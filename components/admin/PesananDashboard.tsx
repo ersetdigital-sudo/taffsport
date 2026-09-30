@@ -4955,7 +4955,10 @@ function AddForm({
       if (usedProducts.length > 0) setProductOptions(rememberProducts(usedProducts));
       shouldSkipDraftSaveRef.current = true;
       localStorage.removeItem(DRAFT_KEY);
-      onSaved("Pesanan ditambahkan");
+      // Server mengirim notifikasi tahap 1 saat pesanan dibuat — toast-nya
+      // menyebut hasil kirim WA-nya biar operator tahu kalau gagal.
+      const created = await res.json().catch(() => null);
+      onSaved(`Pesanan ditambahkan${waNote(created?.notification?.status)}`);
     } catch {
       setError("Gagal menyimpan");
     } finally {

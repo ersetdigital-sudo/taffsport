@@ -9,6 +9,12 @@ import {
   stepFromStatus,
 } from "@/lib/order-status";
 import { loadStepOrder, type StepOrder } from "@/lib/step-order-server";
+import { triggerStageNotification, type NotificationTriggerStatus } from "@/lib/fonnte";
+
+// POST di route ini mengirim WA tahap 1 (Fonnte timeout 10 detik). Tanpa
+// durasi eksplisit, function bisa dimatikan di tengah jalan saat provider
+// lambat — notifikasinya hilang padahal pesanannya sudah tersimpan.
+export const maxDuration = 30;
 
 /**
  * Waktu tuntas tiap order diambil dari `order_status_history`, bukan kolom baru.
@@ -226,5 +232,36 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ order: mapOrder(data, null, stepOrder) }, { status: 201 });
+  // Customer dapat kabar WA begitu pesanan disimpan, bukan cuma saat tahapnya
+  // BERGESER. Sebelumnya pesanan baru yang masih di tahap 1 (Desain) tidak
+  // pernah mengirim notifikasi apa pun, jadi pembeli baru tahu kabar setelah
+  // operator memindahkan tahap.
+  //
+  // Anti-duplikat tetap dijaga `claim_stage_notification` (UNIQUE order_id+tahap),
+  // jadi klik Simpan dua kali tidak mengirim WA dua kali.
+  let notifStatus: NotificationTriggerStatus | "error" = "failed";
+  try {
+    notifStatus = await triggerStageNotification(
+      supabase,
+      data.id,
+      {
+        customer_name: data.customer_name,
+        order_number: data.order_number,
+        customer_phone: data.customer_phone,
+      },
+      1
+    );
+  } catch (e) {
+    // Notifikasi gagal tidak boleh membatalkan pesanan yang sudah tersimpan.
+    console.error("[orders] notifikasi tahap 1 gagal:", e);
+    notifStatus = "error";
+  }
+
+  return NextResponse.json(
+    {
+      order: mapOrder(data, null, stepOrder),
+      notification: { stage: 1, status: notifStatus },
+    },
+    { status: 201 }
+  );
 }
