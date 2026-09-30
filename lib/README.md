@@ -49,7 +49,8 @@ Anti-duplikat notifikasi tidak dicek di kode, tapi di database: RPC
 | `supabase/client.ts` | Supabase client untuk browser (anon key) |
 | `supabase/server.ts` | `createClient()` (cookie session, anon) dan `createServiceClient()` (service role, menembus RLS — hanya untuk server) |
 | `admin-auth.ts` | `getAdminDb()` — guard route handler dashboard: cek cookie `pesanan_auth` / user Supabase, lalu kembalikan service-role client (atau `null` → balas 401) |
-| `cloudinary.ts` | Helper Cloudinary: `uploadToCloudinary` (unsigned upload) dan `cloudinaryUrl` (transformasi `f_auto,q_auto`) |
+| `cloudinary.ts` | Helper Cloudinary sisi browser: `uploadToCloudinary` (perkecil foto → minta tanda tangan ke server → kirim), `optimizeImageUrl` (transformasi `f_auto,q_auto` + batas lebar), `cloudinaryPublicId` & `removedCloudinaryUrls` (deteksi foto yang dibuang operator) |
+| `cloudinary-server.ts` | Operasi Cloudinary yang butuh tanda tangan, **hanya untuk route handler**: `cloudinaryUploadSignature` (tanda tangan upload) dan `destroyCloudinaryAssets` (hapus aset yatim) |
 
 ## Lain-lain
 

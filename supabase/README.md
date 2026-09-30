@@ -36,6 +36,8 @@ Semua file dijalankan manual lewat Supabase **SQL Editor** (atau `psql`), tidak 
 | `0006_selaraskan_nama_tahap.sql` | **Perbaikan bug**: `production_steps` masih 9 nama pipeline lama, bikin customer melihat "Tahap 3/9" sementara dashboard "4/11" |
 | `0007_nomor_wa_resmi.sql` | Isi nomor WhatsApp resmi di baris `brand` (sebelumnya placeholder, jadi tombol "Hubungi CS" customer mengarah ke nomor kosong). Mengubah nomor berikutnya cukup lewat menu Pengaturan |
 | `0008_ulang_kirim_notif_gagal.sql` | **Perbaikan bug**: klaim notifikasi tidak membedakan `success` dari `failed`, jadi tahap yang gagal kirim tidak pernah bisa dikirim ulang walau tokennya sudah diperbaiki |
+| `0009_brand_vsp_sport.sql` | Rebrand identitas toko (`MENARA` → `VSP Sport`). Isinya sengaja tidak diubah setelah dijalankan — migrasi yang sudah jalan tidak boleh diedit, karena Supabase melacak migrasi per versi |
+| `0010_brand_taff_sportwear.sql` | Rebrand identitas toko ke **TAFF Sportwear**: nama, monogram, deskripsi, dan logo di baris `brand` |
 
 ## Tabel (11)
 
