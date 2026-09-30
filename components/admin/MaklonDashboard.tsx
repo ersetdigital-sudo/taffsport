@@ -349,7 +349,7 @@ export default function MaklonDashboard() {
             <div className="pas-card pas-kpi p-4 sm:p-5">
               <p className="text-[13px] text-[var(--pas-muted)]">Siap Dikirim</p>
               <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
-                <p className="pas-display pas-num text-[30px] leading-none text-[#3F5BA9]">{stats.kirim}</p>
+                <p className="pas-display pas-num text-[30px] leading-none text-[#23627C]">{stats.kirim}</p>
               </div>
             </div>
             <div className="pas-card pas-kpi p-4 sm:p-5">
@@ -618,7 +618,7 @@ export default function MaklonDashboard() {
             <p className="text-[14px] text-[var(--pas-muted)] mt-2 leading-relaxed">
               Maklon <span className="text-[var(--pas-ink-1)] font-semibold pas-num">{deleteTarget.id}</span> ({deleteTarget.customer_name}) akan dihapus permanen.
             </p>
-            <p className="text-[13px] text-[#9A5A14] mt-3 bg-[#FF5A1F]/15 border border-[#FF5A1F]/30 rounded-xl px-4 py-2.5 flex items-start gap-1.5">
+            <p className="text-[13px] text-[#8A6A1F] mt-3 bg-[#F0EADF] border border-[#D9C89A] rounded-xl px-4 py-2.5 flex items-start gap-1.5">
               <AlertTriangle size={14} className="shrink-0 mt-0.5" /> Data tidak bisa dikembalikan.
             </p>
             <div className="flex gap-3 mt-5">
@@ -1033,7 +1033,7 @@ function AddForm({
         />
       </label>
 
-      {error && <p className="text-[13px] text-[#E84A12]">{error}</p>}
+      {error && <p className="text-[13px] text-[#C0392B]">{error}</p>}
 
       <div className="flex gap-3">
         <button
@@ -1252,7 +1252,7 @@ function DetailSheet({
         <div className="flex-1 overflow-y-auto px-5 pt-5 pb-28" style={{ scrollbarColor: "var(--pas-line) transparent" }}>
           {/* STATUS HERO */}
           <div className="rounded-2xl border border-[var(--pas-line)] bg-[var(--pas-surface)] shadow-[0_1px_3px_rgba(0,0,0,.04),0_4px_12px_rgba(0,0,0,.04)] p-6 flex flex-col items-center text-center gap-3">
-            <div className="w-14 h-14 rounded-full bg-[rgba(232, 74, 18,.12)] grid place-items-center text-[var(--pas-accent)] text-[22px]">
+            <div className="w-14 h-14 rounded-full bg-[rgba(35,187,183,.18)] grid place-items-center text-[var(--pas-accent)] text-[22px]">
               {order.is_done ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               ) : (
@@ -1307,7 +1307,7 @@ function DetailSheet({
                           background: isDone ? "var(--pas-accent)" : "var(--pas-surface)",
                           border: isDone || isCur ? "2px solid var(--pas-accent)" : "2px solid var(--pas-line)",
                           color: isDone ? "#fff" : isCur ? "var(--pas-accent)" : "var(--pas-muted)",
-                          boxShadow: isDone ? "none" : isCur ? "0 0 0 4px rgba(232, 74, 18,.12)" : "none",
+                          boxShadow: isDone ? "none" : isCur ? "0 0 0 4px rgba(35,187,183,.18)" : "none",
                         }}
                       >
                         {isDone ? "" : i + 1}
@@ -1539,7 +1539,7 @@ function DetailSheet({
             <p className="text-[14px] text-[var(--pas-muted)] mt-2 leading-relaxed">
               Maklon <span className="text-[var(--pas-ink-1)] font-semibold pas-num">{order.id}</span> ({order.customer_name}) akan dihapus permanen.
             </p>
-            <p className="text-[13px] text-[#9A5A14] mt-3 bg-[#FF5A1F]/15 border border-[#FF5A1F]/30 rounded-xl px-4 py-2.5 flex items-start gap-1.5">
+            <p className="text-[13px] text-[#8A6A1F] mt-3 bg-[#F0EADF] border border-[#D9C89A] rounded-xl px-4 py-2.5 flex items-start gap-1.5">
               <AlertTriangle size={14} className="shrink-0 mt-0.5" /> Data tidak bisa dikembalikan.
             </p>
             <div className="flex gap-3 mt-5">
@@ -1900,7 +1900,7 @@ function EditSheet({
               />
             </label>
           </div>
-          {error && <p className="text-[13px] text-[#E84A12]">{error}</p>}
+          {error && <p className="text-[13px] text-[#C0392B]">{error}</p>}
           <button className="pas-btn-accent w-full py-3.5 text-[15px]" disabled={saving}>
             {saving ? "Menyimpan..." : "Simpan Perubahan"}
           </button>

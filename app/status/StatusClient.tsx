@@ -411,7 +411,7 @@ export default function StatusClient({
                   </p>
 
                   {linkShared && (
-                    <p className="mb-5 rounded-xl border border-[rgba(255,90,31,.45)] bg-[rgba(255,90,31,.10)] px-4 py-3 text-[13px] leading-relaxed text-[#ffb08b]">
+                    <p className="mb-5 rounded-xl border border-[rgba(35,187,183,.45)] bg-[rgba(35,187,183,.10)] px-4 py-3 text-[13px] leading-relaxed text-[#8FE3E0]">
                       Link ini sepertinya sudah dibagikan ke orang lain, jadi kami minta
                       verifikasi nomor HP dulu. Demi keamanan, mohon link dari WhatsApp
                       hanya dipakai sendiri ya.
@@ -554,7 +554,7 @@ export default function StatusClient({
                   <>Pesanan kamu sedang kami kerjakan</>
                 )}
                 <br className="hidden sm:block" />{" "}
-                <span className="text-[#FF5A1F]">sesuai jadwal</span>
+                <span className="text-[#23BBB7]">sesuai jadwal</span>
               </h1>
 
               <div className="mt-5 flex flex-wrap items-center gap-2">
@@ -767,7 +767,7 @@ export default function StatusClient({
                       {products.map((p, i) => (
                         <div key={i} className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[.03] px-4 py-3.5">
                           <p className="text-[14.5px] font-medium">{p.name}</p>
-                          <p className="dpo-mono text-[15px] flex-none text-[#FF5A1F]">
+                          <p className="dpo-mono text-[15px] flex-none text-[#23BBB7]">
                             {fmtQty(p.sizes.reduce((a, s) => a + (s.qty || 0), 0))}
                           </p>
                         </div>
@@ -804,7 +804,7 @@ export default function StatusClient({
                                         </td>
                                       );
                                     })}
-                                    <td className="dpo-mono px-2 py-2.5 text-right text-[14px] font-semibold text-[#FF5A1F]">{fmtQty(rowTotal)}</td>
+                                    <td className="dpo-mono px-2 py-2.5 text-right text-[14px] font-semibold text-[#23BBB7]">{fmtQty(rowTotal)}</td>
                                   </tr>
                                 );
                               })}
@@ -817,7 +817,7 @@ export default function StatusClient({
                                     {fmtQty(p.sizes.reduce((a, s) => a + (s.qty || 0), 0))}
                                   </td>
                                 ))}
-                                <td className="dpo-mono px-2 py-3 text-right text-[14px] text-[#FF5A1F]">{fmtQty(totalPcs)}</td>
+                                <td className="dpo-mono px-2 py-3 text-right text-[14px] text-[#23BBB7]">{fmtQty(totalPcs)}</td>
                               </tr>
                             </tfoot>
                           </table>
@@ -886,7 +886,7 @@ export default function StatusClient({
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 rounded-full bg-[#FF5A1F] px-6 py-3 text-center text-[14px] font-semibold text-white hover:bg-[#FF5A1F] transition"
+                    className="flex-1 rounded-full bg-[#23BBB7] px-6 py-3 text-center text-[14px] font-semibold text-[#062B2A] hover:bg-[#1B9A96] transition"
                   >
                     Lacak Pengiriman
                   </a>
@@ -914,7 +914,7 @@ export default function StatusClient({
                   href={waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#FF5A1F] px-8 py-3.5 text-[15px] font-semibold text-white hover:bg-[#FF5A1F] transition hover:-translate-y-px"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#23BBB7] px-8 py-3.5 text-[15px] font-semibold text-[#062B2A] hover:bg-[#1B9A96] transition hover:-translate-y-px"
                 >
                   Chat CS via WhatsApp
                 </a>
@@ -933,7 +933,7 @@ export default function StatusClient({
               href={waLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A1F] px-6 py-3.5 text-[15px] font-semibold text-white"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#23BBB7] px-6 py-3.5 text-[15px] font-semibold text-[#062B2A]"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 18, height: 18, flex: "none" }} aria-hidden="true">
                 <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.1 14.9l-.4-.2-2.7.7.7-2.6-.2-.4A8 8 0 0 1 12 4z"></path>

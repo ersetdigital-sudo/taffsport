@@ -116,14 +116,14 @@ export default function TrackForm({
             <div className="max-w-xl mx-auto flex flex-col gap-8 pt-6 sm:pt-10 lg:pt-14">
               {/* copy + form */}
               <section>
-                <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#FF5A1F] border border-[rgba(255, 90, 31,.35)] rounded-full px-3 py-1.5">
+                <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#23BBB7] border border-[rgba(35, 187, 183,.35)] rounded-full px-3 py-1.5">
                   Order Tracking
                 </span>
 
                 <h1 className="trk-display text-[40px] leading-[1.02] sm:text-[58px] mt-5">
                   Lacak Pesanan
                   <br />
-                  Kamu<span className="text-[#FF5A1F]">.</span>
+                  Kamu<span className="text-[#23BBB7]">.</span>
                 </h1>
 
                 <p className="text-[#A3A3A3] text-[16px] sm:text-[17px] leading-relaxed mt-4">
@@ -218,7 +218,7 @@ export default function TrackForm({
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#FF5A1F] underline underline-offset-4"
+                      className="text-[#23BBB7] underline underline-offset-4"
                     >
                       Tanya admin
                     </a>
@@ -236,7 +236,7 @@ export default function TrackForm({
               <section>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="trk-card p-4 sm:p-5 text-center">
-                    <p className="trk-display text-[20px] sm:text-[24px] text-[#FF5A1F]">
+                    <p className="trk-display text-[20px] sm:text-[24px] text-[#23BBB7]">
                       450K+
                     </p>
                     <p className="text-[12px] sm:text-[13px] text-[#A3A3A3] mt-1 leading-snug">
@@ -244,7 +244,7 @@ export default function TrackForm({
                     </p>
                   </div>
                   <div className="trk-card p-4 sm:p-5 text-center">
-                    <p className="trk-display text-[20px] sm:text-[24px] text-[#FF5A1F]">
+                    <p className="trk-display text-[20px] sm:text-[24px] text-[#23BBB7]">
                       9K+
                     </p>
                     <p className="text-[12px] sm:text-[13px] text-[#A3A3A3] mt-1 leading-snug">
@@ -252,7 +252,7 @@ export default function TrackForm({
                     </p>
                   </div>
                   <div className="trk-card p-4 sm:p-5 text-center">
-                    <p className="trk-display text-[20px] sm:text-[24px] text-[#FF5A1F]">
+                    <p className="trk-display text-[20px] sm:text-[24px] text-[#23BBB7]">
                       7–10
                     </p>
                     <p className="text-[12px] sm:text-[13px] text-[#A3A3A3] mt-1 leading-snug">
@@ -278,7 +278,7 @@ export default function TrackForm({
                 <span>{hours}</span>
                 <a
                   href={waHref}
-                  className="text-[#FF5A1F] hover:underline underline-offset-4"
+                  className="text-[#23BBB7] hover:underline underline-offset-4"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

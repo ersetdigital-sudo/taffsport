@@ -111,13 +111,13 @@ export default async function HomePage() {
           <main className="max-w-6xl mx-auto px-5 sm:px-8 pb-24">
             {/* ── Hero ──────────────────────────────────────────────────── */}
             <section className="max-w-3xl pt-6 sm:pt-10 lg:pt-14">
-              <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#FF5A1F] border border-[rgba(255, 90, 31,.35)] rounded-full px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#23BBB7] border border-[rgba(35, 187, 183,.35)] rounded-full px-3 py-1.5">
                 Desain Bebas · Kirim se-Indonesia
               </span>
 
               <h1 className="trk-display text-[38px] leading-[1.03] sm:text-[58px] mt-5">
                 {taglineLines[0] || "Jersey Custom Full Printing"}
-                <span className="text-[#FF5A1F]">.</span>
+                <span className="text-[#23BBB7]">.</span>
               </h1>
 
               {taglineLines[1] && (
@@ -159,7 +159,7 @@ export default async function HomePage() {
                   <div key={family} className="trk-card p-5 sm:p-6">
                     <div className="flex items-baseline justify-between gap-3">
                       <h3 className="trk-display text-[20px]">{family}</h3>
-                      <span className="trk-stencil text-[9.5px] text-[#FF5A1F]">
+                      <span className="trk-stencil text-[9.5px] text-[#23BBB7]">
                         {FAMILY_INFO[family]?.unit}
                       </span>
                     </div>
@@ -169,7 +169,7 @@ export default async function HomePage() {
                           key={item}
                           className="flex items-center gap-2.5 text-[14px] text-[#D4D4D4]"
                         >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#FF5A1F] shrink-0" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#23BBB7] shrink-0" />
                           {item}
                         </li>
                       ))}
@@ -228,7 +228,7 @@ export default async function HomePage() {
                     },
                   ].map((step) => (
                     <div key={step.n}>
-                      <span className="trk-stencil text-[10px] text-[#FF5A1F]">
+                      <span className="trk-stencil text-[10px] text-[#23BBB7]">
                         {step.n}
                       </span>
                       <p className="text-[15px] font-semibold text-white mt-1.5">
@@ -265,7 +265,7 @@ export default async function HomePage() {
                   href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#FF5A1F] hover:underline underline-offset-4"
+                  className="text-[#23BBB7] hover:underline underline-offset-4"
                 >
                   WhatsApp: {formatWhatsAppDisplay(brand.whatsappNumber)}
                 </a>

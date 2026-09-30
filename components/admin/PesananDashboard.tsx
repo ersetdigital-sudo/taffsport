@@ -128,7 +128,7 @@ const MONTH_NAMES = [
   "Juli", "Agustus", "September", "Oktober", "November", "Desember",
 ];
 /** Palet donut/legend; diulang kalau jumlah produk melebihi jumlah warna. */
-const CAT_COLORS = ["#E84A12", "#FF5A1F", "#FF5A1F", "#8A8A85", "#B07514", "#3F5BA9"];
+const CAT_COLORS = ["#23627C", "#23BBB7", "#1B9A96", "#8A8A85", "#8A6A1F", "#1B4F63"];
 
 /** "2026-09" dari created_at, menurut zona Asia/Jakarta (bukan zona browser). */
 const monthKeyOf = (iso: string) => monthKeyID(iso);
@@ -1018,7 +1018,7 @@ function ViewPesanan({
               Pesanan <span className="text-[var(--pas-ink-1)] font-semibold pas-num">{confirmDelete.id}</span> ({confirmDelete.customer_name}) akan dihapus permanen dan tidak bisa dikembalikan.
             </p>
             {isDangerousStatus(confirmDelete) && (
-              <p className="text-[13px] text-[#9A5A14] mt-3 bg-[#FF5A1F]/15 border border-[#FF5A1F]/30 rounded-xl px-4 py-2.5 flex items-start gap-1.5">
+              <p className="text-[13px] text-[#8A6A1F] mt-3 bg-[#F0EADF] border border-[#D9C89A] rounded-xl px-4 py-2.5 flex items-start gap-1.5">
                 <AlertTriangle size={14} className="shrink-0 mt-0.5" /> Pesanan ini sedang dalam produksi/pengiriman. Hapus hanya jika ini adalah data testing.
               </p>
             )}
@@ -1068,7 +1068,7 @@ function ViewPesanan({
                   ? "pas-display pas-num text-[30px] leading-none text-red-500"
                   : hasWarning
                     ? "pas-display pas-num text-[30px] leading-none text-[var(--pas-orange)]"
-                    : "pas-display pas-num text-[30px] leading-none text-[#3F5BA9]"
+                    : "pas-display pas-num text-[30px] leading-none text-[#23627C]"
               }
             >
               {deadlineAlertCount}
@@ -3381,16 +3381,16 @@ function ViewNotif({ showToast, orders }: { showToast: (msg: string) => void; or
     <>
       {/* â”€â”€ CSS VARS (cream design system) â”€â”€ */}
       <style>{`
-        .notif-wrap{--cream:#F5EFE3;--cream-2:#EDEDE8;--paper:#FFFFFF;--ink:#0A0A0A;--ink-2:#3A3A36;--ink-soft:#8A8A85;--line:#E4E4DF;--line-2:#F0EBE0;--green:#0A0A0A;--green-2:#E84A12;--accent:#E84A12;--mint:#FFE9DF;--mint-line:#F6D9C9;--danger:#E84A12;--danger-bg:#FFE9DF;--danger-line:#F6D9C9}
+        .notif-wrap{--cream:#F0EADF;--cream-2:#E7E5DC;--paper:#FFFFFF;--ink:#0A0A0A;--ink-2:#3A3A36;--ink-soft:#8A8A85;--line:#DFD9CC;--line-2:#EDE5D6;--green:#1B4F63;--green-2:#23627C;--accent:#23627C;--mint:#D3EDEF;--mint-line:#B9DCDF;--danger:#C0392B;--danger-bg:#FCE9E4;--danger-line:#EFC9BE}
         .notif-wrap .n-card{background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:0 1px 1px rgba(10, 10, 10,.03),0 22px 44px -32px rgba(10, 10, 10,.28)}
         .notif-wrap .n-eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.2em;color:var(--ink-soft);font-family:var(--font-geist-mono),ui-monospace,monospace}
-        .notif-wrap .n-hero{position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(145deg,#141414 0%,#7A2A1C 52%,#E84A12 100%);box-shadow:0 30px 70px -40px rgba(10, 10, 10,.75),inset 0 1px 0 rgba(255,255,255,.1)}
+        .notif-wrap .n-hero{position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(145deg,#0B2B33 0%,#1B4F63 52%,#23BBB7 100%);box-shadow:0 30px 70px -40px rgba(10, 10, 10,.75),inset 0 1px 0 rgba(255,255,255,.1)}
         .notif-wrap .n-hero-glow{position:absolute;inset:auto -8% 40% auto;width:520px;height:520px;background:radial-gradient(circle,rgba(255,246,214),.20),transparent 62%);pointer-events:none}
         .notif-wrap .n-hero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.045) 1px,transparent 1px);background-size:100% 36px,36px 100%;mask-image:radial-gradient(120% 90% at 70% 0%,#000 25%,transparent 75%)}
         .notif-wrap .n-stat{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,#fff,#FBF8F2);padding:18px 18px 16px;transition:transform .22s ease,box-shadow .22s ease}
         .notif-wrap .n-stat:hover{transform:translateY(-2px);box-shadow:0 18px 34px -26px rgba(10, 10, 10,.32)}
         .notif-wrap .n-field{width:100%;background:#FBF8F2;border:1px solid var(--line);border-radius:14px;padding:22px 14px 9px;font-size:15px;color:var(--ink);transition:border-color .18s ease,box-shadow .18s ease,background .18s ease;font-family:var(--font-geist),system-ui,sans-serif}
-        .notif-wrap .n-field:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 4px rgba(232, 74, 18,.16)}
+        .notif-wrap .n-field:focus{outline:none;background:#fff;border-color:var(--accent);box-shadow:0 0 0 4px rgba(35, 98, 124,.16)}
         .notif-wrap .n-fw{position:relative}
         .notif-wrap .n-fw label{position:absolute;left:14px;top:8px;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);pointer-events:none;transition:color .18s ease;font-family:var(--font-geist-mono),ui-monospace,monospace}
         .notif-wrap .n-fw .n-field:focus + label{color:var(--accent)}
@@ -3411,7 +3411,7 @@ function ViewNotif({ showToast, orders }: { showToast: (msg: string) => void; or
         .notif-wrap .n-pulse{width:7px;height:7px;border-radius:999px;background:#FFC79E;box-shadow:0 0 0 0 rgba(255,229,0,.7);animation:npulse 2.2s infinite}
         @keyframes npulse{0%{box-shadow:0 0 0 0 rgba(255,229,0,.55)}70%{box-shadow:0 0 0 11px rgba(255,229,0,0)}100%{box-shadow:0 0 0 0 rgba(255,229,0,0)}}
         .notif-wrap .n-switch{width:50px;height:28px;border-radius:999px;background:rgba(255,255,255,.22);position:relative;cursor:pointer;flex:none;transition:background .24s ease;border:1px solid rgba(255,255,255,.2)}
-        .notif-wrap .n-switch.on{background:#FF5A1F;border-color:rgba(255,255,255,.35)}
+        .notif-wrap .n-switch.on{background:#23BBB7;border-color:rgba(255,255,255,.35)}
         .notif-wrap .n-switch span{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:999px;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.28);transition:transform .26s cubic-bezier(.2,.85,.25,1)}
         .notif-wrap .n-switch.on span{transform:translateX(22px)}
       `}</style>
@@ -3501,7 +3501,7 @@ function ViewNotif({ showToast, orders }: { showToast: (msg: string) => void; or
                 <p className="mt-1 text-[12px]" style={{ color: "var(--ink-soft)" }}>30 hari terakhir</p>
               </div>
               <span className="grid h-8 w-8 place-items-center rounded-[10px]" style={{ background: "var(--mint)", border: "1px solid var(--mint-line)" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E84A12" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#23627C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></svg>
               </span>
             </div>
             <p className="mt-4" style={{ fontFamily: 'var(--font-geist-mono),monospace', fontSize: 27, fontWeight: 700, letterSpacing: "-.02em" }}>
@@ -3518,7 +3518,7 @@ function ViewNotif({ showToast, orders }: { showToast: (msg: string) => void; or
                 <p className="mt-1 text-[12px]" style={{ color: "var(--ink-soft)" }}>masih berjalan</p>
               </div>
               <span className="grid h-8 w-8 place-items-center rounded-[10px]" style={{ background: "var(--mint)", border: "1px solid var(--mint-line)" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E84A12" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="17" rx="2.5" /><path d="M8 2v4M16 2v4M3 10h18" /></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#23627C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="17" rx="2.5" /><path d="M8 2v4M16 2v4M3 10h18" /></svg>
               </span>
             </div>
             <p className="mt-4" style={{ fontFamily: 'var(--font-geist-mono),monospace', fontSize: 27, fontWeight: 700, letterSpacing: "-.02em" }}>
@@ -3535,7 +3535,7 @@ function ViewNotif({ showToast, orders }: { showToast: (msg: string) => void; or
                 <p className="mt-1 text-[12px]" style={{ color: "var(--ink-soft)" }}>admin internal</p>
               </div>
               <span className="grid h-8 w-8 place-items-center rounded-[10px]" style={{ background: "var(--mint)", border: "1px solid var(--mint-line)" }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#E84A12" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /></svg>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#23627C" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.87" /></svg>
               </span>
             </div>
             <p className="mt-4" style={{ fontFamily: 'var(--font-geist-mono),monospace', fontSize: 27, fontWeight: 700, letterSpacing: "-.02em" }}>
@@ -3652,7 +3652,7 @@ function ViewNotif({ showToast, orders }: { showToast: (msg: string) => void; or
                             Sukses
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[12px]" style={{ color: "#E84A12" }}>
+                          <span className="inline-flex items-center gap-1 text-[12px]" style={{ color: "#23627C" }}>
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="15" y1="9" x2="9" y2="15" /><line x1="9" y1="9" x2="15" y2="15" /></svg>
                             Gagal
                           </span>
@@ -4027,7 +4027,7 @@ function DetailSheet({
           <div className="mb-3 flex items-center gap-3 rounded-2xl border border-[var(--pas-line)] bg-[var(--pas-surface)] px-4 py-3 shadow-[0_1px_3px_rgba(0,0,0,.04),0_4px_12px_rgba(0,0,0,.04)]">
             <span
               className="grid h-10 w-10 shrink-0 place-items-center rounded-full"
-              style={{ background: "rgba(255,90,31,.12)", color: "var(--pas-accent)" }}
+              style={{ background: "rgba(35,187,183,.14)", color: "var(--pas-accent)" }}
               aria-hidden="true"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
@@ -4079,7 +4079,7 @@ function DetailSheet({
 
           {/* ── STATUS HERO ── */}
           <div className="rounded-2xl border border-[var(--pas-line)] bg-[var(--pas-surface)] shadow-[0_1px_3px_rgba(0,0,0,.04),0_4px_12px_rgba(0,0,0,.04)] p-6 flex flex-col items-center text-center gap-3">
-            <div className="w-14 h-14 rounded-full bg-[rgba(232, 74, 18,.12)] grid place-items-center text-[var(--pas-accent)] text-[22px]">
+            <div className="w-14 h-14 rounded-full bg-[rgba(35,187,183,.18)] grid place-items-center text-[var(--pas-accent)] text-[22px]">
               {order.is_done ? (
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5" /></svg>
               ) : (
@@ -4130,7 +4130,7 @@ function DetailSheet({
                           background: isDone ? "var(--pas-accent)" : isCur ? "var(--pas-surface)" : "var(--pas-surface)",
                           border: isDone ? "2px solid var(--pas-accent)" : isCur ? "2px solid var(--pas-accent)" : "2px solid var(--pas-line)",
                           color: isDone ? "#fff" : isCur ? "var(--pas-accent)" : "var(--pas-muted)",
-                          boxShadow: isDone ? "none" : isCur ? "0 0 0 4px rgba(232, 74, 18,.12)" : "none",
+                          boxShadow: isDone ? "none" : isCur ? "0 0 0 4px rgba(35,187,183,.18)" : "none",
                         }}
                       >
                         {isDone ? "" : i + 1}
@@ -4143,7 +4143,7 @@ function DetailSheet({
                         {isCur && <div className="text-[11px] text-[var(--pas-muted)] opacity-70 mt-0.5">Sedang dikerjakan</div>}
                         {stagePhotos[slugFromStepName(s.name) || ""] && (
                           <div className="mt-1">
-                            <span className="inline-flex items-center gap-1 rounded-md bg-[rgba(255,90,31,.12)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--pas-accent)]">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-[rgba(35,187,183,.14)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--pas-accent)]">
                               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                                 <path d="M4 8h2.6l1.2-2h8.4L17.4 8H20a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
                                 <circle cx="12" cy="13" r="3.1" />
@@ -4174,7 +4174,7 @@ function DetailSheet({
                 ? "pas-nudge border-[var(--pas-accent)]"
                 : stagePhotoValue
                   ? "border-[var(--pas-line)]"
-                  : "border-[rgba(255,90,31,.30)]"
+                  : "border-[rgba(35,187,183,.45)]"
             }`}
           >
             <div className="flex items-center gap-3 border-b border-[var(--pas-line)] px-4 py-3" style={{ background: "rgba(10, 10, 10,.03)" }}>
@@ -4258,12 +4258,12 @@ function DetailSheet({
                 <label
                   className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-[1.5px] border-dashed px-4 py-6 text-center transition ${
                     photoNudgeOn
-                      ? "border-[var(--pas-accent)] bg-[rgba(255,90,31,.06)]"
+                      ? "border-[var(--pas-accent)] bg-[rgba(35,187,183,.08)]"
                       : "border-[var(--pas-line)] hover:border-[var(--pas-accent)] hover:bg-[rgba(10,10,10,.04)]"
                   }`}
                 >
                   <input type="file" accept={IMAGE_ACCEPT} className="hidden" disabled={uploadingStage} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleStagePhotoUpload(f); e.currentTarget.value = ""; }} />
-                  <span className="grid h-10 w-10 place-items-center rounded-full" style={{ background: "rgba(255,90,31,.12)", color: "var(--pas-accent)" }}>
+                  <span className="grid h-10 w-10 place-items-center rounded-full" style={{ background: "rgba(35,187,183,.14)", color: "var(--pas-accent)" }}>
                     {uploadingStage ? (
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="animate-spin"><path d="M21 12a9 9 0 1 1-3.2-6.9" /></svg>
                     ) : (
@@ -4790,7 +4790,7 @@ function EditSheet({
               />
             </label>
           </div>
-          {error && <p className="text-[13px] text-[#E84A12]">{error}</p>}
+          {error && <p className="text-[13px] text-[#C0392B]">{error}</p>}
           <button className="pas-btn-accent w-full py-3.5 text-[15px]" disabled={saving}>
             {saving ? "Menyimpan..." : "Simpan Perubahan"}
           </button>
@@ -5171,7 +5171,7 @@ function AddForm({
           />
         </label>
       </div>
-      {error && <p className="text-[13px] text-[#E84A12]">{error}</p>}
+      {error && <p className="text-[13px] text-[#C0392B]">{error}</p>}
       <button className="pas-btn-accent w-full py-3.5 text-[15px]" disabled={saving}>
         {saving ? "Menyimpan..." : "Simpan Pesanan"}
       </button>

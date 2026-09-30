@@ -114,7 +114,7 @@ function ProductList({ products, fallbackName, fallbackQty }: {
             className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[.03] px-3.5 py-2.5"
           >
             <span className="text-[14px] font-medium">{p.name || "-"}</span>
-            <span className="dpo-mono text-[14px] text-[#FF5A1F]">{qty} pcs</span>
+            <span className="dpo-mono text-[14px] text-[#23BBB7]">{qty} pcs</span>
           </div>
         );
       })}
@@ -487,7 +487,7 @@ export default async function MaklonStatusPage({
               href={csHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A1F] px-8 py-3.5 text-[15px] font-semibold text-white transition hover:-translate-y-px hover:bg-[#FF5A1F] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#23BBB7] px-8 py-3.5 text-[15px] font-semibold text-[#062B2A] transition hover:-translate-y-px hover:bg-[#1B9A96] sm:w-auto"
             >
               Chat CS
             </a>

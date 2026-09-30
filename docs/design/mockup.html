@@ -3,45 +3,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TAFF Sportwear · Admin Panel</title>
+<!-- Mockup referensi. Palet mengikuti brand terbaru: Light Blue #D3EDEF · Turquoise #23BBB7 · Deep Blue #23627C · Cream #F0EADF -->
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@600&amp;display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Archivo,sans-serif;background:#F5EFE3;color:#0A0A0A;display:flex;min-height:100vh}
-aside{width:248px;background:#0A0A0A;color:#A3A3A3;padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
+body{font-family:Archivo,sans-serif;background:#F0EADF;color:#0A0A0A;display:flex;min-height:100vh}
+aside{width:248px;background:linear-gradient(180deg,#2A6E8A 0%,#23627C 48%,#1B4F63 100%);color:rgba(255,255,255,.72);padding:24px 16px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;height:100vh}
 .logo{width:100%;height:96px;object-fit:cover;object-position:center;border-radius:6px;margin-bottom:4px}
 .tag{font-size:12px;color:#5C5C5C;margin-bottom:20px}
 .sec{font-size:11px;font-weight:700;letter-spacing:1.5px;color:#5C5C5C;margin:14px 0 6px}
-aside a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:#A3A3A3;text-decoration:none;font-size:14px;font-weight:500}
-aside a:hover{background:#1A1A1A;color:#fff}
-aside a.active{background:#fff;color:#0A0A0A;font-weight:700}
-aside a .n{margin-left:auto;font-size:11px;background:#0A0A0A;color:#fff;border-radius:10px;padding:2px 8px}
+aside a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:rgba(255,255,255,.72);text-decoration:none;font-size:14px;font-weight:500}
+aside a:hover{background:rgba(255,255,255,.12);color:#fff}
+aside a.active{background:#fff;color:#1B4F63;font-weight:700}
+aside a .n{margin-left:auto;font-size:11px;background:#1B4F63;color:#fff;border-radius:10px;padding:2px 8px}
 aside svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
-.user{margin-top:auto;display:flex;gap:10px;align-items:center;background:#1A1A1A;border-radius:10px;padding:12px}
-.av{width:34px;height:34px;border-radius:50%;background:#fff;color:#0A0A0A;display:grid;place-items:center;font-weight:800;font-size:11px}
+.user{margin-top:auto;display:flex;gap:10px;align-items:center;background:rgba(255,255,255,.12);border-radius:10px;padding:12px}
+.av{width:34px;height:34px;border-radius:50%;background:#fff;color:#1B4F63;display:grid;place-items:center;font-weight:800;font-size:11px}
 .user b{color:#fff;font-size:13px;display:block}.user small{font-size:11px;color:#8A8A85}
 main{flex:1;min-width:0}
-header{background:#fff;height:76px;padding:0 32px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #E4E4DF}
+header{background:#fff;height:76px;padding:0 32px;display:flex;align-items:center;gap:12px;border-bottom:1px solid #DFD9CC}
 header .t{flex:1}header small{font-size:12px;color:#8A8A85}header h1{font-size:24px;font-weight:800}
 .date{font-size:12px;color:#8A8A85}
 .btn{height:40px;padding:0 18px;border-radius:8px;font:700 14px Archivo;cursor:pointer;border:1px solid #0A0A0A}
-.btn.cta{background:#FF5A1F;border-color:#FF5A1F;color:#fff}.btn.cta:hover{background:#E84A12}.btn.dark{background:#0A0A0A;color:#fff}.btn.light{background:#fff;color:#0A0A0A;border-color:#DADAD5}
+.btn.cta{background:#23BBB7;border-color:#23BBB7;color:#062B2A}.btn.cta:hover{background:#1B9A96}.btn.dark{background:#0A0A0A;color:#fff}.btn.light{background:#fff;color:#0A0A0A;border-color:#D9D2C2}
 .wrap{padding:24px 32px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.card{background:#fff;border:1px solid #E4E4DF;border-radius:12px;padding:18px 20px}
+.card{background:#fff;border:1px solid #DFD9CC;border-radius:12px;padding:18px 20px}
 .card p{font-size:13px;font-weight:500;color:#6B6B66}
 .card .v{display:flex;align-items:flex-end;gap:10px;margin-top:8px}
 .card strong{font-size:40px;font-weight:800;line-height:1}
 .pill{font-size:11px;font-weight:700;padding:4px 10px;border-radius:12px;background:#EDEDE8;margin-bottom:4px}
-.card.hero{background:#0A0A0A;border-color:#0A0A0A}.card.hero p{color:#A3A3A3}.card.hero strong{color:#fff}.card.hero .pill{background:#fff;color:#0A0A0A}
-.red{color:#FF5A1F}.pill.red{background:#FFE9DF}
+.card.hero{background:linear-gradient(150deg,#2A6E8A 0%,#23627C 52%,#1B4F63 100%);border-color:#1B4F63}.card.hero p{color:#CFE3E9}.card.hero strong{color:#fff}.card.hero .pill{background:rgba(211,237,239,.92);color:#1B4F63}
+.red{color:#23627C}.pill.red{background:#D3EDEF}
 .tools{display:flex;gap:12px;margin:20px 0 16px;align-items:center}
-.search{width:320px;height:42px;border:1px solid #DADAD5;border-radius:8px;background:#fff;padding:0 14px;font:13px Archivo}
-select{height:42px;border:1px solid #DADAD5;border-radius:8px;background:#fff;padding:0 12px;font:600 13px Archivo}
-.tabs{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #DADAD5;border-radius:8px;padding:4px}
+.search{width:320px;height:42px;border:1px solid #D9D2C2;border-radius:8px;background:#fff;padding:0 14px;font:13px Archivo}
+select{height:42px;border:1px solid #D9D2C2;border-radius:8px;background:#fff;padding:0 12px;font:600 13px Archivo}
+.tabs{margin-left:auto;display:flex;gap:2px;background:#fff;border:1px solid #D9D2C2;border-radius:8px;padding:4px}
 .tabs button{border:0;background:none;font:13px Archivo;color:#4A4A46;padding:8px 14px;border-radius:6px;cursor:pointer}
 .tabs button.on{background:#0A0A0A;color:#fff;font-weight:700}
 table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #E4E4DF;border-radius:12px;overflow:hidden}
-th{font-size:11px;font-weight:700;letter-spacing:1px;color:#8A8A85;text-align:left;padding:14px 16px;border-bottom:1px solid #E4E4DF}
+th{font-size:11px;font-weight:700;letter-spacing:1px;color:#8A8A85;text-align:left;padding:14px 16px;border-bottom:1px solid #DFD9CC}
 td{font-size:13px;padding:14px 16px;border-bottom:1px solid #F0EBE0;vertical-align:middle}
 tr:hover td{background:#FBF8F2}
 .code{font:600 13px 'JetBrains Mono',monospace}.sub{font-size:12px;color:#8A8A85;margin-top:2px}
@@ -51,7 +52,7 @@ tr:hover td{background:#FBF8F2}
 .st.prod{background:#0A0A0A;color:#fff}.st.new{border:1px solid #0A0A0A}.st.done{background:#EDEDE8;color:#4A4A46}
 .act{display:flex;gap:10px}.act svg{width:16px;height:16px;stroke:#6B6B66;fill:none;stroke-width:1.8;cursor:pointer}
 
-.menu-btn{display:none;width:40px;height:40px;border:1px solid #DADAD5;border-radius:8px;background:#fff;cursor:pointer;flex:none}
+.menu-btn{display:none;width:40px;height:40px;border:1px solid #D9D2C2;border-radius:8px;background:#fff;cursor:pointer;flex:none}
 .menu-btn svg{width:20px;height:20px;stroke:#0A0A0A;fill:none;stroke-width:2}
 .overlay{display:none}
 .table-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:12px}
