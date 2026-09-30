@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { waMeUrl } from "@/lib/wa";
 
 import {
   ORDER_STATUS_LABELS,
@@ -129,17 +128,15 @@ function stepHighlight(status: string, hasTracking: boolean): string {
 /**
  * Halaman status pesanan (client component).
  *
- * Identitas toko datang sebagai PROP dari server (`app/status/page.tsx` →
- * getBrand()), bukan dari state + fetch ke /api/brand. Jadi HTML pertama yang
- * dikirim ke customer sudah memuat nomor WhatsApp dari menu Pengaturan — tidak
- * ada lagi nomor cadangan yang tertulis di bundle.
+ * Sengaja TIDAK ada tombol "Hubungi CS"/WhatsApp di halaman ini: fungsinya
+ * murni melihat progres pesanan, dan kanal komunikasi sudah lewat pesan
+ * WhatsApp yang dikirim otomatis tiap tahap. Data awalnya datang dari server
+ * (lihat lib/status-server.ts) supaya HTML pertama langsung berisi progres.
  */
 export default function StatusClient({
-  brand,
   initial,
   initialLinkShared,
 }: {
-  brand: { name: string; whatsapp_number: string };
   /**
    * Data yang sudah dibaca server (lihat lib/status-server.ts). Kalau terisi,
    * HTML pertama sudah memuat progres pesanan — dulu blok ini kosong sampai
@@ -536,10 +533,6 @@ export default function StatusClient({
     ? ORDER_STATUS_LABELS.selesai
     : stageNameOf(totalSteps);
   const lastUpdate = history.length > 0 ? history[history.length - 1] : null;
-  const waLink = waMeUrl(
-    brand.whatsapp_number,
-    `Halo ${brand.name}, saya mau tanya order ${orderId}`
-  );
 
   // Product data (new structured format) with fallback to legacy fields
   const products: { name: string; sizes: { size: string; qty: number }[] }[] =
@@ -579,18 +572,10 @@ export default function StatusClient({
                   <p className="text-[10.5px] text-[#8A8A85] sm:text-[11px]">Pabrik Jersey Custom Full Printing</p>
                 </div>
               </div>
-              <a
-                href={waLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-2 rounded-full border border-white/[.12] bg-white/5 px-4 py-2 text-[13px] font-medium text-[#A3A3A3] hover:bg-white/10 hover:text-white transition"
-              >
-                Hubungi CS
-              </a>
             </div>
           </header>
 
-          <main className="mx-auto w-full max-w-3xl px-4 pb-28 sm:px-6 sm:pb-20">
+          <main className="mx-auto w-full max-w-3xl px-4 pb-16 sm:px-6 sm:pb-20">
 
             {/* HERO / STATUS */}
             <section className="dpo-reveal pt-7 sm:pt-12">
@@ -955,42 +940,10 @@ export default function StatusClient({
               </section>
             )}
 
-            {/* CTA */}
-            <section className="dpo-card mt-8 p-6 sm:p-8 text-center">
-              <h2 className="dpo-h1 text-2xl sm:text-3xl">Ada yang mau ditanyakan?</h2>
-              <p className="mt-2 text-[14px] text-[#A3A3A3]">Tim CS kami siap bantu, Senin–Sabtu 08.00–20.00 WIB.</p>
-              <div className="mt-5 flex justify-center">
-                <a
-                  href={waLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#23627C] px-8 py-3.5 text-[15px] font-semibold text-white hover:bg-[#1B4F63] transition hover:-translate-y-px"
-                >
-                  Chat CS via WhatsApp
-                </a>
-              </div>
-              <p className="mt-4 text-[12px] text-[#8A8A85]">Semua komunikasi order ditangani lewat WhatsApp resmi TAFF Sportwear.</p>
-            </section>
-
             <footer className="mt-10 text-center text-[12px] text-[#8A8A85]">
               <p>© 2026 TAFF Sportwear — Pabrik Jersey Custom Full Printing</p>
             </footer>
           </main>
-
-          {/* STICKY CTA MOBILE */}
-          <div className="dpo-stickycta">
-            <a
-              href={waLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#23627C] px-6 py-3.5 text-[15px] font-semibold text-white"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 18, height: 18, flex: "none" }} aria-hidden="true">
-                <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.1 14.9l-.4-.2-2.7.7.7-2.6-.2-.4A8 8 0 0 1 12 4z"></path>
-              </svg>
-              Chat CS via WhatsApp
-            </a>
-          </div>
 
           {lightboxUrl && (
             <div

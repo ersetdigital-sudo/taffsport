@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { getBrand } from "@/lib/queries";
 import { getTokenFromCookie } from "@/lib/verify-token";
 import { clientIp } from "@/lib/track-guard";
 import { loadStatusInitial } from "@/lib/status-server";
@@ -12,11 +11,15 @@ export const metadata: Metadata = {
   description: "Pantau progres produksi pesanan jersey custom TAFF Sportwear.",
 };
 
-// Identitas toko dibaca per request: nomor WhatsApp untuk tombol CS harus sama
-// dengan yang diisi di menu Pengaturan admin, termasuk di HTML pertama.
+// Dibaca per request: token ada di query/cookie, jadi halaman ini tidak bisa
+// di-cache sebagai halaman statis.
 export const dynamic = "force-dynamic";
 
 /**
+ * Halaman ini sudah tidak menampilkan tombol WhatsApp/CS sama sekali, jadi
+ * identitas toko (getBrand) tidak lagi dibaca di sini — satu query Supabase
+ * lebih sedikit sebelum HTML pertama dikirim.
+ *
  * Token diambil dari link WhatsApp (`?token=`) dulu; cookie perangkat jadi
  * cadangan supaya kunjungan ulang (bookmark/refresh tanpa query) tetap bisa
  * dirender di server. Kalau dua-duanya tidak ada, halaman dirender seperti
@@ -30,21 +33,15 @@ export default async function StatusPage({
   const sp = await searchParams;
   const h = await headers();
   const token = sp.token || getTokenFromCookie(h.get("cookie"));
-
-  // Data pesanan dan identitas toko tidak saling bergantung → dijalankan
-  // bersamaan supaya HTML pertama siap secepat mungkin.
-  const [{ data: initial, linkShared }, brand] = await Promise.all([
-    loadStatusInitial(sp.order, token, clientIp(h)),
-    getBrand(),
-  ]);
+  const { data: initial, linkShared } = await loadStatusInitial(
+    sp.order,
+    token,
+    clientIp(h)
+  );
 
   return (
     <Suspense fallback={null}>
-      <StatusClient
-        brand={{ name: brand.name, whatsapp_number: brand.whatsappNumber }}
-        initial={initial}
-        initialLinkShared={linkShared}
-      />
+      <StatusClient initial={initial} initialLinkShared={linkShared} />
     </Suspense>
   );
 }
