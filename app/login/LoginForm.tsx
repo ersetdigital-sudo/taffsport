@@ -152,8 +152,8 @@ export default function LoginForm({ brand }: { brand: Brand }) {
         <div className="pas-auth-frame">
           <section className="pas-auth-hero">
             <div className="flex items-center gap-3">
-              <span className="pas-auth-plate h-11 w-11">
-                <img src={brand.logoPath} alt="" />
+              <span className="pas-auth-plate">
+                <img src={brand.logoPath} alt="" className="h-10 w-auto" />
               </span>
               <span className="pas-stencil text-[12px] text-white">
                 {brand.name}
@@ -192,8 +192,8 @@ export default function LoginForm({ brand }: { brand: Brand }) {
       {/* ── Ponsel: masthead, panel brand, lalu form ── */}
       <main className="pas-auth-mobile">
         <div className="flex items-center gap-3">
-          <span className="pas-auth-plate h-9 w-9">
-            <img src={brand.logoPath} alt="" />
+          <span className="pas-auth-plate">
+            <img src={brand.logoPath} alt="" className="h-8 w-auto" />
           </span>
           <span className="pas-stencil text-[11px] text-[var(--pas-ink-1)]">
             {brand.name}
@@ -201,8 +201,8 @@ export default function LoginForm({ brand }: { brand: Brand }) {
         </div>
 
         <div className="pas-auth-slate mt-4">
-          <span className="pas-auth-plate h-[72px] w-[72px]">
-            <img src={brand.logoPath} alt="" />
+          <span className="pas-auth-plate">
+            <img src={brand.logoPath} alt="" className="h-[68px] w-auto" />
           </span>
           {subline && (
             <p className="max-w-[20ch] text-[13px] leading-[1.6] text-[#C4C4C4]">

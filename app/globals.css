@@ -2342,9 +2342,11 @@ table.pas-tbl tbody tr:hover { background: #FBF8F2; }
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   padding: 6px 8px 26px; text-align: center;
 }
-.pas-brand-mark { width: 116px; height: 116px; display: grid; place-items: center; }
+/* Logo brand sekarang lockup mendatar (rasio ±1.76:1), bukan lambang kotak —
+   jadi tingginya dibiarkan ikut lebar, bukan dipatok 116×116 seperti dulu. */
+.pas-brand-mark { width: 100%; max-width: 188px; display: grid; place-items: center; }
 .pas-brand-mark img {
-  width: 100%; height: 100%; object-fit: contain; display: block;
+  width: 100%; height: auto; object-fit: contain; display: block;
   filter: drop-shadow(0 8px 22px rgba(255, 90, 31,.45));
 }
 .pas-brand-name {
@@ -3008,12 +3010,22 @@ table.pas-tbl.pas-tbl-static tbody tr:hover { background: transparent; }
 }
 
 /* ── Elemen bersama ── */
+/* Piring putih di belakang logo: logonya sendiri gelap, jadi butuh alas
+   terang di atas hero hitam.
+
+   Tingginya sengaja dipasang di elemen <img> (lewat kelas h-*), bukan di
+   piringnya: waktu tingginya dipatok di piring lalu gambarnya diberi
+   `height: 100%`, persentasenya tidak punya acuan yang pasti sehingga browser
+   memakai ukuran asli gambar — logo 900px langsung meluber keluar. Piringnya
+   sekarang cuma membungkus isi. */
 .pas-auth-plate {
-  flex: none; overflow: hidden;
-  border-radius: 10px; background: #fff;
-  display: grid; place-items: center;
+  flex: none; display: inline-block; line-height: 0;
+  padding: 5px; border-radius: 10px; background: #fff;
 }
-.pas-auth-plate img { width: 100%; height: 100%; object-fit: cover; }
+/* Sengaja tanpa width/height di sini: aturan ini spesifisitasnya lebih tinggi
+   dari kelas Tailwind, jadi menulis `height: auto` di sini akan meniadakan
+   kelas `h-*` pada gambarnya dan logo kembali memakai ukuran aslinya. */
+.pas-auth-plate img { display: block; object-fit: contain; }
 
 .pas-auth-label {
   display: block;

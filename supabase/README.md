@@ -38,6 +38,7 @@ Semua file dijalankan manual lewat Supabase **SQL Editor** (atau `psql`), tidak 
 | `0008_ulang_kirim_notif_gagal.sql` | **Perbaikan bug**: klaim notifikasi tidak membedakan `success` dari `failed`, jadi tahap yang gagal kirim tidak pernah bisa dikirim ulang walau tokennya sudah diperbaiki |
 | `0009_brand_vsp_sport.sql` | Rebrand identitas toko (`MENARA` → `VSP Sport`). Isinya sengaja tidak diubah setelah dijalankan — migrasi yang sudah jalan tidak boleh diedit, karena Supabase melacak migrasi per versi |
 | `0010_brand_taff_sportwear.sql` | Rebrand identitas toko ke **TAFF Sportwear**: nama, monogram, deskripsi, dan logo di baris `brand` |
+| `0011_ganti_logo_brand.sql` | Ganti berkas logo brand ke `/brand-logo.png`. Nama berkasnya ikut berubah karena aset di `public/` dilayani `immutable` selama setahun — menimpa isi di URL yang sama tidak akan terlihat |
 
 ## Tabel (11)
 

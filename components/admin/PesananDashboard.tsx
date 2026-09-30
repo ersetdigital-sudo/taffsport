@@ -517,7 +517,7 @@ export default function PesananDashboard() {
       <aside className="pas-side">
         <a href="/" className="pas-brand">
           <span className="pas-brand-mark">
-            <img src="/logo-taff.png" alt="TAFF Sportwear" />
+            <img src="/brand-logo.png" alt="TAFF Sportwear" />
           </span>
           <span className="block text-center">
             <span className="pas-brand-name">TAFF Sportwear</span>
@@ -588,7 +588,7 @@ export default function PesananDashboard() {
         <header className="pas-topbar">
           <div className="px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 min-w-0">
-<img src="/logo-taff.png" alt="TAFF Sportwear" className="w-10 h-10 object-contain lg:hidden" />
+<img src="/brand-logo.png" alt="TAFF Sportwear" className="h-9 w-auto object-contain lg:hidden" />
               <div className="min-w-0">
                 <p className="pas-kicker">{meta.crumb}</p>
                 <h1 className="pas-display pas-title mt-1 truncate">
@@ -671,7 +671,7 @@ export default function PesananDashboard() {
           {/* Drawer header */}
           <div className="flex items-center mb-2">
             <a href="/" className="flex items-center gap-2.5">
-              <img src="/logo-taff.png" alt="TAFF Sportwear" className="w-9 h-9 object-contain" />
+              <img src="/brand-logo.png" alt="TAFF Sportwear" className="h-8 w-auto object-contain" />
               <span className="pas-brand-name !text-[16px]">TAFF Sportwear</span>
             </a>
           </div>
