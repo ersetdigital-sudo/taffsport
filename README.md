@@ -174,6 +174,15 @@ development file. `APP_URL` must be the production domain, because that is what 
 links are built from. Cloudinary's upload preset has to be set to Signed mode to match
 the signing endpoint; leaving it unsigned would reopen the upload path.
 
+**Scheduling.** `vercel.json` carries no `crons` block — the daily deadline reminder is
+driven by cron-job.org instead. One job: GET
+`https://taffsport.vercel.app/api/admin/deadline-notif` with custom header
+`Authorization: Bearer <CRON_SECRET>` (same value as the Vercel env var), timezone
+Asia/Jakarta, daily at 09:00 WIB. The route remains the gatekeeper: it only sends when
+`deadline_notif_enabled` is on, the configured "Jam Kirim (WIB)" has been reached, and
+`deadline_notif_last_sent_date` is still empty for today — so the job time must fall at
+or after the configured send time (09:00 WIB vs the default 08:00 WIB).
+
 ## Status
 
 The platform covers operations only — no storefront, no catalogue — so the data model stays as small as the work it supports. Freshly provisioned on its own Supabase project and migrations, with the checks above passing. Live at **[taffsport.vercel.app](https://taffsport.vercel.app)**, redeployed on every push to `main`.

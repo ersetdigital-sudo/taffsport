@@ -16,11 +16,12 @@ const CRON_SECRET = process.env.CRON_SECRET || "";
 /**
  * Ambil secret cron dari request. Dua bentuk diterima:
  *
- *  - `Authorization: Bearer <CRON_SECRET>` — inilah yang dikirim Vercel Cron
- *    secara otomatis begitu env `CRON_SECRET` di-set. Tanpa menerima header
- *    ini, cron Vercel selalu ditolak 401 dan notifikasi tidak pernah jalan.
- *  - `x-cron-secret` atau `?secret=` — untuk pemanggilan manual: curl, GitHub
- *    Actions, atau cron eksternal lain.
+ *  - `Authorization: Bearer <CRON_SECRET>` — inilah yang dikirim scheduler
+ *    eksternal (cron-job.org) begitu env `CRON_SECRET` di-set di Vercel.
+ *    Tanpa menerima header ini, pemanggilan cron selalu ditolak 401 dan
+ *    notifikasi tidak pernah jalan.
+ *  - `x-cron-secret` atau `?secret=` — untuk pemanggilan manual: curl, "Test
+ *    now" di dashboard cron-job.org, GitHub Actions, atau scheduler lain.
  *
  * Dulu hanya bentuk kedua yang diterima, jadi jadwal cron otomatis tidak akan
  * pernah lolos autentikasi.
@@ -100,7 +101,7 @@ export async function GET(req: Request) {
   const cronSecretOk = Boolean(CRON_SECRET) && secretValue === CRON_SECRET;
 
   // Dua jalur masuk yang sah:
-  //  - Cron Vercel, dibuktikan dengan CRON_SECRET.
+  //  - Scheduler eksternal (cron-job.org), dibuktikan dengan CRON_SECRET.
   //  - Tombol "kirim sekarang" di dashboard, dibuktikan cookie admin.
   //
   // Sebelumnya ceknya `!fromDashboard` dari header `x-from-dashboard`, dan

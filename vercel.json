@@ -1,10 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": "nextjs",
-  "crons": [
-    {
-      "path": "/api/admin/deadline-notif",
-      "schedule": "0 2 * * *"
-    }
-  ]
+  "framework": "nextjs"
 }
