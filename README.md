@@ -131,6 +131,10 @@ Claims are cheap, so these were checked against the live project rather than ass
 | Signed upload with a valid session | `200`, asset landed in the intended folder |
 | Upload with a forged signature | `401` from Cloudinary — the signature is genuinely enforced |
 | `tsc --noEmit` and `next build` | clean |
+| Production deploy (`taffsport.vercel.app`) | `/`, `/login`, `/track`, `/status` all return `200` |
+| Dashboard API without a session | `401` |
+| Cron endpoint without the secret | `401` |
+| Signed upload grant in production | `200` with a session, `401` without |
 
 ## Tech stack
 
@@ -144,9 +148,29 @@ Claims are cheap, so these were checked against the live project rather than ass
 | Messaging | Fonnte (WhatsApp gateway) | Where the customers already are; no app install required |
 | Hosting | Vercel | Cron for reminders, plus edge middleware for session refresh |
 
+## Running it yourself
+
+The app is self-contained: one Supabase project, one Cloudinary account, one Vercel
+project. `.env.local.example` lists every variable with a note on what it is for.
+
+```bash
+pnpm install
+cp .env.local.example .env.local   # then fill in the values
+# run migrations 0001 → 0010 in the Supabase SQL editor
+pnpm dev
+```
+
+To deploy, set the same variables on the Vercel project (Production and Preview), then
+push to `main` or run `vercel --prod`. Four of them are secrets the app refuses to run
+without — `SETTINGS_ENCRYPTION_KEY`, `TRACK_SESSION_SECRET`, `PESANAN_PASSWORD` and
+`CRON_SECRET` — and each should be freshly generated for production, never copied from a
+development file. `APP_URL` must be the production domain, because that is what tracking
+links are built from. Cloudinary's upload preset has to be set to Signed mode to match
+the signing endpoint; leaving it unsigned would reopen the upload path.
+
 ## Status
 
-The platform covers operations only — no storefront, no catalogue — so the data model stays as small as the work it supports. Freshly provisioned on its own Supabase project and migrations, with the checks above passing; not yet deployed to a public URL.
+The platform covers operations only — no storefront, no catalogue — so the data model stays as small as the work it supports. Freshly provisioned on its own Supabase project and migrations, with the checks above passing. Live at **[taffsport.vercel.app](https://taffsport.vercel.app)**, redeployed on every push to `main`.
 
 ## Author
 
