@@ -19,6 +19,7 @@ import {
   productFamily,
   rememberProducts,
 } from "@/lib/product-options";
+import { slugFromStepName } from "@/lib/step-order";
 import { waNote } from "@/lib/notif-note";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Search, AlertTriangle } from "lucide-react";
@@ -80,7 +81,10 @@ type OrderData = {
   sizes: string;
   products?: { name: string; sizes: { size: string; qty: number }[] }[];
   design_photos?: string[];
+  /** Foto Work Order — khusus admin, tidak pernah dikirim ke customer. */
   wo_photos?: string[];
+  /** Foto progres per tahap: slug tahap → URL foto (lihat DetailSheet). */
+  stage_photos?: Record<string, string>;
   current_step: number;
   note: string;
   note_time: string;
@@ -613,11 +617,11 @@ export default function PesananDashboard() {
               {currentView === "pesanan" && (
                 <button
                   onClick={() => setShowAdd(true)}
-                  className="pas-btn-accent inline-flex items-center justify-center gap-1 px-3 py-2.5 text-[13px] sm:px-4 sm:text-[14px]"
+                  className="pas-btn-accent inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-[12.5px] sm:px-4 sm:text-[14px]"
                   aria-label="Tambah pesanan baru"
                 >
-                  <span aria-hidden="true">+</span>
-                  <span className="hidden sm:inline">Pesanan</span>
+                  <span aria-hidden="true" className="text-[15px] leading-none">+</span>
+                  Tambah Pesanan
                 </button>
               )}
               {/* "Keluar" pindah ke menu di ponsel supaya topbar tidak berjejal */}
@@ -971,7 +975,7 @@ function ViewPesanan({
       ? { text: `${overdueCount} lewat deadline`, cls: "pas-delta bad mb-0.5" }
       : deadlineAlertCount > 0
         ? { text: `${deadlineAlertCount} mendekati deadline`, cls: "pas-delta ok mb-0.5" }
-        : { text: "on track", cls: "pas-delta good mb-0.5" };
+        : { text: "sesuai jadwal", cls: "pas-delta good mb-0.5" };
 
   const handleDelete = async () => {
     if (!confirmDelete) return;
@@ -1038,14 +1042,14 @@ function ViewPesanan({
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
         <div className="pas-card pas-kpi pas-kpi-hero pas-bento-kpi p-4 sm:p-5">
           <p className="pas-kpi-label text-[13px]">Total Pesanan</p>
-          <div className="flex items-end gap-2.5 mt-2.5">
+          <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
             <p className="pas-display pas-num text-[34px] leading-none">{stats.total}</p>
             <span className="pas-delta mb-0.5">+{baruMingguIni} minggu ini</span>
           </div>
         </div>
         <div className="pas-card pas-kpi pas-bento-kpi p-4 sm:p-5">
           <p className="text-[13px] text-[var(--pas-muted)]">Sedang Produksi</p>
-          <div className="flex items-end gap-2.5 mt-2.5">
+          <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
             <p className="pas-display pas-num text-[30px] leading-none">
               {stats.produksi}
             </p>
@@ -1054,7 +1058,7 @@ function ViewPesanan({
         </div>
         <div className="pas-card pas-kpi pas-bento-kpi p-4 sm:p-5">
           <p className="text-[13px] text-[var(--pas-muted)]">Deadline</p>
-          <div className="flex items-end gap-2.5 mt-2.5">
+          <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
             <p
               className={
                 hasOverdue
@@ -1083,7 +1087,7 @@ function ViewPesanan({
         </div>
         <div className="pas-card pas-kpi pas-bento-kpi p-4 sm:p-5">
           <p className="text-[13px] text-[var(--pas-muted)]">Selesai</p>
-          <div className="flex items-end gap-2.5 mt-2.5">
+          <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
             <p className="pas-display pas-num text-[30px] leading-none">{stats.selesai}</p>
             <span className="pas-delta good mb-0.5">{selesaiBulanIni} bulan ini</span>
           </div>
@@ -3701,6 +3705,12 @@ function DetailSheet({
   const [editCreatedAt, setEditCreatedAt] = useState(order?.created_at ? order.created_at.slice(0, 10) : "");
   const [woPhotos, setWoPhotos] = useState<string[]>(order?.wo_photos || []);
   const [uploadingWo, setUploadingWo] = useState(false);
+  // Foto progres per tahap (slug tahap → URL). Dikirim server di
+  // `order.stage_photos` supaya operator melihat foto yang sudah ia unggah.
+  const [stagePhotos, setStagePhotos] = useState<Record<string, string>>(
+    order?.stage_photos || {}
+  );
+  const [uploadingStage, setUploadingStage] = useState(false);
   const [saving, setSaving] = useState(false);
   const [resending, setResending] = useState(false);
   const [kirimError, setKirimError] = useState("");
@@ -3747,6 +3757,7 @@ function DetailSheet({
       setDeadline(order.deadline ? order.deadline.slice(0, 10) : "");
       setEditCreatedAt(order.created_at ? order.created_at.slice(0, 10) : "");
       setWoPhotos(order.wo_photos || []);
+      setStagePhotos(order.stage_photos || {});
       const prods = order.products;
       if (prods && prods.length > 0) setEditProductRows(prods.map((p: any) => ({ product: p.name || "", custom: false, qty: String(p.sizes?.reduce((a: number, s: any) => a + (s.qty || 0), 0) || "") })));
       else setEditProductRows([{ product: order.product_name || "", custom: false, qty: String(order.quantity || "").replace(/\D/g, "") }]);
@@ -3765,6 +3776,27 @@ function DetailSheet({
     } catch (e) { console.error("[Detail WO] exception", e); setKirimError(e instanceof Error ? e.message : "Upload gagal"); } finally { setUploadingWo(false); }
   };
 
+  /**
+   * Upload foto progres untuk TAHAP yang sedang dipilih di stepper. Fotonya
+   * belum masuk database di sini — baru ikut terkirim saat "Simpan Perubahan"
+   * (field `stage_photo`), bareng perubahan tahap lainnya.
+   */
+  const handleStagePhotoUpload = async (file: File) => {
+    if (!file.type.startsWith("image/")) { setKirimError("File harus gambar"); return; }
+    if (file.size > 10 * 1024 * 1024) { setKirimError("Maksimal 10MB"); return; }
+    const slug = slugFromStepName(steps[step - 1]?.name);
+    if (!slug) { setKirimError("Nama tahap ini belum dikenali, foto tidak bisa disimpan"); return; }
+    setUploadingStage(true);
+    setKirimError("");
+    try {
+      const result = await uploadToCloudinary(file);
+      setStagePhotos((prev) => ({ ...prev, [slug]: optimizeImageUrl(result.url) }));
+    } catch (e) {
+      console.error("[Detail foto tahap] exception", e);
+      setKirimError(e instanceof Error ? e.message : "Upload gagal");
+    } finally { setUploadingStage(false); }
+  };
+
   if (!order) return null;
 
   const hasTracking = !!(courier && resi);
@@ -3778,6 +3810,14 @@ function DetailSheet({
           : "produksi";
 
   const pct = getProgress(step, hasTracking);
+
+  // Foto tahap yang sedang dipilih, plus penanda apakah operator MENGUBAHnya di
+  // sesi ini. Kalau tidak diubah, field `stage_photo` tidak ikut dikirim —
+  // menyimpan catatan/resi tidak boleh menghapus foto tahap yang sudah ada.
+  const currentSlug = slugFromStepName(steps[step - 1]?.name);
+  const stagePhotoValue = (currentSlug && stagePhotos[currentSlug]) || "";
+  const savedStagePhoto = (currentSlug && order.stage_photos?.[currentSlug]) || "";
+  const stagePhotoChanged = !!currentSlug && stagePhotoValue !== savedStagePhoto;
 
   const save = async () => {
     setKirimError("");
@@ -3805,6 +3845,7 @@ function DetailSheet({
           tracking_number: resi,
           deadline: deadline || undefined,
           wo_photos: woPhotos,
+          stage_photo: stagePhotoChanged ? stagePhotoValue : undefined,
           products: editProducts,
           product_name: editCombinedNames,
           quantity: String(editTotalPcs),
@@ -3980,11 +4021,71 @@ function DetailSheet({
                         </div>
                         {isDone && <div className="text-[11px] text-[var(--pas-muted)] opacity-70 mt-0.5">Selesai</div>}
                         {isCur && <div className="text-[11px] text-[var(--pas-muted)] opacity-70 mt-0.5">Sedang dikerjakan</div>}
+                        {stagePhotos[slugFromStepName(s.name) || ""] && (
+                          <div className="text-[11px] text-[var(--pas-accent)] mt-0.5">Ada foto</div>
+                        )}
                       </div>
                     </button>
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* ── FOTO PROGRES TAHAP ── */}
+          <p className="pas-stencil text-[9px] text-[var(--pas-muted)] mt-6 mb-2">Foto Progres Tahap</p>
+          <div className="rounded-2xl border border-[var(--pas-line)] bg-[var(--pas-surface)] shadow-[0_1px_3px_rgba(0,0,0,.04)] overflow-hidden">
+            <div className="px-4 py-3 border-b border-[var(--pas-line)] flex items-center justify-between gap-3">
+              <span className="text-[13.5px] font-bold text-[var(--pas-ink-1)] min-w-0 truncate">
+                {step}. {steps[step - 1]?.name || `Tahap ${step}`}
+              </span>
+              {stagePhotoValue && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    currentSlug &&
+                    setStagePhotos((prev) => ({ ...prev, [currentSlug]: "" }))
+                  }
+                  className="text-[11.5px] font-semibold text-[var(--pas-muted)] hover:text-red-600 transition shrink-0"
+                >
+                  Hapus foto
+                </button>
+              )}
+            </div>
+            <div className="p-4">
+              {stagePhotoValue && (
+                <div className="flex items-start gap-3 mb-4">
+                  <button
+                    type="button"
+                    onClick={() => setZoomUrl(stagePhotoValue)}
+                    className="group relative w-[104px] h-[104px] shrink-0 rounded-xl overflow-hidden border border-[var(--pas-line)] hover:border-[var(--pas-accent)] transition"
+                    title="Klik untuk memperbesar"
+                    aria-label={`Perbesar foto tahap ${steps[step - 1]?.name || step}`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={optimizeImageUrl(stagePhotoValue, 320)} loading="lazy" alt={`Foto tahap ${steps[step - 1]?.name || step}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <span className="pointer-events-none absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/55 text-white border border-white/15 opacity-90">
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5M11 8v6M8 11h6" /></svg>
+                    </span>
+                  </button>
+                  <p className="text-[12px] text-[var(--pas-muted)] leading-relaxed">
+                    Foto ini tampil di halaman tracking customer pada tahap ini.
+                    {stagePhotoChanged && (
+                      <b className="block mt-1 text-[var(--pas-accent)]">Belum disimpan — klik Simpan Perubahan.</b>
+                    )}
+                  </p>
+                </div>
+              )}
+              <label className="flex items-center gap-3 rounded-xl border-[1.5px] border-dashed border-[var(--pas-line)] hover:border-[var(--pas-accent)] cursor-pointer transition px-4 py-3.5 text-[var(--pas-muted)] hover:text-[var(--pas-accent)] hover:bg-[rgba(10,10,10,.04)]">
+                <input type="file" accept={IMAGE_ACCEPT} className="hidden" disabled={uploadingStage} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleStagePhotoUpload(f); e.currentTarget.value = ""; }} />
+                <span className="text-[18px] leading-none">{uploadingStage ? "…" : stagePhotoValue ? "↻" : "+"}</span>
+                <span className="text-[13px] font-semibold">
+                  {uploadingStage ? "Mengunggah…" : stagePhotoValue ? "Ganti foto tahap ini" : "Tambah foto tahap ini"}
+                </span>
+              </label>
+              <p className="text-[11px] text-[var(--pas-muted)] mt-2 opacity-70">
+                Satu foto per tahap, tampil di timeline customer setelah disimpan.
+              </p>
             </div>
           </div>
 

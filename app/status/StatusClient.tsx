@@ -7,7 +7,6 @@ import { waMeUrl } from "@/lib/wa";
 import {
   ORDER_STATUS_LABELS,
   ORDER_STATUS_LIST,
-  ORDER_PHOTO_STAGES,
   getProgress,
   type OrderStatus,
 } from "@/lib/types";
@@ -575,7 +574,18 @@ export default function StatusClient({
                   // kalau ordernya sudah tuntas.
                   const st = n < step ? "done" : n === step ? "now" : "todo";
                   const statusKey = steps.length > 0 ? normalizeStepName(stepDef.name) : ORDER_STATUS_LIST[idx];
-                  const histEntry = history.find((h: any) => normalizeStepName(h.status) === statusKey.toLowerCase());
+                  // Satu tahap bisa punya beberapa baris riwayat (satu tiap kali
+                  // tahap disimpan). Waktu transisi diambil dari baris PALING
+                  // AWAL, sedangkan fotonya dari baris TERAKHIR yang punya foto —
+                  // jadi foto yang baru diganti operator selalu yang tampil.
+                  const histRows = history.filter(
+                    (h: any) => normalizeStepName(h.status) === statusKey.toLowerCase()
+                  );
+                  const histEntry = histRows[0] ?? null;
+                  const histPhoto = histRows.reduce(
+                    (acc: string, h: any) => (h.photo_url ? h.photo_url : acc),
+                    ""
+                  );
 
                   return (
                     <li
@@ -615,6 +625,31 @@ export default function StatusClient({
                         ) : st === "todo" && order.deadline ? (
                           <p className="dpo-mono dpo-step-time">Mengikuti jadwal produksi</p>
                         ) : null}
+
+                        {/* Foto bukti proses dari operator untuk tahap ini. */}
+                        {histPhoto && (
+                          <button
+                            type="button"
+                            onClick={() => setLightboxUrl(histPhoto)}
+                            className="group relative mt-3 block overflow-hidden rounded-xl border border-white/10 bg-black"
+                            title="Klik untuk memperbesar"
+                            aria-label={`Perbesar foto tahap ${stepDef.name}`}
+                          >
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                              src={optimizeImageUrl(histPhoto, 640)}
+                              alt={`Foto tahap ${stepDef.name}`}
+                              loading="lazy"
+                              className="block w-full max-w-[280px] max-h-[320px] object-contain"
+                            />
+                            <span className="pointer-events-none absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full bg-black/55 text-white backdrop-blur border border-white/15 opacity-90 group-hover:bg-black/70 transition">
+                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <circle cx="11" cy="11" r="7" />
+                                <path d="M20 20l-3.5-3.5M11 8v6M8 11h6" />
+                              </svg>
+                            </span>
+                          </button>
+                        )}
 
                         {st === "now" && (order.design_photos?.length ?? 0) > 0 && (
                           <div className="mt-3 flex flex-wrap gap-2.5">

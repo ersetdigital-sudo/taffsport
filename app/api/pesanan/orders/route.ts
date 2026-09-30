@@ -4,6 +4,7 @@ import { generateOrderNumber } from "@/lib/order-number";
 import {
   DONE_STATUS,
   isOrderCompleted,
+  normalizeOrderStatus,
   progressPercentFromStatus,
   stepFromStatus,
 } from "@/lib/order-status";
@@ -42,7 +43,50 @@ async function fetchDoneAt(supabase: any, orderIds: string[]) {
   return latest;
 }
 
-function mapOrder(row: any, doneAt: string | null = null, stepOrder?: StepOrder) {
+/**
+ * Foto progres tiap tahap, per order — dikirim ke dashboard supaya operator bisa
+ * MELIHAT foto yang sudah ia unggah untuk sebuah tahap, bukan cuma menambah buta.
+ *
+ * Satu tahap = satu foto, dan fotonya tersimpan di baris `order_status_history`
+ * milik tahap itu (lihat PATCH /api/pesanan/orders/[id]/status). Karena satu tahap
+ * bisa punya beberapa baris riwayat, yang dipakai adalah baris TERAKHIR yang
+ * berisi foto — aturan yang sama dipakai halaman customer supaya tidak mungkin
+ * dashboard dan halaman customer menampilkan foto berbeda.
+ */
+async function fetchStagePhotos(supabase: any, orderIds: string[]) {
+  const byOrder = new Map<string, Record<string, string>>();
+  if (orderIds.length === 0) return byOrder;
+
+  const { data, error } = await supabase
+    .from("order_status_history")
+    .select("order_id, status, photo_url, created_at")
+    .in("order_id", orderIds)
+    .not("photo_url", "is", null)
+    .neq("photo_url", "")
+    .order("created_at", { ascending: true });
+
+  if (error) {
+    // Foto tahap cuma pelengkap — kalau gagal dibaca, daftar pesanan tetap harus
+    // tampil (tanpa foto), jangan sampai seluruh dashboard ikut kosong.
+    console.error("Gagal membaca foto tahap:", error.message);
+    return byOrder;
+  }
+
+  for (const row of data || []) {
+    const slug = normalizeOrderStatus(row.status);
+    const map = byOrder.get(row.order_id) ?? {};
+    map[slug] = row.photo_url; // urutan menaik → baris terakhir yang menang
+    byOrder.set(row.order_id, map);
+  }
+  return byOrder;
+}
+
+function mapOrder(
+  row: any,
+  doneAt: string | null = null,
+  stepOrder?: StepOrder,
+  stagePhotos: Record<string, string> = {}
+) {
   const hasTracking = !!(row.tracking_number && row.courier);
   const step = stepFromStatus(row.current_status, stepOrder);
   // Persentase dihitung dari NOMOR tahap pada urutan yang berlaku, supaya sama
@@ -71,6 +115,7 @@ function mapOrder(row: any, doneAt: string | null = null, stepOrder?: StepOrder)
     created_at: row.created_at,
     done_at: doneAt,
     pct,
+    stage_photos: stagePhotos,
   };
 }
 
@@ -91,13 +136,19 @@ export async function GET() {
 
   const stepOrder = await loadStepOrder(supabase);
   const rows = data || [];
-  const doneAtByUuid = await fetchDoneAt(
-    supabase,
-    rows.map((row: any) => row.id)
-  );
+  const orderIds = rows.map((row: any) => row.id);
+  const doneAtByUuid = await fetchDoneAt(supabase, orderIds);
+  const stagePhotosByUuid = await fetchStagePhotos(supabase, orderIds);
 
   return NextResponse.json({
-    orders: rows.map((row: any) => mapOrder(row, doneAtByUuid.get(row.id) || null, stepOrder)),
+    orders: rows.map((row: any) =>
+      mapOrder(
+        row,
+        doneAtByUuid.get(row.id) || null,
+        stepOrder,
+        stagePhotosByUuid.get(row.id) || {}
+      )
+    ),
   });
 }
 

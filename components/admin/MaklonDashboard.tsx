@@ -322,11 +322,11 @@ export default function MaklonDashboard() {
               </span>
               <button
                 onClick={() => setShowAdd(true)}
-                className="pas-btn-accent inline-flex items-center justify-center gap-1 px-3 py-2.5 text-[13px] sm:px-4 sm:text-[14px]"
+                className="pas-btn-accent inline-flex items-center justify-center gap-1.5 whitespace-nowrap px-3 py-2.5 text-[12.5px] sm:px-4 sm:text-[14px]"
                 aria-label="Tambah maklon baru"
               >
-                <span aria-hidden="true">+</span>
-                <span className="hidden sm:inline">Maklon</span>
+                <span aria-hidden="true" className="text-[15px] leading-none">+</span>
+                Tambah Maklon
               </button>
             </div>
           </div>
@@ -336,25 +336,25 @@ export default function MaklonDashboard() {
           <section className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 w-full">
             <div className="pas-card pas-kpi pas-kpi-hero p-4 sm:p-5">
               <p className="pas-kpi-label text-[13px]">Total Maklon</p>
-              <div className="flex items-end gap-2.5 mt-2.5">
+              <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
                 <p className="pas-display pas-num text-[34px] leading-none">{stats.total}</p>
               </div>
             </div>
             <div className="pas-card pas-kpi p-4 sm:p-5">
               <p className="text-[13px] text-[var(--pas-muted)]">Sedang Produksi</p>
-              <div className="flex items-end gap-2.5 mt-2.5">
+              <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
                 <p className="pas-display pas-num text-[30px] leading-none">{stats.produksi}</p>
               </div>
             </div>
             <div className="pas-card pas-kpi p-4 sm:p-5">
               <p className="text-[13px] text-[var(--pas-muted)]">Siap Dikirim</p>
-              <div className="flex items-end gap-2.5 mt-2.5">
+              <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
                 <p className="pas-display pas-num text-[30px] leading-none text-[#3F5BA9]">{stats.kirim}</p>
               </div>
             </div>
             <div className="pas-card pas-kpi p-4 sm:p-5">
               <p className="text-[13px] text-[var(--pas-muted)]">Selesai</p>
-              <div className="flex items-end gap-2.5 mt-2.5">
+              <div className="mt-2.5 flex flex-wrap items-end gap-x-2.5 gap-y-1.5">
                 <p className="pas-display pas-num text-[30px] leading-none">{stats.selesai}</p>
               </div>
             </div>

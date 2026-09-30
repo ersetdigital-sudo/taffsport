@@ -32,7 +32,21 @@ export async function PATCH(
   const stepOrder = await loadStepOrder(supabase);
 
   const body = await request.json();
-  const { current_step, note, courier, tracking_number, deadline, wo_photos, customer_name, customer_phone, design_photos } = body;
+  const {
+    current_step,
+    note,
+    courier,
+    tracking_number,
+    deadline,
+    wo_photos,
+    customer_name,
+    customer_phone,
+    design_photos,
+    // Foto progres tahap: URL foto untuk tahap yang dipilih, atau "" kalau
+    // operator menghapusnya. `undefined` = operator tidak menyentuh foto tahap
+    // ini, jadi foto yang sudah ada JANGAN diubah.
+    stage_photo,
+  } = body;
 
   // Rate limit dasar per order — cegah spam trigger notifikasi.
   if (!checkRateLimit(`stage-update:${id}`, 10, 60_000)) {
@@ -160,17 +174,39 @@ export async function PATCH(
   let historyError: string | null = null;
   if (current_step !== undefined && updatedOrder) {
     const statusValue = effectiveStatus ?? statusFromStep(current_step, stepOrder);
-    const { error: histErr } = await supabase.from("order_status_history").insert({
+
+    // Foto progres tahap disimpan di baris history tahap itu (kolom
+    // photo_url) — satu tahap menampilkan SATU foto, dan yang dipakai adalah
+    // baris terakhir yang berisi foto (lihat halaman customer). Tidak perlu
+    // kolom/tabel baru, jadi tidak ada migrasi.
+    const historyRow: Record<string, any> = {
       order_id: updatedOrder.id,
       status: statusValue,
       note: note || "",
-    });
+    };
+    if (typeof stage_photo === "string" && stage_photo) historyRow.photo_url = stage_photo;
+
+    const { error: histErr } = await supabase
+      .from("order_status_history")
+      .insert(historyRow);
     if (histErr) {
       historyError = histErr.message;
       console.error("History insert failed:", histErr.message, {
         order_id: updatedOrder.id,
         status: statusValue,
       });
+    }
+
+    // Operator menghapus foto tahap → kosongkan kolom photo_url di SEMUA baris
+    // tahap ini. Kalau hanya baris baru yang dikosongkan, foto lama di baris
+    // sebelumnya masih ikut tampil di halaman customer.
+    if (!histErr && stage_photo === "") {
+      const { error: clearErr } = await supabase
+        .from("order_status_history")
+        .update({ photo_url: "" })
+        .eq("order_id", updatedOrder.id)
+        .eq("status", statusValue);
+      if (clearErr) console.error("Hapus foto tahap gagal:", clearErr.message);
     }
   }
 

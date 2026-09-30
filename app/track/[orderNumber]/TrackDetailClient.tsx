@@ -20,11 +20,7 @@ import {
   Truck,
   type LucideIcon,
 } from "lucide-react";
-import {
-  ORDER_STATUS_LABELS,
-  ORDER_PHOTO_STAGES,
-  type OrderStatus,
-} from "@/lib/types";
+import { ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/types";
 import {
   isOrderCompleted,
   nextStageLabel,
@@ -340,6 +336,15 @@ function OrderDetailView({
               const historyEntry = history.find(
                 (h: any) => h.status === status
               );
+              // Foto progres tahap dari operator: satu tahap = satu foto, diambil
+              // dari baris riwayat TERAKHIR yang punya foto (sama seperti /status),
+              // jadi foto yang diganti operator selalu yang tampil.
+              const stepPhoto = history
+                .filter((h: any) => h.status === status)
+                .reduce<string>(
+                  (acc, h: any) => (h.photo_url ? h.photo_url : acc),
+                  ""
+                );
               // Order "selesai" = semua tahap tuntas: pakai tahap terakhir sebagai
               // penanda, dan nggak ada tahap yang masih "sedang berjalan".
               const isOrderDone = isOrderCompleted(order.current_status);
@@ -402,17 +407,16 @@ function OrderDetailView({
                             {historyEntry.note}
                           </p>
                         )}
-                        {historyEntry.photo_url &&
-                          ORDER_PHOTO_STAGES.includes(status) && (
-                            <a
-                              href={historyEntry.photo_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-caption text-link hover:underline mt-1 inline-block"
-                            >
-                              Lihat Foto
-                            </a>
-                          )}
+                        {stepPhoto && (
+                          <a
+                            href={stepPhoto}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-caption text-link hover:underline mt-1 inline-block"
+                          >
+                            Lihat Foto
+                          </a>
+                        )}
                       </div>
                     ) : (
                       isCurrent && (
