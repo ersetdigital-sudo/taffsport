@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
-import { JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { getAppUrl } from "@/lib/app-url";
 import { getBrand } from "@/lib/queries";
@@ -28,10 +27,14 @@ const archivo = localFont({
 /**
  * JetBrains Mono — khusus nomor pesanan & label stencil seperti di mockup TAFF
  * (contoh: TNT260929YXUZ). Dikonsumsi lewat --font-mono di globals.css.
+ * Berkas variable font-nya ikut di repo, sama seperti Archivo: build tidak
+ * pernah menyentuh Google Fonts, jadi build di CI/Vercel tidak bisa gagal
+ * karena masalah jaringan.
  */
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
+const jetbrainsMono = localFont({
+  src: "../fonts/jetbrains-mono-variable.ttf",
+  weight: "100 800",
+  style: "normal",
   display: "swap",
   variable: "--font-mono",
 });
