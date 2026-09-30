@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import {
@@ -291,6 +291,47 @@ export default function StatusClient({
       })
       .catch(() => {});
   }, [initial]);
+
+  /**
+   * URL foto yang bisa dibuka di lightbox — dipakai untuk MEMANASKAN cache
+   * (efek di bawah).
+   *
+   * Lightbox meminta lebar 1600 sedangkan thumbnail cuma 640, jadi URL-nya baru
+   * diminta saat customer mengklik — dan permintaan PERTAMA ke Cloudinary harus
+   * membuat turunan barunya dulu. Jeda itulah yang terasa walaupun alas 640px
+   * sudah tampil duluan.
+   */
+  const lightboxWarmUrls = useMemo(() => {
+    const urls = new Set<string>();
+    for (const h of history as { photo_url?: string }[]) {
+      if (h?.photo_url) urls.add(String(h.photo_url));
+    }
+    for (const url of (order?.design_photos ?? []) as string[]) {
+      if (url) urls.add(url);
+    }
+    return Array.from(urls).slice(0, 6);
+  }, [history, order]);
+
+  // Panaskan foto ukuran lightbox setelah halaman tampil: klik pertama jadi
+  // tidak menunggu unduhan apa pun. Jaringan lambat & mode hemat data dilewati
+  // (tampilan alas 640px tetap membuat lightbox tidak pernah kosong), dan
+  // jumlahnya dibatasi supaya tidak memakan bandwidth berlebihan.
+  useEffect(() => {
+    if (lightboxWarmUrls.length === 0) return;
+    const timer = window.setTimeout(() => {
+      const conn = (navigator as { connection?: { saveData?: boolean; effectiveType?: string } })
+        .connection;
+      if (conn?.saveData) return;
+      if (typeof conn?.effectiveType === "string" && /2g|3g/.test(conn.effectiveType)) return;
+
+      for (const url of lightboxWarmUrls) {
+        const img = new Image();
+        img.decoding = "async";
+        img.src = optimizeImageUrl(url, 1600);
+      }
+    }, 1200);
+    return () => window.clearTimeout(timer);
+  }, [lightboxWarmUrls]);
 
   useEffect(() => {
     if (!lightboxUrl) return;
