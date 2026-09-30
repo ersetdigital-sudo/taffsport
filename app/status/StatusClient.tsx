@@ -173,6 +173,8 @@ export default function StatusClient({
   const pctRef = useRef<HTMLDivElement>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [lbOpen, setLbOpen] = useState(false);
+  // True setelah foto resolusi besar di lightbox selesai dimuat.
+  const [lbLoaded, setLbLoaded] = useState(false);
   const [lbScale, setLbScale] = useState(1);
   const [lbOffset, setLbOffset] = useState({ x: 0, y: 0 });
   const lbPinchRef = useRef<{ d: number; s: number } | null>(null);
@@ -295,6 +297,9 @@ export default function StatusClient({
     setLbOpen(true);
     setLbScale(1);
     setLbOffset({ x: 0, y: 0 });
+    // Foto besar baru mulai diunduh di sini — penandanya direset tiap kali
+    // lightbox dibuka supaya versi ringan tetap dipakai sebagai alas.
+    setLbLoaded(false);
   }, [lightboxUrl]);
 
   useEffect(() => {
@@ -1037,10 +1042,15 @@ export default function StatusClient({
                   <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={optimizeImageUrl(lightboxUrl, 1600)}
-                alt="Preview desain diperbesar"
+              {/* Foto besar ditumpuk di atas versi ringan yang SUDAH tampil di
+                  daftar. Thumbnail memakai lebar 640 dan lightbox 1600, jadi
+                  URL-nya beda dan gambar besarnya belum ada di cache browser —
+                  itulah sebabnya lightbox sempat kosong. Alas 640px itu URL-nya
+                  sama persis dengan yang barusan diklik, jadi tampil seketika,
+                  lalu foto 1600px menimpanya begitu selesai dimuat. */}
+              <div
+                className={`relative grid max-w-[90vw] max-h-[90vh] select-none place-items-center transition duration-200 ${lbOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
+                style={{ transform: `translate(${lbOffset.x}px, ${lbOffset.y}px) scale(${lbScale})`, touchAction: "none" }}
                 onClick={(e) => e.stopPropagation()}
                 onWheel={(e) => {
                   e.preventDefault();
@@ -1053,10 +1063,24 @@ export default function StatusClient({
                     setLbOffset({ x: e.touches[0].clientX - lbDragRef.current.x, y: e.touches[0].clientY - lbDragRef.current.y });
                   }
                 }}
-                draggable={false}
-                className={`max-w-[90vw] max-h-[90vh] object-contain select-none transition duration-200 ${lbOpen ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
-                style={{ transform: `translate(${lbOffset.x}px, ${lbOffset.y}px) scale(${lbScale})`, touchAction: "none" }}
-              />
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={optimizeImageUrl(lightboxUrl, 640)}
+                  alt=""
+                  aria-hidden="true"
+                  draggable={false}
+                  className={`block max-w-[90vw] max-h-[90vh] object-contain transition duration-150 ${lbLoaded ? "opacity-0" : "opacity-100"}`}
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={optimizeImageUrl(lightboxUrl, 1600)}
+                  alt="Preview desain diperbesar"
+                  onLoad={() => setLbLoaded(true)}
+                  draggable={false}
+                  className={`absolute inset-0 m-auto max-w-[90vw] max-h-[90vh] object-contain transition duration-150 ${lbLoaded ? "opacity-100" : "opacity-0"}`}
+                />
+              </div>
               <p className="pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 text-[12px] text-white/60">Tap luar gambar / Esc untuk tutup • Pinch/scroll untuk zoom • Drag untuk geser</p>
             </div>
           )}
