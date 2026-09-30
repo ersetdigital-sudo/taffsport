@@ -676,7 +676,7 @@ export default function PesananDashboard() {
 
       {/* â”€â”€ MOBILE NAV DRAWER â”€â”€ */}
       <Sheet open={showMobileNav} onOpenChange={setShowMobileNav}>
-        <SheetContent side="left" className="p-5 bg-[#0A0A0A] text-white border-r border-white/10 w-[280px] overflow-y-auto flex flex-col [&>button]:text-white/50 [&>button]:hover:text-white [&>button]:hover:bg-white/10 [&>button]:rounded-lg [&>button]:p-2 [&>button]:transition">
+        <SheetContent side="left" className="p-5 bg-[#1B4F63] text-white border-r border-white/10 w-[280px] overflow-y-auto flex flex-col [&>button]:text-white/50 [&>button]:hover:text-white [&>button]:hover:bg-white/10 [&>button]:rounded-lg [&>button]:p-2 [&>button]:transition">
           {/* Drawer header — satu-satunya tempat logo brand muncul di ponsel */}
           <div className="flex items-center mb-2 pr-8">
             <a href="/" className="flex flex-col gap-2 min-w-0">

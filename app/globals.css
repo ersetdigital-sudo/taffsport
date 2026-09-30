@@ -2225,12 +2225,13 @@
 .pas-panel.slide-left .pas-navlink:hover { background: rgba(255,255,255,.12) !important; color: #fff !important; }
 .pas-panel.slide-left .pas-navlink.on { background: #fff !important; color: #1B4F63 !important; font-weight: 700; }
 .pas-panel.slide-left .pas-navlink.on .pas-ic { color: #1B4F63 !important; }
-.pas-panel.slide-left .pas-navsec { color: rgba(255,255,255,.35) !important; }
+.pas-panel.slide-left .pas-navsec { color: rgba(255,255,255,.62) !important; }
 .pas-panel.slide-left .pas-display { color: #fff !important; }
 .pas-panel.slide-left .pas-mark { background: #fff; color: var(--pas-green); }
 .pas-navsec {
   font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
-  color: #5C5C5C; padding: 0 8px; margin: 14px 0 10px; font-weight: 700;
+  /* selalu di atas sidebar/drawer deep blue — abu #5C5C5C nyaris hilang */
+  color: rgba(255,255,255,.62); padding: 0 8px; margin: 14px 0 10px; font-weight: 700;
 }
 @media (max-width: 900px) { .pas-side { display: none; } }
 
@@ -2306,17 +2307,17 @@
 }
 
 .pas-btn-accent {
-  /* TAFF Sportwear: tombol utama gradient turquoise (mockup .btn-p).
-     Teksnya hitam, bukan putih: putih di atas #23BBB7 cuma 2.37:1 dan di atas
-     #1B9A96 2.65:1 — jauh di bawah ambang 4.5:1 untuk teks 15px. Hitam di
-     gradient yang sama 8.21:1 / 5.66:1, dan gradiennya tidak pernah berubah
-     antar tema, jadi warna teksnya juga sengaja dipatok, bukan ikut token tema. */
-  background: var(--pas-grad); color: #0A0A0A; border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(35, 98, 124,.32);
+  /* Tombol utama: deep blue bergradasi, teks PUTIH seperti permintaan klien.
+     Latar turquoise sengaja tidak dipakai: putih di atas #23BBB7 cuma
+     2.37:1 dan di atas #1B9A96 2.65:1 — gagal ambang 4.5:1 untuk teks 15px.
+     Putih di atas deep blue #23627C/#1B4F63 6.75:1 / 9.4:1, aman. */
+  background: linear-gradient(135deg, #2A6E8A 0%, #23627C 55%, #1B4F63 100%);
+  color: #FFFFFF; border-radius: 10px;
+  box-shadow: 0 6px 16px -6px rgba(27, 79, 99,.55);
   letter-spacing: 0; text-transform: none;
   font-family: var(--font-sans), "Archivo", system-ui, sans-serif; font-weight: 700;
 }
-.pas-btn-accent:hover { transform: none; filter: brightness(1.06); }
+.pas-btn-accent:hover { transform: none; filter: brightness(1.14); }
 .pas-btn-ghost {
   border: 1px solid transparent; border-radius: 10px;
   background: #E7E5DC; color: #4A4A46; font-weight: 500;
