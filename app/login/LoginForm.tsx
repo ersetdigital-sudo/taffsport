@@ -128,6 +128,7 @@ export default function LoginForm({ brand }: { brand: Brand }) {
       <button
         type="submit"
         disabled={loading}
+        aria-busy={loading}
         className="pas-btn-accent mt-5 flex w-full items-center justify-center gap-2 py-3.5 text-[15px] disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading && <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />}
