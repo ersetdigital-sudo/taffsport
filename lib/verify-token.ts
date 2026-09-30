@@ -97,6 +97,25 @@ export function getTokenFromCookie(cookieHeader: string | null): string | null {
   return match.trim().split("=").slice(1).join("=");
 }
 
+/**
+ * Cookie untuk perangkat yang nomor HP-nya sudah diverifikasi (berlaku sama
+ * dengan tokennya, 30 hari).
+ *
+ * Token trusted-device tadinya hidup hanya di localStorage, dan localStorage
+ * tidak dikirim ke server — akibatnya /status selalu dirender di browser
+ * (halaman kosong dulu beberapa detik) walau perangkatnya sudah dikenal.
+ * Dengan cookie ini HTML pertama sudah berisi data pesanan.
+ */
+export function buildTrustedDeviceCookie(rawToken: string): string {
+  return [
+    `${COOKIE_NAME}=${rawToken}`,
+    "Path=/",
+    "HttpOnly",
+    "SameSite=Lax",
+    `Max-Age=${Math.floor(TRUSTED_DEVICE_TTL_MS / 1000)}`,
+  ].join("; ");
+}
+
 export function getSessionFromCookie(cookieHeader: string | null): TrackSession | null {
   const token = getTokenFromCookie(cookieHeader);
   return token ? verifyToken(token) : null;

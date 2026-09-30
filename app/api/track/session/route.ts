@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
-import { verifyToken, getSessionFromCookie, getTokenFromCookie } from "@/lib/verify-token";
+import {
+  verifyToken,
+  getSessionFromCookie,
+  getTokenFromCookie,
+  buildTrustedDeviceCookie,
+} from "@/lib/verify-token";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { clientIp, isTokenSharedAcrossDevices } from "@/lib/track-guard";
 
@@ -33,8 +38,12 @@ export async function GET(request: NextRequest) {
   let session = null;
   let rawToken: string | null = null;
   const authHeader = request.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    rawToken = authHeader.slice(7);
+  // Token dari header = perangkat yang sudah lolos verifikasi nomor HP
+  // (disimpan di localStorage). Kita cerminkan jadi cookie 30 hari supaya
+  // halaman /status berikutnya bisa dirender server, bukan kosong dulu.
+  const fromTrustedDevice = Boolean(authHeader?.startsWith("Bearer "));
+  if (fromTrustedDevice) {
+    rawToken = authHeader!.slice(7);
     session = verifyToken(rawToken);
   }
 
@@ -91,7 +100,13 @@ export async function GET(request: NextRequest) {
       .order("created_at", { ascending: true });
 
     const { wo_photos: _wo, ...safeOrder } = order as any;
-    return NextResponse.json({ order: safeOrder, history: history || [] });
+    const response = NextResponse.json({ order: safeOrder, history: history || [] });
+
+    if (fromTrustedDevice && rawToken) {
+      response.headers.append("Set-Cookie", buildTrustedDeviceCookie(rawToken));
+    }
+
+    return response;
   } catch {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }

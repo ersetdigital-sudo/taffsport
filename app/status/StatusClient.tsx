@@ -136,8 +136,22 @@ function stepHighlight(status: string, hasTracking: boolean): string {
  */
 export default function StatusClient({
   brand,
+  initial,
+  initialLinkShared,
 }: {
   brand: { name: string; whatsapp_number: string };
+  /**
+   * Data yang sudah dibaca server (lihat lib/status-server.ts). Kalau terisi,
+   * HTML pertama sudah memuat progres pesanan — dulu blok ini kosong sampai
+   * dua fetch berurutan selesai di browser.
+   */
+  initial?: {
+    order: any;
+    history: any[];
+    steps: { name: string; position: number }[];
+  } | null;
+  /** Token ditolak karena dipakai dari banyak perangkat → modal verifikasi. */
+  initialLinkShared?: boolean;
 }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -151,12 +165,14 @@ export default function StatusClient({
   const [showPhoneModal, setShowPhoneModal] = useState(false);
   // True kalau server menolak token karena link dibuka dari banyak perangkat
   // berbeda (indikasi link diteruskan ke orang lain / grup WA).
-  const [linkShared, setLinkShared] = useState(false);
+  const [linkShared, setLinkShared] = useState(!!initialLinkShared);
 
-  const [order, setOrder] = useState<any>(null);
-  const [history, setHistory] = useState<any[]>([]);
-  const [loaded, setLoaded] = useState(false);
-  const [steps, setSteps] = useState<{ name: string; position: number }[]>([]);
+  const [order, setOrder] = useState<any>(initial?.order ?? null);
+  const [history, setHistory] = useState<any[]>(initial?.history ?? []);
+  const [loaded, setLoaded] = useState(!!initial?.order);
+  const [steps, setSteps] = useState<{ name: string; position: number }[]>(
+    initial?.steps ?? []
+  );
   const pctRef = useRef<HTMLDivElement>(null);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [lbOpen, setLbOpen] = useState(false);
@@ -175,6 +191,10 @@ export default function StatusClient({
     // tanpa modal verifikasi HP. Kalau token invalid/expired, fetch di bawah
     // akan gagal dan fallback ke verifikasi HP seperti biasa.
     if (urlToken) sessionStorage.setItem(tokenKey, urlToken);
+
+    // Sudah dirender server — jangan ditimpa fetch ulang. Token tetap disimpan
+    // di atas supaya kunjungan berikutnya juga lolos tanpa verifikasi HP.
+    if (initial?.order) return;
 
     const token = storedToken(tokenKey);
 
@@ -237,7 +257,7 @@ export default function StatusClient({
         sessionStorage.removeItem(key);
         setShowPhoneModal(true);
       });
-  }, [orderId, urlToken]);
+  }, [orderId, urlToken, initial]);
 
   // Animate progress counter
   useEffect(() => {
@@ -260,8 +280,9 @@ export default function StatusClient({
     return () => clearInterval(iv);
   }, [order, loaded, steps]);
 
-  // Fetch production steps from DB
+  // Fetch production steps from DB — dilewati kalau server sudah mengirimnya.
   useEffect(() => {
+    if (initial?.steps?.length) return;
     fetch("/api/pesanan/steps")
       .then((r) => r.json())
       .then((d) => {
@@ -270,7 +291,7 @@ export default function StatusClient({
         }
       })
       .catch(() => {});
-  }, []);
+  }, [initial]);
 
   useEffect(() => {
     if (!lightboxUrl) return;
@@ -401,7 +422,7 @@ export default function StatusClient({
             </header>
 
             {/* Phone verification modal */}
-            {showPhoneModal && (
+            {showPhoneModal ? (
               <main className="max-w-3xl mx-auto px-5 sm:px-8 pt-10">
                 <div className="trk-card p-5 sm:p-7 max-w-md mx-auto">
                   <p className="trk-display text-[20px] text-center mb-2">Verifikasi Pesanan</p>
@@ -451,6 +472,35 @@ export default function StatusClient({
                     </button>
                   </form>
                 </div>
+              </main>
+            ) : (
+              /* Skeleton: sebelumnya blok ini benar-benar kosong, jadi halaman
+                 terlihat hitam sampai data selesai dimuat. Sekarang bentuk
+                 kartunya sudah tampil sejak frame pertama. */
+              <main className="max-w-3xl mx-auto px-5 sm:px-8 pt-7 sm:pt-12" aria-busy="true">
+                <div className="trk-card p-6 sm:p-8">
+                  <div className="h-3 w-28 rounded-full bg-white/10 animate-pulse" />
+                  <div className="mt-4 h-7 w-4/5 rounded-lg bg-white/10 animate-pulse" />
+                  <div className="mt-3 h-7 w-1/2 rounded-lg bg-white/10 animate-pulse" />
+                  <div className="mt-8 flex items-center justify-between gap-3">
+                    <div className="h-8 flex-1 rounded-lg bg-white/[.06] animate-pulse" />
+                    <div className="h-8 w-24 rounded-lg bg-white/[.06] animate-pulse" />
+                  </div>
+                  <div className="mt-7 h-2.5 w-full overflow-hidden rounded-full bg-white/[.07]">
+                    <div className="h-full w-1/3 rounded-full bg-[#23BBB7]/40 animate-pulse" />
+                  </div>
+                </div>
+                <div className="trk-card mt-4 p-5 sm:p-6">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center gap-3 py-2.5">
+                      <div className="h-9 w-9 shrink-0 rounded-xl bg-white/[.07] animate-pulse" />
+                      <div className="h-3 flex-1 rounded-full bg-white/[.06] animate-pulse" />
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-5 text-center text-[12.5px] text-[#8A8A85]">
+                  Memuat status pesanan…
+                </p>
               </main>
             )}
           </div>
