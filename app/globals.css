@@ -63,7 +63,10 @@
   --color-info: #3550c4;
   --color-danger: #E84A12;
   --color-link: #0A0A0A;
-  --color-ring-focus: rgba(255, 90, 31, 0.45);
+  /* Solid, bukan oranye transparan: versi 45% cuma 1.71:1 di atas kartu putih
+     sehingga cincin fokus nyaris tidak terlihat. Versi solid 3.87:1 di atas
+     putih dan 5.26:1 di atas latar gelap. */
+  --color-ring-focus: #E84A12;
 
   /* Premium shadows — soft, layered depth */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
@@ -135,7 +138,7 @@
   --color-info: #7d96f5;
   --color-danger: #f87171;
   --color-link: #FF5A1F;
-  --color-ring-focus: rgba(255, 90, 31, 0.5);
+  --color-ring-focus: #E84A12;
 
   /* Premium shadows (dark) — deeper, with subtle glow */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
@@ -2247,7 +2250,7 @@
   background: var(--pas-surface); border: 1px solid var(--pas-line);
   border-radius: 10px; color: var(--pas-ink-1);
 }
-.pas-field::placeholder { color: #A3A3A3; }
+.pas-field::placeholder { color: #6B6B66; }
 .pas-field:focus {
   border-color: var(--pas-deep); box-shadow: 0 0 0 3px rgba(232, 74, 18,.14);
   background: var(--pas-surface);
@@ -2269,8 +2272,12 @@
 }
 
 .pas-btn-accent {
-  /* TAFF Sportwear: tombol utama gradient oranye→merah (mockup .btn-p) */
-  background: var(--pas-grad); color: #fff; border-radius: 10px;
+  /* TAFF Sportwear: tombol utama gradient oranye→merah (mockup .btn-p).
+     Teksnya hitam, bukan putih: putih di atas #FF5A1F cuma 3.12:1 dan di atas
+     #E84A12 3.87:1 — di bawah ambang 4.5:1 untuk teks 15px. Hitam di gradient
+     yang sama 6.73:1 / 5.42:1, dan gradiennya tidak pernah berubah antar tema,
+     jadi warna teksnya juga sengaja dipatok, bukan ikut token tema. */
+  background: var(--pas-grad); color: #0A0A0A; border-radius: 10px;
   box-shadow: 0 4px 12px rgba(232, 74, 18,.35);
   letter-spacing: 0; text-transform: none;
   font-family: var(--font-sans), "Archivo", system-ui, sans-serif; font-weight: 700;
@@ -2909,3 +2916,141 @@ table.pas-tbl.pas-tbl-static tbody tr:hover { background: transparent; }
   .pas-legend { min-width: 100%; }
   .pas-select-wrap, .pas-select-wrap .pas-field { width: 100%; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   LAYAR LOGIN
+   Struktur dari wireframe: panel brand bersudut di kiri untuk desktop,
+   tumpukan brand → judul → aksi untuk mobile. Warnanya tetap palet TAFF
+   (hitam, oranye, krem) — bukan biru/merah bawaan wireframe.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Satu-satunya gerak di halaman ini: kartu masuk. */
+@keyframes pas-auth-enter {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+.pas-auth-enter { animation: pas-auth-enter .32s cubic-bezier(.2, .7, .2, 1) both; }
+@media (prefers-reduced-motion: reduce) {
+  .pas-auth-enter { animation: none; }
+}
+
+/* Tampil/sembunyi diatur di sini, bukan lewat utility `hidden` / `lg:flex`.
+   Berkas ini dimuat setelah layer utilities, jadi kelas display milik Tailwind
+   akan kalah dan kedua komposisi ikut tampil di lebar ponsel. */
+.pas-auth-stage, .pas-auth-mobile { display: none; }
+@media (min-width: 1024px) { .pas-auth-stage { display: flex; } }
+@media (max-width: 1023.98px) { .pas-auth-mobile { display: flex; } }
+
+/* ── Desktop: hero bersudut + panel form ── */
+.pas-auth-stage {
+  min-height: 100vh;
+  align-items: center; justify-content: center;
+  padding: 48px 24px;
+  background: #050505;
+  color-scheme: dark;
+}
+.pas-auth-frame {
+  position: relative;
+  width: 100%; max-width: 1060px; min-height: 640px;
+  border-radius: 16px; overflow: hidden;
+  background: var(--pas-surface);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+}
+
+/* Sudut miring = tanda pengenal wireframe ini. Isinya identitas toko, bukan
+   widget portofolio bawaan wireframe (avatar/panah/sosial) yang tidak ada
+   padanannya di panel ini. */
+.pas-auth-hero {
+  position: absolute; top: 16px; bottom: 16px; left: 16px;
+  width: 56%;
+  display: flex; flex-direction: column;
+  /* padding kanan dalam persen diukur dari lebar containing block (bingkai),
+     bukan dari lebar hero — 11% kira-kira 118px, pas menyisakan ruang untuk
+     sisi miring. */
+  padding: 40px 11% 34px 36px;
+  color: #fff;
+  clip-path: polygon(0 0, 100% 0, 88% 100%, 0 100%);
+  background:
+    radial-gradient(110% 80% at 0% 100%, rgba(255, 90, 31, .28) 0%, rgba(255, 90, 31, 0) 62%),
+    linear-gradient(158deg, #1A1A1A 0%, #0A0A0A 46%, #000 100%);
+}
+
+.pas-auth-quote {
+  margin: 0;
+  font-size: clamp(26px, 2.85vw, 38px);
+  line-height: 1.08; letter-spacing: -.03em; font-weight: 800;
+  text-wrap: balance;
+}
+
+.pas-auth-form {
+  min-height: 640px;
+  margin-left: 52%;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 48px 56px;
+}
+.pas-auth-form-inner { width: 100%; max-width: 360px; margin: 0 auto; }
+
+/* ── Mobile: masthead → panel brand miring → form ── */
+.pas-auth-mobile {
+  min-height: 100vh;
+  flex-direction: column;
+  padding: 22px 20px 30px;
+  background: var(--pas-bg);
+}
+.pas-auth-slate {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; padding: 28px 30px 36px;
+  color: #fff; text-align: center;
+  clip-path: polygon(0 0, 100% 0, 100% 86%, 0 100%);
+  background:
+    radial-gradient(120% 100% at 0% 100%, rgba(255, 90, 31, .30) 0%, rgba(255, 90, 31, 0) 62%),
+    linear-gradient(160deg, #1A1A1A 0%, #0A0A0A 50%, #000 100%);
+}
+
+/* ── Elemen bersama ── */
+.pas-auth-plate {
+  flex: none; overflow: hidden;
+  border-radius: 10px; background: #fff;
+  display: grid; place-items: center;
+}
+.pas-auth-plate img { width: 100%; height: 100%; object-fit: cover; }
+
+.pas-auth-label {
+  display: block;
+  font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
+  color: var(--pas-ink-2);
+}
+
+/* Field + ikon di dalamnya */
+.pas-auth-input { position: relative; }
+.pas-auth-input .pas-field { padding-left: 44px; padding-right: 48px; }
+.pas-auth-input .lead {
+  position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+  display: grid; place-items: center; color: var(--pas-muted); pointer-events: none;
+}
+.pas-auth-input .peek {
+  position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
+  width: 30px; height: 30px; display: grid; place-items: center;
+  border: 0; border-radius: 8px; background: none; cursor: pointer;
+  color: var(--pas-ink-2); transition: background .15s;
+}
+.pas-auth-input .peek:hover { background: var(--pas-light); }
+
+/* Aksen oranye ditumpuk di atas #FFE9DF supaya teksnya lolos 4.5:1
+   (#E84A12 di atas latar itu cuma 3.3:1). */
+.pas-auth-error {
+  display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 14px; border: 1px solid #EFC9B6; border-radius: 10px;
+  background: #FFE9DF; color: #A32B0A;
+  font-size: 12.5px; line-height: 1.55;
+}
+.pas-auth-error svg { flex: none; margin-top: 1px; }
+
+.pas-auth-hint { font-size: 12.5px; line-height: 1.6; color: var(--pas-ink-2); }
+.pas-auth-link {
+  font-weight: 600; color: var(--pas-ink-1);
+  text-decoration: underline; text-decoration-color: var(--pas-line);
+  text-underline-offset: 4px;
+  transition: text-decoration-color .15s;
+}
+.pas-auth-link:hover { text-decoration-color: var(--pas-accent); }
