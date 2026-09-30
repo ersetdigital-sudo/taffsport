@@ -49,10 +49,21 @@ export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
  *  tapi ikut ditagih sebagai storage dan bandwidth setiap kali foto dikirim. */
 export const MAX_UPLOAD_DIMENSION = 1600;
 
-/** Kualitas JPEG saat foto diperkecil ulang.
+/** Kualitas saat foto diperkecil ulang (dipakai JPEG & WebP).
  *  0.82 masih sulit dibedakan mata untuk foto, tapi ukurannya jauh lebih
  *  kecil daripada 0.95. */
 export const JPEG_QUALITY = 0.82;
+
+/**
+ * Ambang "sudah cukup ringan": berkas yang lebih kecil dari ini dikirim apa
+ * adanya tanpa didekode + di-encode ulang.
+ *
+ * Dulu patokannya cuma DIMENSI, dan itu bikin foto yang dimensinya sudah
+ * "cukup kecil" (mis. PNG 1024px) tetap dikirim utuh 900 KB — padahal formatnya
+ * bisa dipadatkan jauh lebih banyak. Di jaringan seluler, 900 KB vs 150 KB itu
+ * bedanya puluhan detik.
+ */
+const SKIP_REENCODE_BYTES = 300 * 1024;
 
 /** Format yang diterima. HEIC sengaja tidak ikut — Cloudinary bisa mengonversinya,
  *  tapi browser tidak bisa menampilkan hasilnya sebagai preview lokal. */
@@ -95,8 +106,9 @@ export function validateImageFile(file: File): string | null {
  * paling besar cuma menampilkannya 1600px — piksel di atas itu cuma membakar
  * storage dan bandwidth selamanya tanpa pernah terlihat.
  *
- * Setelah diperkecil, satu foto biasanya tinggal ~200-400 KB (hemat sekitar
- * 5-8x dibanding menyimpan aslinya).
+ * Setelah diperkecil, satu foto biasanya tinggal ~150-300 KB (hemat sekitar
+ * 5-8x dibanding menyimpan aslinya) — sebagian besar penghematan itu datang
+ * dari pilihan format di encodeCanvas(), bukan cuma dari kecilnya dimensi.
  *
  * Aturannya sengaja konservatif: kalau ragu, KIRIM BERKAS ASLINYA. Gagal
  * memperkecil tidak boleh bikin operator tidak bisa upload.
@@ -128,6 +140,38 @@ function readImageSize(file: File): Promise<{ width: number; height: number } | 
   });
 }
 
+function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: string,
+  quality: number
+): Promise<Blob | null> {
+  return new Promise((resolve) => canvas.toBlob(resolve, type, quality));
+}
+
+/**
+ * Encode ulang canvas ke format paling ringan yang didukung browser.
+ *
+ * WebP dicoba lebih dulu karena dua alasan: hasilnya paling kecil untuk gambar
+ * seperti desain jersey, dan ia mendukung transparansi — jadi mockup PNG tidak
+ * perlu diubah jadi JPEG (yang akan menghitamkan area transparannya).
+ *
+ * Browser tanpa dukungan WebP (Safari < 14) TIDAK mengembalikan null, tapi
+ * diam-diam menyerahkan PNG — karena itu hasilnya diperiksa dari `blob.type`,
+ * bukan dari keberadaan blob-nya.
+ */
+async function encodeCanvas(
+  canvas: HTMLCanvasElement,
+  sourceIsPng: boolean
+): Promise<{ blob: Blob | null; ext: string }> {
+  const webp = await canvasToBlob(canvas, "image/webp", JPEG_QUALITY);
+  if (webp && webp.type === "image/webp") return { blob: webp, ext: "webp" };
+
+  const fallbackType = sourceIsPng ? "image/png" : "image/jpeg";
+  const blob = await canvasToBlob(canvas, fallbackType, JPEG_QUALITY);
+  // PNG punya alpha; JPEG tidak, jadi latarnya putih (lihat pemanggilnya).
+  return { blob, ext: sourceIsPng ? "png" : "jpg" };
+}
+
 async function downscaleImage(
   file: File
 ): Promise<{ blob: Blob; filename: string }> {
@@ -136,12 +180,14 @@ async function downscaleImage(
   // Browser lawas (mis. Safari lama) tidak punya createImageBitmap.
   if (typeof createImageBitmap !== "function") return asIs;
 
-  // Jalur cepat: foto yang dimensinya sudah cukup kecil dikirim apa adanya —
-  // tidak perlu didekode penuh dulu (foto 1200px dari HP lama sering begini).
+  // Jalur cepat: foto yang dimensinya sudah cukup kecil DAN berkasnya sudah
+  // ringan dikirim apa adanya — tidak perlu didekode penuh dulu (foto 1200px
+  // dari HP lama sering begini). Berkas yang dimensinya kecil tapi berat tetap
+  // lewat jalur encode di bawah, karena justru itu yang bikin upload lambat.
   const probed = await readImageSize(file);
-  if (probed && Math.max(probed.width, probed.height) <= MAX_UPLOAD_DIMENSION) {
-    return asIs;
-  }
+  const smallDimension =
+    !!probed && Math.max(probed.width, probed.height) <= MAX_UPLOAD_DIMENSION;
+  if (smallDimension && file.size <= SKIP_REENCODE_BYTES) return asIs;
 
   let bitmap: ImageBitmap;
   try {
@@ -153,12 +199,13 @@ async function downscaleImage(
   }
 
   try {
+    // Dimensi yang sudah cukup kecil TIDAK diperbesar; yang diperbaiki cuma
+    // format & kompresinya (mis. PNG 900 KB → WebP ~150 KB).
     const longest = Math.max(bitmap.width, bitmap.height);
-    if (longest <= MAX_UPLOAD_DIMENSION) return asIs;
-
-    const scale = MAX_UPLOAD_DIMENSION / longest;
-    const width = Math.round(bitmap.width * scale);
-    const height = Math.round(bitmap.height * scale);
+    const scale =
+      longest > MAX_UPLOAD_DIMENSION ? MAX_UPLOAD_DIMENSION / longest : 1;
+    const width = Math.max(1, Math.round(bitmap.width * scale));
+    const height = Math.max(1, Math.round(bitmap.height * scale));
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
@@ -168,25 +215,20 @@ async function downscaleImage(
     if (!ctx) return asIs;
 
     // PNG bisa punya bagian transparan (mockup desain jersey sering begitu).
-    // Kalau dipaksa jadi JPEG, area transparan itu berubah jadi hitam — jadi
-    // untuk PNG keluarannya tetap PNG, dan penghematannya datang dari dimensi.
-    const keepPng = file.type === "image/png";
-    if (!keepPng) {
-      // JPEG tidak punya alpha; putih adalah latar paling aman.
+    // Latar putih hanya dipakai kalau sumbernya memang tidak punya alpha.
+    const sourceIsPng = file.type === "image/png";
+    if (!sourceIsPng) {
       ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, width, height);
     }
     ctx.drawImage(bitmap, 0, 0, width, height);
 
-    const blob = await new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, keepPng ? "image/png" : "image/jpeg", JPEG_QUALITY)
-    );
+    const { blob, ext } = await encodeCanvas(canvas, sourceIsPng);
 
     // Kalau hasilnya ternyata TIDAK lebih kecil (mis. PNG kecil tapi padat),
     // pakai berkas aslinya.
     if (!blob || blob.size >= file.size) return asIs;
 
-    const ext = keepPng ? "png" : "jpg";
     const base = (file.name || "foto").replace(/\.[^.]+$/, "");
     return { blob, filename: base + "." + ext };
   } catch {
