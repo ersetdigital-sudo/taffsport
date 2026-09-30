@@ -1499,7 +1499,7 @@ function DetailSheet({
             {saving ? "Menyimpan..." : "Simpan Perubahan"}
           </button>
           <button
-            className="px-5 py-3.5 rounded-[10px] text-[12px] font-bold border border-[var(--pas-line)] bg-[var(--pas-surface)] text-[var(--pas-ink-1)] cursor-pointer transition-all disabled:opacity-50"
+            className="px-5 py-3.5 rounded-[10px] text-[12px] font-bold border border-[#2E5968] bg-[#3B6B7E] text-white cursor-pointer transition-all hover:bg-[#2E5968] disabled:opacity-50"
             style={{ fontFamily: "var(--font-display), system-ui, sans-serif", letterSpacing: ".04em", textTransform: "uppercase" }}
             onClick={markDone}
             disabled={saving}

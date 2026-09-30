@@ -172,7 +172,7 @@ export default function TrackForm({
                       autoComplete="off"
                       className="trk-field w-full mt-2 px-4 py-3.5 text-[16px] tracking-wide"
                     />
-                    <span className="block text-[13px] text-[#5C5C5C] mt-2">
+                    <span className="block text-[13px] text-[#8A8A85] mt-2">
                       Dipakai hanya untuk verifikasi pemilik pesanan.
                     </span>
                   </label>
@@ -209,7 +209,7 @@ export default function TrackForm({
                     )}
                   </button>
 
-                  <p className="text-[13px] text-[#5C5C5C] text-center mt-5">
+                  <p className="text-[13px] text-[#8A8A85] text-center mt-5">
                     Lupa nomor pesanan?{" "}
                     <a
                       href={waMeUrl(
@@ -270,11 +270,11 @@ export default function TrackForm({
                 <p className="text-[13px] text-[#A3A3A3]">
                   © 2026 TAFF Sportwear — Custom Jersey &amp; Sportswear
                 </p>
-                <p className="trk-stencil text-[9px] text-[#5C5C5C] mt-0.5">
+                <p className="trk-stencil text-[9px] text-[#8A8A85] mt-0.5">
                   taffsport.id
                 </p>
               </div>
-              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#5C5C5C]">
+              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#8A8A85]">
                 <span>{hours}</span>
                 <a
                   href={waHref}

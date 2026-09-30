@@ -1713,7 +1713,7 @@
   color: #fff;
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
-.trk-field::placeholder { color: #4A4A46; }
+.trk-field::placeholder { color: #8A8A85; }
 .trk-field:focus {
   outline: none;
   border-color: #23BBB7;
@@ -1722,9 +1722,10 @@
 }
 
 .trk-btn-accent {
-  background: #23BBB7;
-  /* hitam kehijauan: putih di atas turquoise cuma 2.37:1 */
-  color: #062B2A;
+  background: #23627C;
+  /* putih di atas deep blue 6.75:1 — turquoise tidak dipakai karena putih
+     di atasnya cuma 2.37:1 */
+  color: #FFFFFF;
   border-radius: 14px;
   font-family: var(--font-archivo), "Archivo", sans-serif;
   font-weight: 800;
@@ -1782,7 +1783,7 @@
   justify-content: center;
   background: #0A0A0A;
   border: 1px solid #2E2E2E;
-  color: #4A4A46;
+  color: #8A8A85;
   font-size: 13px;
   font-weight: 700;
   transition: all .35s ease;
@@ -1810,7 +1811,7 @@
 }
 
 .trk-step .trk-label { font-weight: 600; }
-.trk-step.trk-todo .trk-label { color: #6B6B66; }
+.trk-step.trk-todo .trk-label { color: #8A8A85; }
 .trk-step.trk-done .trk-label { color: #E4E4DF; }
 .trk-step.trk-current .trk-label { color: #fff; }
 
@@ -1913,7 +1914,7 @@
   letter-spacing: .22em;
   text-transform: uppercase;
   font-size: 11px;
-  color: #5C5C5C;
+  color: #8A8A85;
 }
 .dpo-h1 {
   font-family: var(--font-display), "Barlow Condensed", "Barlow", sans-serif;
@@ -2032,7 +2033,7 @@
   place-items: center;
   background: #0A0A0A;
   border: 1px solid #2E2E2E;
-  color: #5C5C5C;
+  color: #8A8A85;
   flex: none;
   font-family: var(--font-mono), monospace;
   font-size: 12px;
@@ -2066,8 +2067,8 @@
 }
 .dpo-step.is-todo .dpo-step-title { color: #A3A3A3; font-weight: 500; }
 .dpo-step-desc { margin-top: 2px; font-size: 13px; color: #A3A3A3; line-height: 1.5; }
-.dpo-step.is-todo .dpo-step-desc { color: #5C5C5C; }
-.dpo-step-time { margin-top: 6px; font-size: 11px; color: #5C5C5C; letter-spacing: .03em; }
+.dpo-step.is-todo .dpo-step-desc { color: #8A8A85; }
+.dpo-step-time { margin-top: 6px; font-size: 11px; color: #8A8A85; letter-spacing: .03em; }
 .dpo-chip {
   border-radius: 999px;
   padding: 2px 9px;
@@ -2165,8 +2166,8 @@
   --pas-surface-2: #FAF6EE;
   --pas-line: #DFD9CC;
   --pas-line-2: #EDE5D6;
-  --pas-muted: #7C7C74;
-  --pas-muted-2: #A3A3A3;
+  --pas-muted: #646460;
+  --pas-muted-2: #646460;
   --pas-ink-1: #0A0A0A;
   --pas-ink-2: #3A3A36;
   /* Deep Blue, bukan turquoise: aksen ini dipakai sebagai teks/ikon di atas
@@ -2186,9 +2187,9 @@
   --pas-grad-side: linear-gradient(180deg, #2A6E8A 0%, #23627C 48%, #1B4F63 100%);
   /* badge status — baru turquoise muda, produksi turquoise, kirim deep blue */
   --pas-baru-bg: #D3EDEF;    --pas-baru-fg: #23627C;
-  --pas-prod-bg: #D6F1F0;    --pas-prod-fg: #1B7A77;
+  --pas-prod-bg: #D6F1F0;    --pas-prod-fg: #14615F;
   --pas-kirim-bg: #DDE9EE;   --pas-kirim-fg: #1B4F63;
-  --pas-selesai-bg: #E7F3E7; --pas-selesai-fg: #4F7A4E;
+  --pas-selesai-bg: #E7F3E7; --pas-selesai-fg: #3E6B41;
   --pas-light: #E7E5DC;
   --pas-yellow: #D9A227;  /* aksen peringatan/kapasitas (nama variabel lama) */
 
@@ -2209,7 +2210,7 @@
 .pas-side .pas-stencil { color: rgba(255,255,255,.7) !important; }
 .pas-navlink {
   display: flex; align-items: center; gap: 12px; padding: 10px 12px;
-  border-radius: 8px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,.72); transition: .15s;
+  border-radius: 8px; font-size: 14px; font-weight: 500; color: rgba(255,255,255,.85); transition: .15s;
 }
 .pas-navlink:hover { background: rgba(255,255,255,.12); color: #fff; }
 .pas-navlink.on { background: #fff; color: #1B4F63; font-weight: 700; }
@@ -2221,17 +2222,17 @@
   background: var(--pas-green) !important;
   border-color: rgba(255,255,255,.08) !important;
 }
-.pas-panel.slide-left .pas-navlink { color: rgba(255,255,255,.72) !important; background: transparent !important; }
+.pas-panel.slide-left .pas-navlink { color: rgba(255,255,255,.85) !important; background: transparent !important; }
 .pas-panel.slide-left .pas-navlink:hover { background: rgba(255,255,255,.12) !important; color: #fff !important; }
 .pas-panel.slide-left .pas-navlink.on { background: #fff !important; color: #1B4F63 !important; font-weight: 700; }
 .pas-panel.slide-left .pas-navlink.on .pas-ic { color: #1B4F63 !important; }
-.pas-panel.slide-left .pas-navsec { color: rgba(255,255,255,.62) !important; }
+.pas-panel.slide-left .pas-navsec { color: rgba(255,255,255,.82) !important; }
 .pas-panel.slide-left .pas-display { color: #fff !important; }
 .pas-panel.slide-left .pas-mark { background: #fff; color: var(--pas-green); }
 .pas-navsec {
   font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
   /* selalu di atas sidebar/drawer deep blue — abu #5C5C5C nyaris hilang */
-  color: rgba(255,255,255,.62); padding: 0 8px; margin: 14px 0 10px; font-weight: 700;
+  color: rgba(255,255,255,.82); padding: 0 8px; margin: 14px 0 10px; font-weight: 700;
 }
 @media (max-width: 900px) { .pas-side { display: none; } }
 
@@ -2257,14 +2258,14 @@
   box-shadow: 0 12px 28px -12px rgba(27, 79, 99,.55);
 }
 .pas-kpi-hero .pas-num { color: #fff; }
-.pas-kpi-hero .pas-kpi-label { color: #CFE3E9; }
-.pas-kpi-hero .pas-kpi-note { color: #BFD6DD; }
+.pas-kpi-hero .pas-kpi-label { color: #E9F3F6; }
+.pas-kpi-hero .pas-kpi-note { color: #E9F3F6; }
 .pas-kpi-hero .pas-delta { background: rgba(211,237,239,.92); color: #1B4F63; }
 .pas-delta { font-size: 11.5px; font-weight: 600; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
 .pas-delta.up { background: #D3EDEF; color: #23627C; }
-.pas-delta.flat { background: #E7E5DC; color: #8A8A85; }
-.pas-delta.ok { background: #F6EFDD; color: #8A6A1F; }
-.pas-delta.good { background: #E7F3E7; color: #4F7A4E; }
+.pas-delta.flat { background: #E7E5DC; color: #5C5C5C; }
+.pas-delta.ok { background: #F6EFDD; color: #795D17; }
+.pas-delta.good { background: #E7F3E7; color: #3E6B41; }
 .pas-delta.bad { background: #FCE9E4; color: #C0392B; }
 
 /* Sorotan lembut untuk mengarahkan operator ke langkah berikutnya — dipakai
@@ -2303,7 +2304,7 @@
 .pas-search input { padding-left: 38px; }
 .pas-search .pas-mag {
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-  color: #A3A3A3; font-size: 14px; pointer-events: none;
+  color: #6B6B66; font-size: 14px; pointer-events: none;
 }
 
 .pas-btn-accent {
@@ -2319,30 +2320,33 @@
 }
 .pas-btn-accent:hover { transform: none; filter: brightness(1.14); }
 .pas-btn-ghost {
-  border: 1px solid transparent; border-radius: 10px;
-  background: #E7E5DC; color: #4A4A46; font-weight: 500;
+  /* Tombol sekunder: teks putih, latar steel blue. Krem terang tidak dipakai
+     karena teks putih di atasnya gagal kontras — sesuai permintaan semua
+     teks tombol putih. #3B6B7E memberi 5.85:1 untuk putih. */
+  border: 1px solid rgba(255,255,255,.14); border-radius: 10px;
+  background: #3B6B7E; color: #FFFFFF; font-weight: 500;
 }
-.pas-btn-ghost:hover { background: #DCD9CD; border-color: transparent; }
+.pas-btn-ghost:hover { background: #2E5968; border-color: rgba(255,255,255,.22); }
 
 .pas-seg {
   display: inline-flex; background: transparent;
   border: 0; border-radius: 0; padding: 0; gap: 8px;
 }
 .pas-chip {
-  border: 1px solid var(--pas-line); background: var(--pas-surface); color: #4A4A46;
+  border: 1px solid rgba(255,255,255,.14); background: #3B6B7E; color: #FFFFFF;
   font-weight: 500; border-radius: 8px; padding: 8px 14px; font-size: 12.5px; font-family: inherit; cursor: pointer;
+  transition: background .15s, border-color .15s;
 }
-.pas-chip:hover { background: #FAF6EE; color: var(--pas-ink-1); }
+.pas-chip:hover { background: #2E5968; color: #fff; }
 .pas-chip.on {
-  /* teks hitam: putih di atas turquoise tidak lolos kontras */
-  background: var(--pas-grad); color: #062B2A; border-color: transparent;
+  background: #1B4F63; color: #fff; border-color: #23BBB7;
   box-shadow: 0 4px 12px rgba(35, 98, 124,.28);
 }
 
 .pas-pill {
   display: inline-flex; align-items: center; gap: 6px; border-radius: 12px;
   font-size: 11.5px; font-weight: 600; letter-spacing: 0; text-transform: none;
-  padding: 5px 12px; background: #EDEDE8; color: #8A8A85;
+  padding: 5px 12px; background: #EDEDE8; color: #5C5C5C;
 }
 .pas-pill::before { content: none; }
 .pas-pill.baru { background: var(--pas-baru-bg); color: var(--pas-baru-fg); }
@@ -2352,7 +2356,7 @@
 
 table.pas-tbl { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
 table.pas-tbl th {
-  background: #FAF6EE; color: #8A8A85; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  background: #FAF6EE; color: #6B6B66; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
   font-weight: 700; padding: 12px 16px; text-align: left;
 }
 table.pas-tbl td {
@@ -2390,7 +2394,7 @@ table.pas-tbl tbody tr:hover { background: #FAF6EE; }
   line-height: 1.2; letter-spacing: .3px;
 }
 .pas-brand-sub {
-  display: block; color: rgba(255,255,255,.68); font-size: 11px; letter-spacing: 1.4px;
+  display: block; color: rgba(255,255,255,.85); font-size: 11px; letter-spacing: 1.4px;
   text-transform: uppercase; margin-top: 3px;
 }
 
@@ -2469,25 +2473,26 @@ table.pas-tbl tbody tr:hover { background: #FAF6EE; }
 .pas-stepbtn {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
   padding: 10px 12px; border-radius: 12px; border: 1px solid transparent;
-  transition: all .18s; font-size: 14px; color: #8A8A85;
+  transition: all .18s; font-size: 14px; color: #6B6B66;
 }
 .pas-stepbtn:hover { background: var(--pas-light); color: var(--pas-ink-1); }
 .pas-stepbtn .pas-num {
   width: 24px; height: 24px; border-radius: 99px; display: grid; place-items: center;
-  font-size: 11px; font-weight: 700; background: #EDEDE8; color: #8A8A85; flex: none;
+  font-size: 11px; font-weight: 700; background: #EDEDE8; color: #6B6B66; flex: none;
 }
 .pas-stepbtn.done { color: var(--pas-ink-1); }
 .pas-stepbtn.done .pas-num { background: rgba(211,237,239,.95); color: var(--pas-red); }
 .pas-stepbtn.cur {
   background: rgba(35, 187, 183,.10); border-color: rgba(35, 187, 183,.40); color: var(--pas-ink-1);
 }
-.pas-stepbtn.cur .pas-num { background: var(--pas-grad); color: #062B2A; }
+.pas-stepbtn.cur .pas-num { background: #1B4F63; color: #fff; }
 
 .pas-toast {
   position: fixed; right: 16px; top: 16px;
   transform: translateX(12px); opacity: 0; pointer-events: none;
   /* teks gelap di atas gradient turquoise supaya tetap lolos kontras */
-  background: var(--pas-grad); color: #062B2A; font-weight: 700;
+  /* teks putih di atas deep blue (6.75:1) sesuai permintaan */
+  background: linear-gradient(135deg, #2A6E8A 0%, #23627C 55%, #1B4F63 100%); color: #FFFFFF; font-weight: 700;
   padding: 12px 20px; border-radius: 999px; z-index: 80;
   transition: all .3s ease;
 }
@@ -2574,9 +2579,9 @@ table.pas-tbl tbody tr:hover { background: #FAF6EE; }
   .pas-bento-chip-scroll > * { scroll-snap-align: start; flex-shrink: 0; }
 
   .pas-bento-chip {
-    border: 1px solid var(--pas-line) !important;
-    background: var(--pas-surface) !important;
-    color: var(--pas-muted) !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    background: #3B6B7E !important;
+    color: #FFFFFF !important;
     font-weight: 600;
     border-radius: 8px !important;
     padding: 8px 12px !important;
@@ -2586,15 +2591,15 @@ table.pas-tbl tbody tr:hover { background: #FAF6EE; }
     box-shadow: 0 2px 6px rgba(0,0,0,.04) !important;
   }
   .pas-bento-chip:hover {
-    background: #FAF6EE !important;
-    color: var(--pas-ink-1) !important;
-    border-color: var(--pas-deep) !important;
+    background: #2E5968 !important;
+    color: #FFFFFF !important;
+    border-color: rgba(255,255,255,.24) !important;
     transform: translateY(-1px);
   }
   .pas-bento-chip.on {
-    background: var(--pas-grad) !important;
-    color: #062B2A !important;
-    border-color: var(--pas-deep) !important;
+    background: #1B4F63 !important;
+    color: #FFFFFF !important;
+    border-color: #23BBB7 !important;
     box-shadow: 0 4px 12px rgba(35, 98, 124,.28) !important;
   }
 

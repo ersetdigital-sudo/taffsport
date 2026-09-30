@@ -153,7 +153,7 @@ function Shell({ children, csHref }: { children: React.ReactNode; csHref: string
                   <p className="trk-display text-[14.5px] font-semibold uppercase tracking-wide sm:text-[15px]">
                     TAFF Sportwear
                   </p>
-                  <p className="text-[10.5px] text-[#5C5C5C] sm:text-[11px]">
+                  <p className="text-[10.5px] text-[#8A8A85] sm:text-[11px]">
                     Pabrik Jersey Custom Full Printing
                   </p>
                 </div>
@@ -346,7 +346,7 @@ export default async function MaklonStatusPage({
             />
             {isDone ? "Selesai" : stageName}
           </span>
-          <span className="text-[12.5px] text-[#5C5C5C]">
+          <span className="text-[12.5px] text-[#8A8A85]">
             Tahap {step} dari {totalSteps}
           </span>
         </div>
@@ -354,7 +354,7 @@ export default async function MaklonStatusPage({
         <div className="trk-bar mt-6">
           <i style={{ width: `${pct}%` }} />
         </div>
-        <div className="mt-2 flex items-center justify-between text-[12.5px] text-[#5C5C5C]">
+        <div className="mt-2 flex items-center justify-between text-[12.5px] text-[#8A8A85]">
           <span className="dpo-mono">{pct}%</span>
           <span>Update terakhir {formatDateTime(order.updated_at)}</span>
         </div>
@@ -379,7 +379,7 @@ export default async function MaklonStatusPage({
                   )}
                 </div>
                 <p className="trk-label text-[15px]">{name}</p>
-                <p className="mt-1 text-[12.5px] text-[#5C5C5C]">
+                <p className="mt-1 text-[12.5px] text-[#8A8A85]">
                   {pos < step ? "Selesai" : pos === step ? (isDone ? "Selesai" : "Sedang dikerjakan") : "Menunggu"}
                 </p>
               </div>
@@ -487,7 +487,7 @@ export default async function MaklonStatusPage({
               href={csHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#23BBB7] px-8 py-3.5 text-[15px] font-semibold text-[#062B2A] transition hover:-translate-y-px hover:bg-[#1B9A96] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#23627C] px-8 py-3.5 text-[15px] font-semibold text-white transition hover:-translate-y-px hover:bg-[#1B4F63] sm:w-auto"
             >
               Chat CS
             </a>

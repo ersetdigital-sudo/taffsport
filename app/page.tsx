@@ -194,7 +194,7 @@ export default async function HomePage() {
                     key={label}
                     className="trk-btn-ghost px-3.5 py-2 text-[12.5px] text-[#D4D4D4]"
                   >
-                    <span className="trk-stencil text-[9px] text-[#5C5C5C] mr-1.5">
+                    <span className="trk-stencil text-[9px] text-[#8A8A85] mr-1.5">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {label}
@@ -258,7 +258,7 @@ export default async function HomePage() {
                   © {new Date().getFullYear()} {brand.name}
                 </p>
               </div>
-              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#5C5C5C]">
+              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#8A8A85]">
                 {/* Jam operasional dari menu Pengaturan, bukan teks tetap */}
                 <span>{hours}</span>
                 <a

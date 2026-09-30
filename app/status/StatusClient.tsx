@@ -526,7 +526,7 @@ export default function StatusClient({
 </a>
                 <div className="leading-tight">
                   <p className="trk-display text-[14.5px] font-semibold uppercase tracking-wide sm:text-[15px]">TAFF Sportwear</p>
-                  <p className="text-[10.5px] text-[#5C5C5C] sm:text-[11px]">Pabrik Jersey Custom Full Printing</p>
+                  <p className="text-[10.5px] text-[#8A8A85] sm:text-[11px]">Pabrik Jersey Custom Full Printing</p>
                 </div>
               </div>
               <a
@@ -573,7 +573,7 @@ export default function StatusClient({
                   title="Salin nomor pesanan"
                 >
                   <span id="dpoCopyLabel">{orderId}</span>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-[#5C5C5C]" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 text-[#8A8A85]" aria-hidden="true">
                     <rect x="9" y="9" width="11" height="11" rx="2"></rect>
                     <path d="M5 15V5a2 2 0 0 1 2-2h8"></path>
                   </svg>
@@ -595,13 +595,13 @@ export default function StatusClient({
                     <p className="dpo-kicker">Progres keseluruhan</p>
                     <p className="mt-1.5 font-bold leading-none text-[34px] dpo-h1 sm:text-[40px]">
                       <span ref={pctRef}>0</span>
-                      <span className="ml-0.5 text-[20px] text-[#5C5C5C]">%</span>
+                      <span className="ml-0.5 text-[20px] text-[#8A8A85]">%</span>
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="dpo-h2 text-[15px]">Tahap {step} <span className="text-[#5C5C5C]">/ {totalSteps}</span></p>
+                    <p className="dpo-h2 text-[15px]">Tahap {step} <span className="text-[#8A8A85]">/ {totalSteps}</span></p>
                     {lastUpdate && (
-                      <p className="dpo-mono mt-1 text-[10.5px] leading-tight text-[#5C5C5C]">
+                      <p className="dpo-mono mt-1 text-[10.5px] leading-tight text-[#8A8A85]">
                         Update {formatShortDateTimeID(lastUpdate.created_at)}
                       </p>
                     )}
@@ -612,7 +612,7 @@ export default function StatusClient({
                     <span key={i} className={i + 1 < step ? "on" : i + 1 === step ? "cur" : ""}></span>
                   ))}
                 </div>
-                <div className="dpo-mono mt-2.5 flex justify-between gap-3 text-[10px] uppercase tracking-wider text-[#5C5C5C]">
+                <div className="dpo-mono mt-2.5 flex justify-between gap-3 text-[10px] uppercase tracking-wider text-[#8A8A85]">
                   <span className="truncate">{progressFromLabel}</span>
                   <span className="truncate text-right">{progressToLabel}</span>
                 </div>
@@ -623,7 +623,7 @@ export default function StatusClient({
             <section className="dpo-reveal mt-9 sm:mt-12">
               <div className="flex items-end justify-between gap-3">
                 <h2 className="dpo-h2">Tahap Produksi</h2>
-                <span className="text-[12px] text-[#5C5C5C]">{step} dari {totalSteps} tahap</span>
+                <span className="text-[12px] text-[#8A8A85]">{step} dari {totalSteps} tahap</span>
               </div>
 
               <ol className="dpo-steps mt-4">
@@ -672,7 +672,7 @@ export default function StatusClient({
                       </span>
                       <div className="min-w-0 flex-1">
                         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                          <span className="dpo-mono text-[11px] text-[#5C5C5C]">{String(n).padStart(2, "0")}</span>
+                          <span className="dpo-mono text-[11px] text-[#8A8A85]">{String(n).padStart(2, "0")}</span>
                           <h3 className="dpo-step-title">{stepDef.name}</h3>
                           {st === "done" && <span className="dpo-chip dpo-chip-done">Selesai</span>}
                           {st === "now" && (
@@ -755,7 +755,7 @@ export default function StatusClient({
                 <div className="flex flex-wrap items-end justify-between gap-2">
                   <h2 className="dpo-h2">Rincian Pesanan</h2>
                   {totalPcs > 0 && (
-                    <span className="text-[12px] text-[#5C5C5C]">
+                    <span className="text-[12px] text-[#8A8A85]">
                       Total <span className="dpo-mono text-[#E4E4DF]">{fmtQty(totalPcs)}</span> pcs
                     </span>
                   )}
@@ -780,7 +780,7 @@ export default function StatusClient({
                         <div className="mt-3 overflow-x-auto rounded-xl border border-white/10">
                           <table className="w-full text-[13px]">
                             <thead>
-                              <tr className="bg-white/[.05] text-[11px] uppercase tracking-wider text-[#5C5C5C]">
+                              <tr className="bg-white/[.05] text-[11px] uppercase tracking-wider text-[#8A8A85]">
                                 <th className="px-2 py-2.5 text-left font-medium w-[31%]">Ukuran</th>
                                 {products.map((p) => (
                                   <th key={p.name} className="px-2 py-2.5 text-center font-medium">{p.name}</th>
@@ -799,7 +799,7 @@ export default function StatusClient({
                                     {products.map((p) => {
                                       const qty = p.sizes.find((s) => s.size === sz)?.qty || 0;
                                       return (
-                                        <td key={p.name} className={`dpo-mono px-2 py-2.5 text-center text-[14px] ${qty ? "" : "text-[#5C5C5C]"}`}>
+                                        <td key={p.name} className={`dpo-mono px-2 py-2.5 text-center text-[14px] ${qty ? "" : "text-[#8A8A85]"}`}>
                                           {qty ? fmtQty(qty) : "–"}
                                         </td>
                                       );
@@ -811,7 +811,7 @@ export default function StatusClient({
                             </tbody>
                             <tfoot>
                               <tr className="border-t border-white/15 bg-white/[.04] font-semibold">
-                                <td className="px-2 py-3 text-left text-[12px] uppercase tracking-wider text-[#5C5C5C]">Total</td>
+                                <td className="px-2 py-3 text-left text-[12px] uppercase tracking-wider text-[#8A8A85]">Total</td>
                                 {products.map((p) => (
                                   <td key={p.name} className="dpo-mono px-2 py-3 text-center text-[14px]">
                                     {fmtQty(p.sizes.reduce((a, s) => a + (s.qty || 0), 0))}
@@ -886,7 +886,7 @@ export default function StatusClient({
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 rounded-full bg-[#23BBB7] px-6 py-3 text-center text-[14px] font-semibold text-[#062B2A] hover:bg-[#1B9A96] transition"
+                    className="flex-1 rounded-full bg-[#23627C] px-6 py-3 text-center text-[14px] font-semibold text-white hover:bg-[#1B4F63] transition"
                   >
                     Lacak Pengiriman
                   </a>
@@ -914,15 +914,15 @@ export default function StatusClient({
                   href={waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#23BBB7] px-8 py-3.5 text-[15px] font-semibold text-[#062B2A] hover:bg-[#1B9A96] transition hover:-translate-y-px"
+                  className="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-full bg-[#23627C] px-8 py-3.5 text-[15px] font-semibold text-white hover:bg-[#1B4F63] transition hover:-translate-y-px"
                 >
                   Chat CS via WhatsApp
                 </a>
               </div>
-              <p className="mt-4 text-[12px] text-[#5C5C5C]">Semua komunikasi order ditangani lewat WhatsApp resmi TAFF Sportwear.</p>
+              <p className="mt-4 text-[12px] text-[#8A8A85]">Semua komunikasi order ditangani lewat WhatsApp resmi TAFF Sportwear.</p>
             </section>
 
-            <footer className="mt-10 text-center text-[12px] text-[#5C5C5C]">
+            <footer className="mt-10 text-center text-[12px] text-[#8A8A85]">
               <p>© 2026 TAFF Sportwear — Pabrik Jersey Custom Full Printing</p>
             </footer>
           </main>
@@ -933,7 +933,7 @@ export default function StatusClient({
               href={waLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#23BBB7] px-6 py-3.5 text-[15px] font-semibold text-[#062B2A]"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#23627C] px-6 py-3.5 text-[15px] font-semibold text-white"
             >
               <svg viewBox="0 0 24 24" fill="currentColor" style={{ width: 18, height: 18, flex: "none" }} aria-hidden="true">
                 <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 2a8 8 0 1 1-4.1 14.9l-.4-.2-2.7.7.7-2.6-.2-.4A8 8 0 0 1 12 4z"></path>
