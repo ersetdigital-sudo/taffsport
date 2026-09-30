@@ -146,3 +146,33 @@ export function monthKeyID(value: DateInput): string {
 export function todayKeyID(): string {
   return dateKeyID(new Date());
 }
+
+/**
+ * Jarak hari menuju sebuah tanggal, dihitung per tanggal WIB (jam diabaikan).
+ *
+ * Kenapa jam diabaikan: kolom `deadline` bertipe `timestamptz`, tapi admin
+ * mengisinya dari `<input type="date">` sehingga nilainya tersimpan sebagai
+ * tengah malam UTC — kalau jamnya ikut ditampilkan di WIB hasilnya jadi
+ * "07.00", angka yang tidak pernah dipilih siapa pun dan bikin bingung.
+ * Yang benar-benar dipakai sistem cuma TANGGAL-nya, jadi perbandingan pun
+ * dilakukan antar tanggal WIB. Kembalian `null` untuk nilai kosong/tidak valid.
+ */
+export function daysUntilID(value: DateInput): number | null {
+  const key = dateKeyID(value);
+  if (!key) return null;
+  const target = Date.parse(`${key}T00:00:00Z`);
+  const today = Date.parse(`${todayKeyID()}T00:00:00Z`);
+  return Math.round((target - today) / 86_400_000);
+}
+
+/**
+ * Keterangan singkat jarak ke sebuah tanggal, mis. `hari ini`, `3 hari lagi`,
+ * `lewat 2 hari`. Dipakai sebagai penjelas label "Target Selesai" supaya
+ * customer langsung paham tanggal itu artinya apa.
+ */
+export function formatDeadlineNoteID(value: DateInput): string {
+  const diff = daysUntilID(value);
+  if (diff === null) return "";
+  if (diff === 0) return "hari ini";
+  return diff > 0 ? `${diff} hari lagi` : `lewat ${Math.abs(diff)} hari`;
+}

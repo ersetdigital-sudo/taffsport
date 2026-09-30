@@ -16,7 +16,7 @@ import {
   stepFromStatus,
   TOTAL_STAGES,
 } from "@/lib/order-status";
-import { formatShortDateTimeID } from "@/lib/format-date";
+import { formatShortDateID, formatShortDateTimeID, formatDeadlineNoteID } from "@/lib/format-date";
 import { optimizeImageUrl } from "@/lib/cloudinary";
 import { labelFromSlug, resolveStepOrder, type StepOrder } from "@/lib/step-order";
 
@@ -533,6 +533,8 @@ export default function StatusClient({
     ? ORDER_STATUS_LABELS.selesai
     : stageNameOf(totalSteps);
   const lastUpdate = history.length > 0 ? history[history.length - 1] : null;
+  // Keterangan "3 hari lagi" / "lewat 2 hari" untuk chip "Target selesai".
+  const deadlineNote = formatDeadlineNoteID(order.deadline);
 
   // Product data (new structured format) with fallback to legacy fields
   const products: { name: string; sizes: { size: string; qty: number }[] }[] =
@@ -617,8 +619,17 @@ export default function StatusClient({
                   <span className="dpo-live"></span> {stepHighlight(order.current_status, hasTracking)}
                 </span>
                 {order.deadline && (
-                  <span className="dpo-meta">
-                    Target <span className="dpo-mono ml-1 text-[#E4E4DF]">{formatShortDateTimeID(order.deadline)}</span>
+                  <span
+                    className="dpo-meta"
+                    title="Perkiraan tanggal pesanan selesai diproduksi (WIB)"
+                  >
+                    Target selesai
+                    <span className="dpo-mono text-[#E4E4DF]">
+                      {formatShortDateID(order.deadline)}
+                    </span>
+                    {deadlineNote && (
+                      <span className="text-[#8A8A85]">· {deadlineNote}</span>
+                    )}
                   </span>
                 )}
               </div>
@@ -877,6 +888,25 @@ export default function StatusClient({
                         <p className="mt-1 text-[14.5px] font-medium">{order.sizes}</p>
                       </div>
                     )}
+                  </div>
+                )}
+
+                {/* "Target" di header chip sering bikin bingung, jadi tanggalnya
+                    diulang di sini lengkap dengan penjelasannya. */}
+                {order.deadline && (
+                  <div className="mt-4 rounded-xl border border-white/10 bg-white/[.03] px-4 py-3.5">
+                    <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5">
+                      <p className="dpo-kicker">Target Selesai</p>
+                      <p className="dpo-mono text-[14px] text-[#E4E4DF]">
+                        {formatShortDateID(order.deadline)}
+                        {deadlineNote && (
+                          <span className="ml-2 text-[#8A8A85]">· {deadlineNote}</span>
+                        )}
+                      </p>
+                    </div>
+                    <p className="mt-1.5 text-[12.5px] leading-relaxed text-[#8A8A85]">
+                      Perkiraan tanggal pesanan kamu selesai diproduksi (WIB), bukan jadwal kirim ekspedisi.
+                    </p>
                   </div>
                 )}
 

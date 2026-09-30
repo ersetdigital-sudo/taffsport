@@ -4,7 +4,11 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { verifyToken } from "@/lib/verify-token";
 import { clientIp, isTokenSharedAcrossDevices } from "@/lib/track-guard";
 import { MAKLON_STAGES, MAKLON_STEP_PROGRESS } from "@/lib/maklon-status";
-import { formatDateTimeWIB, formatShortDateID } from "@/lib/format-date";
+import {
+  formatDateTimeWIB,
+  formatDeadlineNoteID,
+  formatShortDateID,
+} from "@/lib/format-date";
 
 /**
  * Halaman tracking publik untuk pesanan MAKLON.
@@ -342,8 +346,13 @@ export default async function MaklonStatusPage({
               <p className="trk-cell-value">{isDone ? "Selesai" : stageName}</p>
             </div>
             <div className="trk-cell">
-              <p className="trk-cell-label">Deadline</p>
+              <p className="trk-cell-label">Target Selesai</p>
               <p className="trk-cell-value">{formatDate(order.deadline)}</p>
+              {order.deadline && (
+                <p className="mt-1 text-[12px] text-[#8A8A85]">
+                  {formatDeadlineNoteID(order.deadline)}
+                </p>
+              )}
             </div>
           </div>
 
