@@ -160,6 +160,12 @@ cp .env.local.example .env.local   # then fill in the values
 pnpm dev
 ```
 
+Two optional seeders ship with the repo if you want sample data to click through:
+`scripts/seed-pesanan-demo.mjs` (jersey orders with a full stage history, so the
+customer tracking timeline has something in it) and `scripts/seed-maklon-demo.mjs`
+(maklon orders). Both write only rows named `Demo …`, and both take `--clean` to
+remove exactly those rows and nothing else.
+
 To deploy, set the same variables on the Vercel project (Production and Preview), then
 push to `main` or run `vercel --prod`. Four of them are secrets the app refuses to run
 without — `SETTINGS_ENCRYPTION_KEY`, `TRACK_SESSION_SECRET`, `PESANAN_PASSWORD` and
