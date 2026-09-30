@@ -174,14 +174,15 @@ development file. `APP_URL` must be the production domain, because that is what 
 links are built from. Cloudinary's upload preset has to be set to Signed mode to match
 the signing endpoint; leaving it unsigned would reopen the upload path.
 
-**Scheduling.** `vercel.json` carries no `crons` block — the daily deadline reminder is
-driven by cron-job.org instead. One job: GET
-`https://taffsport.vercel.app/api/admin/deadline-notif` with custom header
+**Scheduling.** `vercel.json` carries no `crons` block — the deadline reminder is driven
+by cron-job.org instead: one job, GET
+`https://taffsport.vercel.app/api/admin/deadline-notif`, custom header
 `Authorization: Bearer <CRON_SECRET>` (same value as the Vercel env var), timezone
-Asia/Jakarta, daily at 09:00 WIB. The route remains the gatekeeper: it only sends when
-`deadline_notif_enabled` is on, the configured "Jam Kirim (WIB)" has been reached, and
-`deadline_notif_last_sent_date` is still empty for today — so the job time must fall at
-or after the configured send time (09:00 WIB vs the default 08:00 WIB).
+Asia/Jakarta, **every hour**. Hourly rather than once a day is deliberate: the admin panel
+lets the operator pick any "Jam Kirim (WIB)", and the route decides on every run — it
+sends only when `deadline_notif_enabled` is on, the configured send time has already been
+reached in WIB, and `deadline_notif_last_sent_date` is still empty for today, so a day can
+never send twice. A single fixed daily job would silently skip any hour set after it.
 
 ## Status
 
