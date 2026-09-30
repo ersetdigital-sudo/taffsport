@@ -137,9 +137,20 @@ function NavIcon({ name, size = 18 }: { name: string; size?: number }) {
   );
 }
 
-export default function MaklonDashboard() {
-  const [orders, setOrders] = useState<OrderData[]>([]);
-  const [loading, setLoading] = useState(true);
+/**
+ * @param initialOrders Data yang sudah dibaca server (lihat
+ *   app/pesanan/maklon/page.tsx) — tabel langsung berisi data di HTML pertama,
+ *   tanpa momen "Memuat data...".
+ */
+export default function MaklonDashboard({
+  initialOrders,
+}: {
+  initialOrders?: OrderData[];
+} = {}) {
+  const [orders, setOrders] = useState<OrderData[]>(initialOrders ?? []);
+  const [loading, setLoading] = useState(!initialOrders);
+  // Data awal dari server → tidak perlu fetch ulang saat halaman baru dibuka.
+  const hasServerData = (initialOrders?.length ?? 0) > 0;
   const [filter, setFilter] = useState<FilterKey>("all");
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -180,9 +191,9 @@ export default function MaklonDashboard() {
   }, []);
 
   useEffect(() => {
-    fetchOrders();
+    if (!hasServerData) fetchOrders();
     fetchSteps();
-  }, [fetchOrders, fetchSteps]);
+  }, [fetchOrders, fetchSteps, hasServerData]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -600,10 +611,15 @@ export default function MaklonDashboard() {
               </button>
             </div>
             <AddForm
-              onSaved={(msg) => {
-                fetchOrders();
+              onSaved={(msg, created) => {
+                // Baris baru langsung dipasang dari respons server supaya panel
+                // bisa ditutup tanpa menunggu daftar dimuat ulang.
+                if (created) {
+                  setOrders((prev) => [created, ...prev.filter((o) => o.id !== created.id)]);
+                }
                 closeAll();
                 showToast(msg);
+                fetchOrders();
               }}
               onCancel={closeAll}
             />
@@ -647,7 +663,11 @@ function AddForm({
   onSaved,
   onCancel,
 }: {
-  onSaved: (msg: string) => void;
+  /**
+   * `order` = maklon yang baru dibuat, dikirim balik server. Dipakai induk
+   * untuk menampilkan barisnya SEKETIKA tanpa menunggu daftar dimuat ulang.
+   */
+  onSaved: (msg: string, order?: OrderData) => void;
   onCancel: () => void;
 }) {
   const DRAFT_KEY = "maklon_add_order_draft";
@@ -798,7 +818,7 @@ function AddForm({
       if (usedProducts.length > 0) setProductOptions(rememberProducts(usedProducts));
       shouldSkipDraftSaveRef.current = true;
       localStorage.removeItem(DRAFT_KEY);
-      onSaved(`Maklon ${data.order?.id || ""} berhasil ditambahkan`);
+      onSaved(`Maklon ${data.order?.id || ""} berhasil ditambahkan`, data.order);
     } catch {
       setError("Gagal menyimpan maklon, coba lagi");
     } finally {

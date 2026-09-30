@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/admin-auth";
 import { removedCloudinaryUrls } from "@/lib/cloudinary";
 import { destroyCloudinaryAssets } from "@/lib/cloudinary-server";
@@ -8,6 +8,11 @@ import {
   clampMaklonStep,
   maklonStatusFromStep,
 } from "@/lib/maklon-status";
+
+// Notifikasi WA dikirim SETELAH respons (lihat `after` di bawah) dan Fonnte bisa
+// butuh sampai 10 detik — function perlu ruang selama itu supaya kirimannya
+// tidak ikut mati saat respons sudah terkirim.
+export const maxDuration = 30;
 
 export async function PATCH(
   request: Request,
@@ -116,16 +121,25 @@ export async function PATCH(
   const notification: { stage: number | null; status: string } = { stage: newStage, status: "none" };
 
   if (updatedOrder && newStage !== null && newStage !== previousStage) {
-    notification.status = await triggerMaklonStageNotification(
-      supabase,
-      updatedOrder.id,
-      {
-        customer_name: existing.customer_name,
-        order_number: existing.order_number,
-        customer_phone: existing.customer_phone,
-      },
-      newStage
-    );
+    // "queued" = sudah antre dikirim, hasilnya belum diketahui. Toast di
+    // dashboard menyebut ini apa adanya, bukan mengklaim "terkirim".
+    notification.status = "queued";
+    after(async () => {
+      try {
+        await triggerMaklonStageNotification(
+          supabase,
+          updatedOrder.id,
+          {
+            customer_name: existing.customer_name,
+            order_number: existing.order_number,
+            customer_phone: existing.customer_phone,
+          },
+          newStage
+        );
+      } catch (e) {
+        console.error("[maklon/status] notifikasi tahap gagal:", e);
+      }
+    });
   } else if (newStage !== null && newStage === previousStage) {
     notification.status = "skipped_same_stage";
   }

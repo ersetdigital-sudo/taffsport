@@ -9,9 +9,15 @@
  * Dipakai form Pesanan (papan produksi, detail, edit) dan form Maklon supaya
  * semua tempat menyebut hal yang sama. Kalau WA gagal, admin harus tahu — dulu
  * kegagalan itu hilang tanpa jejak di form Pesanan.
+ *
+ * `queued` bukan hasil kirim, tapi penanda bahwa WA-nya dikirim di latar
+ * belakang (lihat `after()` di route pesanan) — jadi toast tidak boleh
+ * mengklaim "terkirim".
  */
 export function waNote(status?: string | null): string {
   switch (status) {
+    case "queued":
+      return " · WA sedang dikirim";
     case "sent":
       return " · WA terkirim";
     case "failed":

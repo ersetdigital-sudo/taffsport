@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/admin-auth";
 import { removedCloudinaryUrls } from "@/lib/cloudinary";
 import { destroyCloudinaryAssets } from "@/lib/cloudinary-server";
@@ -15,7 +15,11 @@ import { loadStepOrder } from "@/lib/step-order-server";
  * tahap BENAR-BENAR berubah, anti-duplikat lewat unique (order_id, stage) di
  * stage_notification_logs, dan kegagalan kirim WA tidak menggagalkan update
  * status.
+ *
+ * Notifikasi WA-nya dikirim lewat `after()`: kirim Fonnte bisa 10 detik dan
+ * sebelumnya operator menunggu selama itu hanya untuk menyimpan satu tahap.
  */
+export const maxDuration = 30;
 export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -213,16 +217,21 @@ export async function PATCH(
   // Notifikasi WhatsApp — hanya bila tahap berubah.
   const notification: {
     stage: number | null;
-    status: "none" | "skipped_same_stage" | NotificationTriggerStatus;
+    status: "none" | "skipped_same_stage" | "queued" | NotificationTriggerStatus;
   } = { stage: newStage, status: "none" };
 
   if (updatedOrder && newStage !== null && newStage !== previousStage) {
-    notification.status = await triggerStageNotification(
-      supabase,
-      updatedOrder.id,
-      existing,
-      newStage
-    );
+    // "queued" = sudah masuk antrean kirim, hasilnya belum diketahui. Toast di
+    // dashboard menyebut ini apa adanya supaya operator tidak menyimpulkan
+    // "terkirim" dari sesuatu yang belum tentu terkirim.
+    notification.status = "queued";
+    after(async () => {
+      try {
+        await triggerStageNotification(supabase, updatedOrder.id, existing, newStage);
+      } catch (e) {
+        console.error("[status] notifikasi tahap gagal:", e);
+      }
+    });
   } else if (newStage !== null && newStage === previousStage) {
     notification.status = "skipped_same_stage";
   }
