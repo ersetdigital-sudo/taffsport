@@ -755,9 +755,11 @@ export default function PesananDashboard() {
           orderId={openId}
           orders={orders}
           onClose={() => setOpenId(null)}
-          onSaved={(msg) => {
+          onSaved={(msg, opts) => {
             fetchOrders();
-            setOpenId(null);
+            // Tahap yang disimpan belum punya foto → panel tetap terbuka supaya
+            // operator bisa langsung mengunggahnya (lihat DetailSheet.save).
+            if (!opts?.keepOpen) setOpenId(null);
             showToast(msg);
           }}
           onToast={showToast}
@@ -3692,7 +3694,8 @@ function DetailSheet({
   orderId: string;
   orders: OrderData[];
   onClose: () => void;
-  onSaved: (msg: string) => void;
+  /** `keepOpen: true` = panel jangan ditutup (mis. operator masih perlu upload foto). */
+  onSaved: (msg: string, opts?: { keepOpen?: boolean }) => void;
   onToast: (msg: string) => void;
   steps: StepRow[];
 }) {
@@ -3711,6 +3714,10 @@ function DetailSheet({
     order?.stage_photos || {}
   );
   const [uploadingStage, setUploadingStage] = useState(false);
+  // Stempel waktu kapan operator "dituntun" ke bagian foto (setelah menyimpan
+  // tahap yang belum punya foto). 0 = tidak sedang dituntun.
+  const [photoNudgeAt, setPhotoNudgeAt] = useState(0);
+  const photoSectionRef = useRef<HTMLDivElement>(null);
   const [saving, setSaving] = useState(false);
   const [resending, setResending] = useState(false);
   const [kirimError, setKirimError] = useState("");
@@ -3763,6 +3770,24 @@ function DetailSheet({
       else setEditProductRows([{ product: order.product_name || "", custom: false, qty: String(order.quantity || "").replace(/\D/g, "") }]);
     }
   }, [order]);
+
+  // Setelah tahap disimpan tanpa foto, panel digeser mulus ke kartu Foto Progres
+  // Tahap dan kartunya disorot sebentar — supaya operator sadar ada langkah
+  // lanjutan, bukan cuma melihat toast lalu panel tertutup.
+  useEffect(() => {
+    if (!photoNudgeAt) return;
+    // Jeda satu frame: tinggi konten baru berubah karena data order di-refresh,
+    // jadi posisi kartunya belum stabil saat effect ini jalan.
+    const scroll = setTimeout(() => {
+      photoSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 90);
+    const clear = setTimeout(() => setPhotoNudgeAt(0), 6000);
+    return () => {
+      clearTimeout(scroll);
+      clearTimeout(clear);
+    };
+  }, [photoNudgeAt]);
+
   const updateEditRow = (idx: number, patch: Partial<typeof editProductRows[0]>) => setEditProductRows((rows) => rows.map((r, i) => (i === idx ? { ...r, ...patch } : r)));
 
   const handleWoUpload = async (file: File) => {
@@ -3818,6 +3843,10 @@ function DetailSheet({
   const stagePhotoValue = (currentSlug && stagePhotos[currentSlug]) || "";
   const savedStagePhoto = (currentSlug && order.stage_photos?.[currentSlug]) || "";
   const stagePhotoChanged = !!currentSlug && stagePhotoValue !== savedStagePhoto;
+  // Jumlah tahap yang sudah ada fotonya — penanda kemajuan di judul bagian foto,
+  // supaya kelihatan mana tahap yang masih kosong.
+  const fotosTahap = Object.values(stagePhotos).filter(Boolean).length;
+  const photoNudgeOn = photoNudgeAt > 0;
 
   const save = async () => {
     setKirimError("");
@@ -3858,9 +3887,17 @@ function DetailSheet({
         setKirimError(data.error || "Gagal menyimpan");
         return;
       }
-      onSaved(`Perubahan tersimpan${waNote(data?.notification?.status)}`);
+      // Belum ada foto untuk tahap ini → panel dibiarkan terbuka dan langsung
+      // diarahkan ke kartu foto, biar alurnya "update tahap → tambah foto".
+      const needsPhoto = !stagePhotoValue;
+      onSaved(`Perubahan tersimpan${waNote(data?.notification?.status)}`, {
+        keepOpen: needsPhoto,
+      });
+      if (needsPhoto) setPhotoNudgeAt(Date.now());
     } catch {
-      onSaved("Gagal menyimpan");
+      // Gagal simpan juga jangan menutup panel — kalau ditutup, penyebabnya
+      // hilang sebelum sempat dibaca operator.
+      onSaved("Gagal menyimpan", { keepOpen: true });
     } finally {
       setSaving(false);
     }
@@ -4022,7 +4059,15 @@ function DetailSheet({
                         {isDone && <div className="text-[11px] text-[var(--pas-muted)] opacity-70 mt-0.5">Selesai</div>}
                         {isCur && <div className="text-[11px] text-[var(--pas-muted)] opacity-70 mt-0.5">Sedang dikerjakan</div>}
                         {stagePhotos[slugFromStepName(s.name) || ""] && (
-                          <div className="text-[11px] text-[var(--pas-accent)] mt-0.5">Ada foto</div>
+                          <div className="mt-1">
+                            <span className="inline-flex items-center gap-1 rounded-md bg-[rgba(255,90,31,.12)] px-1.5 py-0.5 text-[10px] font-semibold text-[var(--pas-accent)]">
+                              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                                <path d="M4 8h2.6l1.2-2h8.4L17.4 8H20a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+                                <circle cx="12" cy="13" r="3.1" />
+                              </svg>
+                              Foto
+                            </span>
+                          </div>
                         )}
                       </div>
                     </button>
@@ -4033,59 +4078,123 @@ function DetailSheet({
           </div>
 
           {/* ── FOTO PROGRES TAHAP ── */}
-          <p className="pas-stencil text-[9px] text-[var(--pas-muted)] mt-6 mb-2">Foto Progres Tahap</p>
-          <div className="rounded-2xl border border-[var(--pas-line)] bg-[var(--pas-surface)] shadow-[0_1px_3px_rgba(0,0,0,.04)] overflow-hidden">
-            <div className="px-4 py-3 border-b border-[var(--pas-line)] flex items-center justify-between gap-3">
-              <span className="text-[13.5px] font-bold text-[var(--pas-ink-1)] min-w-0 truncate">
-                {step}. {steps[step - 1]?.name || `Tahap ${step}`}
+          <div className="mt-6 mb-2 flex flex-wrap items-end justify-between gap-x-3 gap-y-1">
+            <p className="pas-stencil text-[9px] text-[var(--pas-muted)]">Foto Progres Tahap</p>
+            <span className="text-[10.5px] text-[var(--pas-muted)]">
+              <b className={fotosTahap > 0 ? "text-[var(--pas-accent)]" : ""}>{fotosTahap}</b> dari {steps.length} tahap ada foto
+            </span>
+          </div>
+          <div
+            ref={photoSectionRef}
+            className={`overflow-hidden rounded-2xl border bg-[var(--pas-surface)] shadow-[0_1px_3px_rgba(0,0,0,.04)] transition-colors ${
+              photoNudgeOn
+                ? "pas-nudge border-[var(--pas-accent)]"
+                : stagePhotoValue
+                  ? "border-[var(--pas-line)]"
+                  : "border-[rgba(255,90,31,.30)]"
+            }`}
+          >
+            <div className="flex items-center gap-3 border-b border-[var(--pas-line)] px-4 py-3" style={{ background: "rgba(10, 10, 10,.03)" }}>
+              <span
+                className="grid h-7 w-7 shrink-0 place-items-center rounded-lg transition-colors"
+                style={{
+                  background: stagePhotoValue && !photoNudgeOn ? "rgba(10, 10, 10,.08)" : "var(--pas-accent)",
+                  color: stagePhotoValue && !photoNudgeOn ? "var(--pas-muted)" : "#fff",
+                }}
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <path d="M4 8h2.6l1.2-2h8.4L17.4 8H20a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+                  <circle cx="12" cy="13" r="3.1" />
+                </svg>
               </span>
-              {stagePhotoValue && (
-                <button
-                  type="button"
-                  onClick={() =>
-                    currentSlug &&
-                    setStagePhotos((prev) => ({ ...prev, [currentSlug]: "" }))
-                  }
-                  className="text-[11.5px] font-semibold text-[var(--pas-muted)] hover:text-red-600 transition shrink-0"
-                >
-                  Hapus foto
-                </button>
-              )}
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-[13.5px] font-bold text-[var(--pas-ink-1)]">
+                  {step}. {steps[step - 1]?.name || `Tahap ${step}`}
+                </p>
+                <p className="text-[11px] text-[var(--pas-muted)]">
+                  {uploadingStage
+                    ? "Mengunggah foto…"
+                    : stagePhotoValue
+                      ? stagePhotoChanged
+                        ? "Foto siap — belum disimpan"
+                        : "Foto sudah tampil di halaman customer"
+                      : "Belum ada foto untuk tahap ini"}
+                </p>
+              </div>
+              <span className={`pas-delta shrink-0 ${stagePhotoValue ? (stagePhotoChanged ? "ok" : "good") : "flat"}`}>
+                {stagePhotoValue ? (stagePhotoChanged ? "Belum disimpan" : "Ada foto") : "Kosong"}
+              </span>
             </div>
+
             <div className="p-4">
-              {stagePhotoValue && (
-                <div className="flex items-start gap-3 mb-4">
+              {stagePhotoValue ? (
+                <div className="flex items-start gap-3">
                   <button
                     type="button"
                     onClick={() => setZoomUrl(stagePhotoValue)}
-                    className="group relative w-[104px] h-[104px] shrink-0 rounded-xl overflow-hidden border border-[var(--pas-line)] hover:border-[var(--pas-accent)] transition"
+                    className="group relative h-[104px] w-[104px] shrink-0 overflow-hidden rounded-xl border border-[var(--pas-line)] transition hover:border-[var(--pas-accent)]"
                     title="Klik untuk memperbesar"
                     aria-label={`Perbesar foto tahap ${steps[step - 1]?.name || step}`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={optimizeImageUrl(stagePhotoValue, 320)} loading="lazy" alt={`Foto tahap ${steps[step - 1]?.name || step}`} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    <span className="pointer-events-none absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full bg-black/55 text-white border border-white/15 opacity-90">
+                    <img src={optimizeImageUrl(stagePhotoValue, 320)} loading="lazy" alt={`Foto tahap ${steps[step - 1]?.name || step}`} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
+                    <span className="pointer-events-none absolute right-1 top-1 grid h-5 w-5 place-items-center rounded-full border border-white/15 bg-black/55 text-white opacity-90">
                       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5M11 8v6M8 11h6" /></svg>
                     </span>
                   </button>
-                  <p className="text-[12px] text-[var(--pas-muted)] leading-relaxed">
-                    Foto ini tampil di halaman tracking customer pada tahap ini.
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[12px] leading-relaxed text-[var(--pas-muted)]">
+                      Foto ini tampil di halaman tracking customer pada tahap
+                      {" "}
+                      <b className="text-[var(--pas-ink-2)]">{steps[step - 1]?.name || `Tahap ${step}`}</b>.
+                    </p>
                     {stagePhotoChanged && (
-                      <b className="block mt-1 text-[var(--pas-accent)]">Belum disimpan — klik Simpan Perubahan.</b>
+                      <b className="mt-1.5 block text-[12px] text-[var(--pas-accent)]">
+                        Jangan lupa klik Simpan Perubahan.
+                      </b>
                     )}
-                  </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <label className="pas-btn-ghost inline-flex cursor-pointer items-center gap-1.5 px-3 py-2 text-[12px]">
+                        <input type="file" accept={IMAGE_ACCEPT} className="hidden" disabled={uploadingStage} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleStagePhotoUpload(f); e.currentTarget.value = ""; }} />
+                        {uploadingStage ? "Mengunggah…" : "Ganti foto"}
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          currentSlug &&
+                          setStagePhotos((prev) => ({ ...prev, [currentSlug]: "" }))
+                        }
+                        className="rounded-lg border border-[var(--pas-line)] bg-[var(--pas-surface)] px-3 py-2 text-[12px] font-semibold text-[var(--pas-muted)] transition hover:border-red-300 hover:text-red-600"
+                      >
+                        Hapus
+                      </button>
+                    </div>
+                  </div>
                 </div>
+              ) : (
+                <label
+                  className={`flex cursor-pointer flex-col items-center gap-1.5 rounded-xl border-[1.5px] border-dashed px-4 py-6 text-center transition ${
+                    photoNudgeOn
+                      ? "border-[var(--pas-accent)] bg-[rgba(255,90,31,.06)]"
+                      : "border-[var(--pas-line)] hover:border-[var(--pas-accent)] hover:bg-[rgba(10,10,10,.04)]"
+                  }`}
+                >
+                  <input type="file" accept={IMAGE_ACCEPT} className="hidden" disabled={uploadingStage} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleStagePhotoUpload(f); e.currentTarget.value = ""; }} />
+                  <span className="grid h-10 w-10 place-items-center rounded-full" style={{ background: "rgba(255,90,31,.12)", color: "var(--pas-accent)" }}>
+                    {uploadingStage ? (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" className="animate-spin"><path d="M21 12a9 9 0 1 1-3.2-6.9" /></svg>
+                    ) : (
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+                    )}
+                  </span>
+                  <span className="text-[13.5px] font-bold text-[var(--pas-ink-1)]">
+                    {uploadingStage ? "Mengunggah…" : "Tambah foto tahap ini"}
+                  </span>
+                  <span className="max-w-[280px] text-[11px] leading-relaxed text-[var(--pas-muted)]">
+                    JPG / PNG / WebP, maks 2 MB — foto langsung tampil di halaman tracking customer.
+                  </span>
+                </label>
               )}
-              <label className="flex items-center gap-3 rounded-xl border-[1.5px] border-dashed border-[var(--pas-line)] hover:border-[var(--pas-accent)] cursor-pointer transition px-4 py-3.5 text-[var(--pas-muted)] hover:text-[var(--pas-accent)] hover:bg-[rgba(10,10,10,.04)]">
-                <input type="file" accept={IMAGE_ACCEPT} className="hidden" disabled={uploadingStage} onChange={(e) => { const f = e.target.files?.[0]; if (f) handleStagePhotoUpload(f); e.currentTarget.value = ""; }} />
-                <span className="text-[18px] leading-none">{uploadingStage ? "…" : stagePhotoValue ? "↻" : "+"}</span>
-                <span className="text-[13px] font-semibold">
-                  {uploadingStage ? "Mengunggah…" : stagePhotoValue ? "Ganti foto tahap ini" : "Tambah foto tahap ini"}
-                </span>
-              </label>
-              <p className="text-[11px] text-[var(--pas-muted)] mt-2 opacity-70">
-                Satu foto per tahap, tampil di timeline customer setelah disimpan.
-              </p>
             </div>
           </div>
 

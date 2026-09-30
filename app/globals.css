@@ -2246,6 +2246,20 @@
 .pas-delta.good { background: #E7F3E7; color: #4F7A4E; }
 .pas-delta.bad { background: #FFE9DF; color: #E84A12; }
 
+/* Sorotan lembut untuk mengarahkan operator ke langkah berikutnya — dipakai
+   setelah tahap produksi disimpan tanpa foto (lihat DetailSheet). Sengaja
+   cincin yang melebar lalu hilang, bukan denyut warna, supaya tidak terasa
+   seperti error. */
+@keyframes pas-nudge {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 90, 31,.38); }
+  70%  { box-shadow: 0 0 0 14px rgba(255, 90, 31, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 90, 31, 0); }
+}
+.pas-nudge { animation: pas-nudge 1.5s ease-out 4; }
+@media (prefers-reduced-motion: reduce) {
+  .pas-nudge { animation: none; }
+}
+
 .pas-field {
   background: var(--pas-surface); border: 1px solid var(--pas-line);
   border-radius: 10px; color: var(--pas-ink-1);
