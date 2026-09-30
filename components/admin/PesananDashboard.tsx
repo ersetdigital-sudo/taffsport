@@ -586,19 +586,12 @@ export default function PesananDashboard() {
       {/* â”€â”€ MAIN â”€â”€ */}
       <div className="flex-1 min-w-0">
         <header className="pas-topbar">
-          <div className="px-5 sm:px-8 h-16 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3 min-w-0">
-<img src="/brand-logo.png" alt="TAFF Sportwear" className="h-9 w-auto object-contain lg:hidden" />
-              <div className="min-w-0">
-                <p className="pas-kicker">{meta.crumb}</p>
-                <h1 className="pas-display pas-title mt-1 truncate">
-                  {meta.title}
-                </h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
+          <div className="px-4 sm:px-8 h-16 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              {/* Logo tidak lagi dipakai di topbar (terlalu sempit di ponsel) —
+                  logo brand hidup di menu/drawer saja. */}
               <button
-                className="lg:hidden p-2.5 rounded-lg border border-[var(--pas-line)] text-[var(--pas-muted)] hover:text-[var(--pas-ink-1)] hover:bg-[var(--pas-surface-2)] transition"
+                className="lg:hidden -ml-1.5 shrink-0 p-2.5 rounded-lg border border-[var(--pas-line)] text-[var(--pas-muted)] hover:text-[var(--pas-ink-1)] hover:bg-[var(--pas-surface-2)] transition"
                 onClick={() => setShowMobileNav(true)}
                 aria-label="Buka menu"
               >
@@ -606,20 +599,31 @@ export default function PesananDashboard() {
                   <path d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
+              <div className="min-w-0">
+                <p className="pas-kicker truncate">{meta.crumb}</p>
+                <h1 className="pas-display pas-title mt-1 truncate">
+                  {meta.title}
+                </h1>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
               <span className="hidden lg:inline text-[12.5px] text-[var(--pas-muted)]">
                 {formatShortDateID(new Date())}
               </span>
               {currentView === "pesanan" && (
                 <button
                   onClick={() => setShowAdd(true)}
-                  className="pas-btn-accent px-3.5 py-2.5 text-[14px] sm:px-4"
+                  className="pas-btn-accent inline-flex items-center justify-center gap-1 px-3 py-2.5 text-[13px] sm:px-4 sm:text-[14px]"
+                  aria-label="Tambah pesanan baru"
                 >
-                  <span className="sm:inline">+ </span>Pesanan
+                  <span aria-hidden="true">+</span>
+                  <span className="hidden sm:inline">Pesanan</span>
                 </button>
               )}
+              {/* "Keluar" pindah ke menu di ponsel supaya topbar tidak berjejal */}
               <button
                 onClick={handleLogout}
-                className="pas-btn-ghost px-3 py-2 text-[13px] text-[var(--pas-muted)]"
+                className="pas-btn-ghost hidden lg:inline-block px-3 py-2 text-[13px] text-[var(--pas-muted)]"
               >
                 Keluar
               </button>
@@ -667,12 +671,12 @@ export default function PesananDashboard() {
 
       {/* â”€â”€ MOBILE NAV DRAWER â”€â”€ */}
       <Sheet open={showMobileNav} onOpenChange={setShowMobileNav}>
-        <SheetContent side="left" className="p-5 bg-[#0A0A0A] text-white border-r border-white/10 w-[280px] [&>button]:text-white/50 [&>button]:hover:text-white [&>button]:hover:bg-white/10 [&>button]:rounded-lg [&>button]:p-2 [&>button]:transition">
-          {/* Drawer header */}
-          <div className="flex items-center mb-2">
-            <a href="/" className="flex items-center gap-2.5">
-              <img src="/brand-logo.png" alt="TAFF Sportwear" className="h-8 w-auto object-contain" />
-              <span className="pas-brand-name !text-[16px]">TAFF Sportwear</span>
+        <SheetContent side="left" className="p-5 bg-[#0A0A0A] text-white border-r border-white/10 w-[280px] overflow-y-auto flex flex-col [&>button]:text-white/50 [&>button]:hover:text-white [&>button]:hover:bg-white/10 [&>button]:rounded-lg [&>button]:p-2 [&>button]:transition">
+          {/* Drawer header — satu-satunya tempat logo brand muncul di ponsel */}
+          <div className="flex items-center mb-2 pr-8">
+            <a href="/" className="flex flex-col gap-2 min-w-0">
+              <img src="/brand-logo.png" alt="TAFF Sportwear" className="h-10 w-auto max-w-[150px] object-contain object-left" />
+              <span className="pas-brand-name !text-[15px]">TAFF Sportwear</span>
             </a>
           </div>
           <p className="pas-navsec">Operasional</p>
@@ -720,6 +724,24 @@ export default function PesananDashboard() {
               </a>
             ))}
           </nav>
+
+          {/* Akun + Keluar: di ponsel tombol Keluar pindah ke sini dari topbar */}
+          <div className="pas-userbox mt-6 p-3 flex items-center gap-3">
+            <span className="pas-avatar pas-avatar-invert">AD</span>
+            <span className="leading-tight min-w-0">
+              <span className="block text-[13.5px] font-semibold truncate">Admin TAFF</span>
+              <span className="block text-[11.5px] opacity-70 truncate">admin@taffsport.id</span>
+            </span>
+          </div>
+          <button
+            onClick={() => {
+              setShowMobileNav(false);
+              handleLogout();
+            }}
+            className="pas-btn-ghost mt-3 w-full px-3 py-3 text-[13.5px] text-[var(--pas-muted)]"
+          >
+            Keluar
+          </button>
         </SheetContent>
       </Sheet>
 

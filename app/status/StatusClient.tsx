@@ -20,7 +20,7 @@ import {
 } from "@/lib/order-status";
 import { formatShortDateTimeID } from "@/lib/format-date";
 import { optimizeImageUrl } from "@/lib/cloudinary";
-import { resolveStepOrder, type StepOrder } from "@/lib/step-order";
+import { labelFromSlug, resolveStepOrder, type StepOrder } from "@/lib/step-order";
 
 const CHECK_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
 const SPIN_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3.2-6.9"/></svg>';
@@ -412,6 +412,17 @@ export default function StatusClient({
   const isShipped =
     (normalizedStatus === "kirim" || normalizedStatus === "selesai") && hasTracking;
   const pct = getProgress(step, hasTracking);
+  // Dua label kecil di bawah bar progres TIDAK ditulis mati ("Desain" / "Kirim").
+  // Kiri = tahap pesanan ini sekarang, jadi kalau pesanannya sedang di Layout,
+  // yang tampil ya "Layout". Kanan = tahap terakhir alur produksi.
+  const stageNameOf = (n: number) => {
+    const slug = stepOrder[Math.min(Math.max(n, 1), stepOrder.length) - 1];
+    return slug ? labelFromSlug(slug) : "";
+  };
+  const progressFromLabel = isOrderDone ? stageNameOf(totalSteps) : stageNameOf(step);
+  const progressToLabel = isOrderDone
+    ? ORDER_STATUS_LABELS.selesai
+    : stageNameOf(totalSteps);
   const lastUpdate = history.length > 0 ? history[history.length - 1] : null;
   const waLink = waMeUrl(
     brand.whatsapp_number,
@@ -539,9 +550,9 @@ export default function StatusClient({
                     <span key={i} className={i + 1 < step ? "on" : i + 1 === step ? "cur" : ""}></span>
                   ))}
                 </div>
-                <div className="dpo-mono mt-2.5 flex justify-between text-[10px] uppercase tracking-wider text-[#5C5C5C]">
-                  <span>Desain</span>
-                  <span>Kirim</span>
+                <div className="dpo-mono mt-2.5 flex justify-between gap-3 text-[10px] uppercase tracking-wider text-[#5C5C5C]">
+                  <span className="truncate">{progressFromLabel}</span>
+                  <span className="truncate text-right">{progressToLabel}</span>
                 </div>
               </div>
             </section>
