@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { createClient } from "@supabase/supabase-js";
 import { createServiceClient } from "@/lib/supabase/server";
 import { verifyToken } from "@/lib/verify-token";
+import { clientIp, isTokenSharedAcrossDevices } from "@/lib/track-guard";
 import { MAKLON_STAGES, MAKLON_STEP_PROGRESS } from "@/lib/maklon-status";
 import { formatDateTimeWIB, formatShortDateID } from "@/lib/format-date";
 import { WA_NUMBER } from "@/lib/data";
@@ -11,9 +13,13 @@ import { waMeUrl } from "@/lib/wa";
  * Halaman tracking publik untuk pesanan MAKLON.
  *
  * Dipakai oleh link di notifikasi WhatsApp (`buildMaklonTrackingUrl`).
- * Aksesnya pakai token HMAC 30 hari yang sama dengan link jersey
- * (lib/verify-token) — kalau token tidak ada/kedaluwarsa, customer
- * diarahkan hubungi CS, bukan jatuh ke halaman "pesanan tidak ditemukan".
+ * Aksesnya pakai token HMAC yang sama dengan link jersey (lib/verify-token) —
+ * kalau token tidak ada/kedaluwarsa, customer diarahkan hubungi CS, bukan
+ * jatuh ke halaman "pesanan tidak ditemukan".
+ *
+ * Token yang dibuka dari banyak perangkat berbeda (indikasi link diteruskan ke
+ * grup) juga ditolak di sini — halaman maklon belum punya verifikasi nomor HP
+ * sendiri, jadi jalan amannya minta link baru ke CS.
  *
  * Halaman ini SENGAJA terpisah dari /status (yang khusus pesanan jersey,
  * 11 tahap, dan punya alur verifikasi nomor HP sendiri) supaya alur jersey
@@ -225,7 +231,16 @@ export default async function MaklonStatusPage({
   const { order: orderParam, token } = await searchParams;
   const orderNumber = (orderParam || "").trim().toUpperCase();
   const session = token ? verifyToken(token) : null;
-  const authorized = !!session && !!orderNumber && session.orderId === orderNumber;
+
+  // Pengaman "link dibagi": IP di sini dipakai sebagai penanda perangkat, bukan
+  // pengunci — lihat lib/track-guard.ts untuk alasan dan batasannya.
+  const tokenShared =
+    !!token && !!session
+      ? isTokenSharedAcrossDevices(token, clientIp(await headers()))
+      : false;
+
+  const authorized =
+    !!session && !!orderNumber && session.orderId === orderNumber && !tokenShared;
 
   const brand = await loadBrand();
   // Nomor dari pengaturan brand formatnya lokal (08...); konversi ke format
@@ -244,11 +259,15 @@ export default async function MaklonStatusPage({
       <Shell csHref={csHref}>
         <div className="pt-7 sm:pt-12">
           <InfoCard title="Status Pesanan Maklon">
-            <h1 className="trk-display text-[22px] leading-tight">Link tidak valid atau kedaluwarsa</h1>
+            <h1 className="trk-display text-[22px] leading-tight">
+              {tokenShared
+                ? "Link ini sepertinya dibagikan ke orang lain"
+                : "Link tidak valid atau kedaluwarsa"}
+            </h1>
             <p className="mt-3 text-[14px] leading-relaxed text-[#A3A3A3]">
-              Link ini cuma bisa dibuka dari pesan WhatsApp resmi kami dan berlaku 30 hari.
-              Kalau link-nya sudah lama, minta link baru ke CS ya — atau langsung tanya
-              progres pesanan kamu.
+              {tokenShared
+                ? "Link dari WhatsApp itu khusus untuk pemesan. Karena link ini dibuka dari beberapa perangkat berbeda, aksesnya kami tutup demi keamanan data pesanan. Minta link baru ke CS ya."
+                : "Link ini cuma bisa dibuka dari pesan WhatsApp resmi kami dan berlaku 7 hari. Kalau link-nya sudah lama, minta link baru ke CS ya — atau langsung tanya progres pesanan kamu."}
             </p>
             <a
               href={csHref}

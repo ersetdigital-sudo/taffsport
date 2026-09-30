@@ -21,6 +21,44 @@ import { formatShortDateTimeID } from "@/lib/format-date";
 import { optimizeImageUrl } from "@/lib/cloudinary";
 import { labelFromSlug, resolveStepOrder, type StepOrder } from "@/lib/step-order";
 
+/**
+ * Penyimpanan token di perangkat customer.
+ *
+ * `localStorage` = token hasil VERIFIKASI NOMOR HP (berlaku 30 hari) — inilah
+ * yang membuat customer tidak perlu mengetik nomor HP tiap kali buka. Token
+ * dari link WhatsApp sengaja hanya ditaruh di `sessionStorage`: link itu bisa
+ * diteruskan ke siapa pun, jadi tidak layak "diingat" perangkat.
+ *
+ * Semua akses dibungkus try — localStorage bisa diblokir (mode privat / izin
+ * situs), dan itu tidak boleh membuat halaman status gagal terbuka.
+ */
+function storedToken(key: string): string | null {
+  try {
+    const persisted = localStorage.getItem(key);
+    if (persisted) return persisted;
+  } catch {
+    /* lanjut ke sessionStorage */
+  }
+  try {
+    return sessionStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredToken(key: string) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    /* diabaikan */
+  }
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    /* diabaikan */
+  }
+}
+
 const CHECK_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>';
 const SPIN_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-3.2-6.9"/></svg>';
 
@@ -111,6 +149,9 @@ export default function StatusClient({
   const [verifyError, setVerifyError] = useState("");
   const [verifying, setVerifying] = useState(false);
   const [showPhoneModal, setShowPhoneModal] = useState(false);
+  // True kalau server menolak token karena link dibuka dari banyak perangkat
+  // berbeda (indikasi link diteruskan ke orang lain / grup WA).
+  const [linkShared, setLinkShared] = useState(false);
 
   const [order, setOrder] = useState<any>(null);
   const [history, setHistory] = useState<any[]>([]);
@@ -135,7 +176,7 @@ export default function StatusClient({
     // akan gagal dan fallback ke verifikasi HP seperti biasa.
     if (urlToken) sessionStorage.setItem(tokenKey, urlToken);
 
-    const token = sessionStorage.getItem(tokenKey);
+    const token = storedToken(tokenKey);
 
     if (!token) {
       // No token — require fresh verification
@@ -147,13 +188,21 @@ export default function StatusClient({
     fetch(`/api/track/session?order=${encodeURIComponent(orderId)}`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-      .then((r) => {
+      .then(async (r) => {
+        // Token link yang sudah dipakai dari banyak perangkat ditolak server
+        // dengan `code: link_shared` → tampilkan alasan di modal verifikasi,
+        // bukan sekadar "pesanan tidak ditemukan".
+        if (r.status === 403) {
+          const body = await r.json().catch(() => null);
+          if (body?.code === "link_shared") setLinkShared(true);
+          throw new Error("no session");
+        }
         if (!r.ok) throw new Error("no session");
         return r.json();
       })
       .then((data) => {
         if (!data.order) {
-          sessionStorage.removeItem(tokenKey);
+          clearStoredToken(tokenKey);
           sessionStorage.removeItem(key);
           setShowPhoneModal(true);
           return;
@@ -183,8 +232,8 @@ export default function StatusClient({
           });
       })
       .catch(() => {
-        // Token expired/invalid — clear and require fresh verification
-        sessionStorage.removeItem(tokenKey);
+        // Token expired/invalid/kedaluwarsa — buang lalu minta verifikasi ulang.
+        clearStoredToken(tokenKey);
         sessionStorage.removeItem(key);
         setShowPhoneModal(true);
       });
@@ -286,8 +335,13 @@ export default function StatusClient({
         return;
       }
 
-      // Store verification
+      // Token hasil verifikasi berlaku 30 hari → "ingat perangkat ini".
       if (data.token) {
+        try {
+          localStorage.setItem(`taff_token_${orderId}`, data.token);
+        } catch {
+          /* localStorage diblokir — sessionStorage di bawah jadi cadangan */
+        }
         sessionStorage.setItem(`taff_token_${orderId}`, data.token);
       }
       sessionStorage.setItem(`taff_verified_${orderId}`, JSON.stringify(data));
@@ -295,6 +349,7 @@ export default function StatusClient({
       setHistory(data.history);
       setLoaded(true);
       setShowPhoneModal(false);
+      setLinkShared(false);
     } catch {
       setVerifyError("Terjadi kesalahan. Coba lagi.");
       setVerifying(false);
@@ -354,6 +409,14 @@ export default function StatusClient({
                     Masukkan nomor HP untuk melihat{" "}
                     <span className="text-white font-semibold">{orderId}</span>
                   </p>
+
+                  {linkShared && (
+                    <p className="mb-5 rounded-xl border border-[rgba(255,90,31,.45)] bg-[rgba(255,90,31,.10)] px-4 py-3 text-[13px] leading-relaxed text-[#ffb08b]">
+                      Link ini sepertinya sudah dibagikan ke orang lain, jadi kami minta
+                      verifikasi nomor HP dulu. Demi keamanan, mohon link dari WhatsApp
+                      hanya dipakai sendiri ya.
+                    </p>
+                  )}
 
                   <form onSubmit={handleVerify}>
                     <label className="block">

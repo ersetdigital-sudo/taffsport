@@ -29,8 +29,12 @@ export const FONNTE_TIMEOUT_MS = 10_000;
 
 /**
  * URL tracking publik (encode nomor pesanan bila ada karakter spesial).
- * Token opsional (HMAC 30 hari) membuat customer bisa langsung lihat
- * progres TANPA verifikasi HP — lihat app/status/page.tsx.
+ *
+ * Token opsional (HMAC, masa berlaku pendek — lihat TRACKING_LINK_TTL_MS di
+ * lib/verify-token.ts) membuat customer bisa langsung lihat progres TANPA
+ * verifikasi HP. Karena token ini ikut terkirim di chat dan bisa diteruskan ke
+ * siapa pun, masa berlakunya sengaja pendek dan penggunaannya dipantau per IP
+ * (lib/track-guard.ts).
  */
 export function buildTrackingUrl(orderNumber: string, token?: string): string {
   const base = `${getAppUrl()}/status?order=${encodeURIComponent(orderNumber)}`;
@@ -73,6 +77,10 @@ export function buildWhatsAppMessage(
       "Cek detail pesanan dan informasi pengiriman di:",
       trackingUrl,
       "",
+      // Link memuat token yang membuka data pesanan — ingatkan customer supaya
+      // tidak meneruskannya ke grup/umum (lihat lib/track-guard.ts).
+      "Catatan: link ini khusus untuk Kakak, mohon tidak dibagikan ke grup/umum ya.",
+      "",
       "Terima kasih sudah mempercayakan pesanan Kakak kepada TAFF Sportwear.",
     ].join("\n");
   }
@@ -92,6 +100,10 @@ export function buildWhatsAppMessage(
       trackingUrl,
       "",
       "Kami akan mengirimkan update kembali saat pesanan masuk ke tahap berikutnya.",
+      "",
+      // Link memuat token yang membuka data pesanan — ingatkan customer supaya
+      // tidak meneruskannya ke grup/umum (lihat lib/track-guard.ts).
+      "Catatan: link ini khusus untuk Kakak, mohon tidak dibagikan ke grup/umum ya.",
       "",
       "Terima kasih sudah mempercayakan pesanan Kakak kepada TAFF Sportwear.",
     ].join("\n");
@@ -120,6 +132,10 @@ export function buildMaklonWhatsAppMessage(
       "Cek detail pesanan di:",
       trackingUrl,
       "",
+      // Link memuat token yang membuka data pesanan — ingatkan customer supaya
+      // tidak meneruskannya ke grup/umum (lihat lib/track-guard.ts).
+      "Catatan: link ini khusus untuk Kakak, mohon tidak dibagikan ke grup/umum ya.",
+      "",
       "Terima kasih sudah mempercayakan pesanan Kakak kepada TAFF Sportwear.",
     ].join("\n");
   }
@@ -139,6 +155,10 @@ export function buildMaklonWhatsAppMessage(
     trackingUrl,
     "",
     "Kami akan mengirimkan update kembali saat pesanan masuk ke tahap berikutnya.",
+    "",
+    // Link memuat token yang membuka data pesanan — ingatkan customer supaya
+    // tidak meneruskannya ke grup/umum (lihat lib/track-guard.ts).
+    "Catatan: link ini khusus untuk Kakak, mohon tidak dibagikan ke grup/umum ya.",
     "",
     "Terima kasih sudah mempercayakan pesanan Kakak kepada TAFF Sportwear.",
   ].join("\n");
