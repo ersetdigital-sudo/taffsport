@@ -7,18 +7,40 @@
  *
  * Berkas ini di-import komponen client, jadi JANGAN pernah menaruh API key/secret
  * di sini. Tanda tangan dan operasi hapus aset ada di lib/cloudinary-server.ts.
+ *
+ * Setiap tahap upload melaporkan dirinya ke lib/upload-progress.ts, sehingga
+ * dashboard bisa menampilkan "2,4 MB → 320 KB · 45%" tanpa satu pun pemanggil
+ * uploadToCloudinary perlu menambah parameter.
  */
+import {
+  beginUpload,
+  failUpload,
+  finishUpload,
+  formatBytes,
+  markUploadReady,
+  setUploadPercent,
+} from "@/lib/upload-progress";
 
 /** Folder induk semua aset gambar TAFF Sportwear di Cloudinary. */
 export const CLOUDINARY_FOLDER = "taff-sportwear/desain";
 
-/** Batas ukuran berkas yang diterima dari input file.
+/** Batas ukuran BERKAS ASLI yang boleh dipilih operator.
  *
  *  Sejak foto diperkecil dulu di browser (lihat downscaleImage), batas ini
  *  bukan lagi soal kredit Cloudinary — melainkan supaya browser HP tidak
- *  dipaksa mendekode berkas raksasa. Yang benar-benar disimpan di Cloudinary
- *  jauh lebih kecil dari angka ini. */
-export const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+ *  dipaksa mendekode berkas raksasa. Foto kamera HP sekarang umumnya 3-6 MB,
+ *  jadi angka 2 MB yang lama membuat operator mentok di pesan "kecilkan dulu"
+ *  padahal pengecilnya belum sempat jalan. Yang benar-benar disimpan di
+ *  Cloudinary tetap dibatasi MAX_UPLOAD_BYTES di bawah. */
+export const MAX_IMAGE_BYTES = 10 * 1024 * 1024;
+
+/** Batas ukuran berkas yang benar-benar DIKIRIM ke Cloudinary.
+ *
+ *  Diperiksa SETELAH foto diperkecil, bukan sebelum: kalau pengecilan gagal
+ *  (browser tidak bisa mendekode) dan berkas aslinya kebesaran, upload-nya
+ *  ditolak dengan pesan yang sama seperti dulu — daripada diam-diam mengirim
+ *  berkas 6 MB ke akun toko. */
+export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
 
 /** Sisi terpanjang gambar yang perlu disimpan ke Cloudinary.
  *
@@ -50,14 +72,16 @@ export function isCloudinaryConfigured(): boolean {
 /**
  * Periksa berkas sebelum diunggah.
  * Mengembalikan pesan kesalahan siap-tampil, atau null kalau berkas lolos.
+ *
+ * Hanya format & batas berkas ASLI yang diperiksa di sini; batas ukuran kirim
+ * dicek setelah foto diperkecil (lihat MAX_UPLOAD_BYTES).
  */
 export function validateImageFile(file: File): string | null {
   if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
     return `Format ${file.type || "berkas ini"} tidak didukung. Pakai JPG, PNG, atau WebP.`;
   }
   if (file.size > MAX_IMAGE_BYTES) {
-    const mb = (file.size / 1024 / 1024).toFixed(1);
-    return `Ukuran ${mb} MB melebihi batas 2 MB. Kecilkan dulu gambarnya.`;
+    return `Ukuran ${formatBytes(file.size)} melebihi batas ${formatBytes(MAX_IMAGE_BYTES)}. File ini tidak bisa dikecilkan otomatis — pakai gambar lain.`;
   }
   return null;
 }
@@ -67,7 +91,7 @@ export function validateImageFile(file: File): string | null {
  *
  * Ini bagian yang paling menghemat kredit. Tagihan Cloudinary dihitung dari
  * (a) besar berkas yang disimpan, (b) bandwidth pengiriman, dan (c) jumlah
- * transformasi. Foto kamera HP gampang 4000px & 2 MB, sementara dashboard
+ * transformasi. Foto kamera HP gampang 4000px & 6 MB, sementara dashboard
  * paling besar cuma menampilkannya 1600px — piksel di atas itu cuma membakar
  * storage dan bandwidth selamanya tanpa pernah terlihat.
  *
@@ -77,6 +101,33 @@ export function validateImageFile(file: File): string | null {
  * Aturannya sengaja konservatif: kalau ragu, KIRIM BERKAS ASLINYA. Gagal
  * memperkecil tidak boleh bikin operator tidak bisa upload.
  */
+/**
+ * Ukuran gambar tanpa mendekode seluruh pikselnya.
+ *
+ * Memakai elemen <img> + object URL: browser cuma membaca header berkas untuk
+ * mengisi naturalWidth/naturalHeight, jadi hasilnya hampir instan walau fotonya
+ * 12 MP. Dipakai untuk MEMUTUSKAN perlu diperkecil atau tidak — supaya foto
+ * yang sudah cukup kecil tidak didekode penuh hanya untuk dibuang lagi.
+ *
+ * `null` = ukuran tidak terbaca; pemanggil kembali ke jalur lama (dekode penuh).
+ */
+function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    const done = (size: { width: number; height: number } | null) => {
+      URL.revokeObjectURL(url);
+      resolve(size);
+    };
+    img.onload = () =>
+      done(img.naturalWidth && img.naturalHeight
+        ? { width: img.naturalWidth, height: img.naturalHeight }
+        : null);
+    img.onerror = () => done(null);
+    img.src = url;
+  });
+}
+
 async function downscaleImage(
   file: File
 ): Promise<{ blob: Blob; filename: string }> {
@@ -84,6 +135,13 @@ async function downscaleImage(
 
   // Browser lawas (mis. Safari lama) tidak punya createImageBitmap.
   if (typeof createImageBitmap !== "function") return asIs;
+
+  // Jalur cepat: foto yang dimensinya sudah cukup kecil dikirim apa adanya —
+  // tidak perlu didekode penuh dulu (foto 1200px dari HP lama sering begini).
+  const probed = await readImageSize(file);
+  if (probed && Math.max(probed.width, probed.height) <= MAX_UPLOAD_DIMENSION) {
+    return asIs;
+  }
 
   let bitmap: ImageBitmap;
   try {
@@ -181,12 +239,41 @@ export async function uploadToCloudinary(
   const invalid = validateImageFile(file);
   if (invalid) throw new Error(invalid);
 
+  // Diumumkan ke indikator upload di dashboard; lihat lib/upload-progress.ts.
+  const jobId = beginUpload(file.name || "foto", file.size);
+
+  try {
+    return await sendToCloudinary(file, jobId);
+  } catch (e) {
+    failUpload(jobId);
+    throw e;
+  }
+}
+
+/** Isi upload sesungguhnya — dipisah supaya semua jalur keluar pasti menutup indikator. */
+async function sendToCloudinary(
+  file: File,
+  jobId: number
+): Promise<{ url: string; public_id: string }> {
   // Perkecil dulu di browser — lihat downscaleImage(). Ini yang paling
   // menghemat kredit, karena berkas inilah yang disimpan permanen.
   const [upload, grant] = await Promise.all([
     downscaleImage(file),
     requestUploadGrant(),
   ]);
+
+  // Sejak titik ini ukurannya sudah pasti — inilah angka yang dikirim ke
+  // Cloudinary, dan itulah yang ditampilkan ke operator.
+  markUploadReady(jobId, upload.blob.size);
+
+  // Pengecilan sengaja "pessimistis": kalau browser tidak bisa mendekode (atau
+  // hasilnya tidak lebih kecil), berkas ASLINYA yang dipakai — dan berkas asli
+  // bisa saja di atas batas kirim. Itu baru ketahuan di sini.
+  if (upload.blob.size > MAX_UPLOAD_BYTES) {
+    throw new Error(
+      `Foto ini masih ${formatBytes(upload.blob.size)} setelah dicoba dikecilkan (batas ${formatBytes(MAX_UPLOAD_BYTES)}). Pakai gambar lain atau perkecil dulu.`
+    );
+  }
 
   const formData = new FormData();
   formData.append("file", upload.blob, upload.filename);
@@ -196,17 +283,59 @@ export async function uploadToCloudinary(
   formData.append("upload_preset", grant.uploadPreset);
   formData.append("folder", grant.folder);
 
-  const res = await fetch(
+  const data = await postToCloudinary(
     `https://api.cloudinary.com/v1_1/${grant.cloudName}/image/upload`,
-    { method: "POST", body: formData }
+    formData,
+    jobId
   );
-
-  if (!res.ok) {
-    const data = await res.json().catch(() => null);
-    throw new Error(data?.error?.message || "Upload gagal");
-  }
-  const data = await res.json();
+  finishUpload(jobId);
   return { url: data.secure_url, public_id: data.public_id };
+}
+
+/**
+ * Kirim berkas ke Cloudinary sambil melaporkan persentasenya.
+ *
+ * Memakai XMLHttpRequest, bukan fetch: hanya XHR yang memberi event progres
+ * pengiriman (`upload.onprogress`). Dengan `fetch`, satu-satunya kabar yang
+ * bisa ditampilkan adalah "sedang mengunggah" tanpa angka — dan untuk foto
+ * 300 KB di jaringan seluler, menunggu tanpa angka itulah yang terasa lambat.
+ * Pesan kesalahannya sengaja sama dengan versi fetch sebelumnya supaya teks di
+ * dashboard tidak berubah.
+ */
+function postToCloudinary(
+  url: string,
+  formData: FormData,
+  jobId: number
+): Promise<any> {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", url);
+    // Tanpa batas waktu, koneksi yang macet membuat indikatornya berputar
+    // selamanya tanpa kabar apa pun. Dua menit sudah jauh di atas waktu kirim
+    // foto 300 KB, bahkan di jaringan seluler lambat.
+    xhr.timeout = 120_000;
+
+    xhr.upload.onprogress = (e) => {
+      if (e.lengthComputable) setUploadPercent(jobId, e.loaded, e.total);
+    };
+    xhr.onload = () => {
+      let data: any = null;
+      try {
+        data = JSON.parse(xhr.responseText);
+      } catch {
+        data = null;
+      }
+      if (xhr.status >= 200 && xhr.status < 300 && data) {
+        resolve(data);
+        return;
+      }
+      reject(new Error(data?.error?.message || "Upload gagal"));
+    };
+    xhr.onerror = () => reject(new Error("Koneksi terputus saat upload. Coba lagi."));
+    xhr.ontimeout = () => reject(new Error("Upload terlalu lama. Coba lagi."));
+
+    xhr.send(formData);
+  });
 }
 
 const UPLOAD_MARK = "/upload/";

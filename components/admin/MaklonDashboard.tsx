@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef, type ReactNode } from "react";
 import { IMAGE_ACCEPT, optimizeImageUrl, uploadToCloudinary } from "@/lib/cloudinary";
+import UploadIndicator from "@/components/admin/UploadIndicator";
 import { MAKLON_STAGES, maklonProgress } from "@/lib/maklon-status";
 import {
   DEFAULT_PRODUCTS,
@@ -655,6 +656,9 @@ export default function MaklonDashboard({
       )}
 
       <div className={`pas-toast ${toast ? "on" : ""}`}>{toast}</div>
+
+      {/* ── INDIKATOR UPLOAD FOTO (design, WO) ── */}
+      <UploadIndicator />
     </div>
   );
 }

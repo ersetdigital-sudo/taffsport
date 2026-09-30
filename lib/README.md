@@ -51,7 +51,8 @@ Anti-duplikat notifikasi tidak dicek di kode, tapi di database: RPC
 | `supabase/client.ts` | Supabase client untuk browser (anon key) |
 | `supabase/server.ts` | `createClient()` (cookie session, anon) dan `createServiceClient()` (service role, menembus RLS — hanya untuk server) |
 | `admin-auth.ts` | `getAdminDb()` — guard route handler dashboard: cek cookie `pesanan_auth` / user Supabase, lalu kembalikan service-role client (atau `null` → balas 401) |
-| `cloudinary.ts` | Helper Cloudinary sisi browser: `uploadToCloudinary` (perkecil foto → minta tanda tangan ke server → kirim), `optimizeImageUrl` (transformasi `f_auto,q_auto` + batas lebar), `cloudinaryPublicId` & `removedCloudinaryUrls` (deteksi foto yang dibuang operator) |
+| `cloudinary.ts` | Helper Cloudinary sisi browser: `uploadToCloudinary` (perkecil foto → minta tanda tangan ke server → kirim lewat XHR supaya progresnya terbaca), `validateImageFile`, `MAX_IMAGE_BYTES` (10 MB, berkas asli) vs `MAX_UPLOAD_BYTES` (2 MB, setelah diperkecil), `optimizeImageUrl` (transformasi `f_auto,q_auto` + batas lebar), `cloudinaryPublicId` & `removedCloudinaryUrls` (deteksi foto yang dibuang operator) |
+| `upload-progress.ts` | Papan pengumuman upload foto: `beginUpload` → `markUploadReady` → `setUploadPercent` → `finishUpload`/`failUpload`, plus `formatBytes`. Dibaca komponen `components/admin/UploadIndicator.tsx` lewat `useSyncExternalStore`, jadi satu indikator melayani semua tombol upload |
 | `cloudinary-server.ts` | Operasi Cloudinary yang butuh tanda tangan, **hanya untuk route handler**: `cloudinaryUploadSignature` (tanda tangan upload) dan `destroyCloudinaryAssets` (hapus aset yatim) |
 
 ## Lain-lain

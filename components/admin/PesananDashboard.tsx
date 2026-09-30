@@ -23,6 +23,7 @@ import { slugFromStepName } from "@/lib/step-order";
 import { waNote } from "@/lib/notif-note";
 import { buildWhatsAppLink, compactPhone } from "@/lib/wa";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import UploadIndicator from "@/components/admin/UploadIndicator";
 import { Search, AlertTriangle } from "lucide-react";
 
 type StepRow = { id: string; name: string; position: number };
@@ -871,6 +872,9 @@ export default function PesananDashboard({
 
       {/* â”€â”€ TOAST â”€â”€ */}
       <div className={`pas-toast ${toast ? "on" : ""}`}>{toast}</div>
+
+      {/* ── INDIKATOR UPLOAD FOTO (design, WO, foto tahap) ── */}
+      <UploadIndicator />
     </div>
   );
 }
@@ -4298,7 +4302,7 @@ function DetailSheet({
                     {uploadingStage ? "Mengunggah…" : "Tambah foto tahap ini"}
                   </span>
                   <span className="max-w-[280px] text-[11px] leading-relaxed text-[var(--pas-muted)]">
-                    JPG / PNG / WebP, maks 2 MB — foto langsung tampil di halaman tracking customer.
+                    JPG / PNG / WebP, maks 10 MB — dikecilkan otomatis sebelum dikirim, lalu tampil di halaman tracking customer.
                   </span>
                 </label>
               )}

@@ -53,6 +53,8 @@ const PAIRS = [
   ["tombol sekunder hover", "#FFFFFF", "#2E5968", true],
   ["chip filter aktif", "#FFFFFF", "#1B4F63", true],
   ["toast notifikasi", "#FFFFFF", "#23627C", true],
+  ["kartu progres upload — judul", "#FFFFFF", "#23627C", true],
+  ["kartu progres upload — ukuran & persen", "#D3EDEF", "#23627C", true],
   ["stepbtn num aktif", "#FFFFFF", "#1B4F63", true],
   ["footer Simpan Perubahan", "#FFFFFF", "#23627C", true],
   ["footer Tandai Selesai (sekunder)", "#FFFFFF", "#3B6B7E", true],
