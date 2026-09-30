@@ -760,7 +760,17 @@ export default function StatusClient({
                           </button>
                         )}
 
-                        {st === "now" && (order.design_photos?.length ?? 0) > 0 && (
+                        {/* Preview desain nempel di TAHAP DESAIN, bukan di tahap
+                            yang sedang berjalan: foto desain itu hasil tahap 1,
+                            jadi kalau blok ini ikut pindah tiap status di-update,
+                            foto mockup muncul di tahap yang tidak ada hubungannya.
+                            Lewati kalau tahap ini sudah punya foto prosesnya
+                            sendiri — gambar yang sama tidak perlu tampil dua kali,
+                            sebab foto dari form "Tambah Pesanan" juga tersimpan
+                            sebagai foto tahap Desain. */}
+                        {(statusKey === "desain" || n === 1) &&
+                          !histPhoto &&
+                          (order.design_photos?.length ?? 0) > 0 && (
                           <div className="mt-3 flex flex-wrap gap-2.5">
                             {order.design_photos.map((url: string, di: number) => (
                               <button

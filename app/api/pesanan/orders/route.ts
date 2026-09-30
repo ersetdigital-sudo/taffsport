@@ -98,6 +98,43 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  // Foto desain yang diunggah saat pesanan dibuat sekaligus dipasang sebagai
+  // foto TAHAP DESAIN. Sebelumnya foto itu cuma masuk `design_photos`, sehingga
+  // begitu pesanan dibuka di Detail Pesanan, slot "Foto Progres Tahap → 1.
+  // Desain" masih kosong dan operator harus mengunggah gambar yang sama dua
+  // kali.
+  //
+  // Foto tahap hidup di kolom `photo_url` baris `order_status_history` (lihat
+  // route status), jadi barisnya dibuat di sini. `ensure-history` melewati
+  // tahap yang sudah punya baris, jadi tidak akan dobel.
+  const firstStage = stepOrder[0];
+  const firstDesignPhoto =
+    Array.isArray(design_photos) && design_photos.length > 0
+      ? String(design_photos[0])
+      : "";
+  let stagePhotos: Record<string, string> = {};
+
+  if (firstStage && firstDesignPhoto) {
+    const { error: historyError } = await supabase
+      .from("order_status_history")
+      .insert({
+        order_id: data.id,
+        status: firstStage,
+        note: "",
+        photo_url: firstDesignPhoto,
+      });
+
+    if (historyError) {
+      // Riwayat gagal disimpan tidak boleh membatalkan pesanan yang sudah
+      // tersimpan — fotonya tetap ada di `design_photos`.
+      console.error("[orders] gagal menyimpan foto tahap desain:", historyError.message);
+    } else {
+      // Dikirim balik supaya dashboard tidak perlu menunggu daftar dimuat ulang
+      // untuk menampilkan foto itu di Detail Pesanan.
+      stagePhotos = { [firstStage]: firstDesignPhoto };
+    }
+  }
+
   // Customer dapat kabar WA begitu pesanan disimpan, bukan cuma saat tahapnya
   // BERGESER. Sebelumnya pesanan baru yang masih di tahap 1 (Desain) tidak
   // pernah mengirim notifikasi apa pun, jadi pembeli baru tahu kabar setelah
@@ -131,7 +168,7 @@ export async function POST(request: Request) {
 
   return NextResponse.json(
     {
-      order: mapOrder(data, null, stepOrder),
+      order: { ...mapOrder(data, null, stepOrder), stage_photos: stagePhotos },
       notification: { stage: 1, status: "queued" },
     },
     { status: 201 }

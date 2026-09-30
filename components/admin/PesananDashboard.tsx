@@ -4375,7 +4375,7 @@ function DetailSheet({
             </div>
             <div className="grid grid-cols-2 gap-4 p-4">
               <div>
-                <span className="pas-stencil text-[9px] text-[var(--pas-muted)] block mb-2">Preview Design</span>
+                <span className="pas-stencil text-[9px] text-[var(--pas-muted)] block mb-2">Desain</span>
                 <div className="flex flex-wrap gap-2">
                   {(order.design_photos?.length ?? 0) > 0 ? order.design_photos!.map((url, i) => (
                     <button key={i} type="button" onClick={() => setZoomUrl(url)} className="group relative w-[72px] h-[72px] rounded-xl overflow-hidden border border-[var(--pas-line)] hover:border-[var(--pas-accent)] transition" title="Klik untuk memperbesar" aria-label={`Perbesar design ${i + 1}`}>
@@ -4385,9 +4385,9 @@ function DetailSheet({
                         <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5M11 8v6M8 11h6" /></svg>
                       </span>
                     </button>
-                  )) : <span className="text-[12px] text-[var(--pas-muted)]">Belum ada preview</span>}
+                  )) : <span className="text-[12px] text-[var(--pas-muted)]">Belum ada desain</span>}
                 </div>
-                <p className="text-[10px] text-[var(--pas-muted)] mt-1.5 opacity-60">Read-only - klik untuk zoom</p>
+                <p className="text-[10px] text-[var(--pas-muted)] mt-1.5 opacity-60">Lihat saja - klik untuk zoom</p>
               </div>
               <div>
                 <span className="pas-stencil text-[9px] text-[var(--pas-muted)] block mb-2">WO</span>
@@ -4741,7 +4741,7 @@ function EditSheet({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <span className="text-[13px] text-[var(--pas-muted)]">Preview Design</span>
+              <span className="text-[13px] text-[var(--pas-muted)]">Desain</span>
               <div className="flex flex-wrap gap-2.5 mt-1.5">
                 {designPhotos.map((url, i) => (
                   <div key={i} className="relative w-[76px] h-[76px] group">
@@ -5125,7 +5125,8 @@ function AddForm({
 
       <div className="grid grid-cols-2 gap-4">
       <div>
-        <span className="text-[13px] text-[var(--pas-muted)]">Preview Design</span>
+        <span className="text-[13px] text-[var(--pas-muted)]">Desain</span>
+        <p className="text-[11px] text-[var(--pas-muted)] -mt-0.5">Jadi foto tahap Desain</p>
         <div className="flex flex-wrap gap-2.5 mt-1.5">
           {designPhotos.map((url, i) => (
             <div key={i} className="relative w-[76px] h-[76px] group">
