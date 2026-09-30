@@ -21,7 +21,7 @@ import {
 } from "@/lib/product-options";
 import { slugFromStepName } from "@/lib/step-order";
 import { waNote } from "@/lib/notif-note";
-import { buildWhatsAppLink } from "@/lib/wa";
+import { buildWhatsAppLink, compactPhone } from "@/lib/wa";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Search, AlertTriangle } from "lucide-react";
 
@@ -1616,7 +1616,7 @@ function ViewKirim({
                 <div>
                   <p className="font-semibold pas-num">{o.id}</p>
                   <p className="text-[13px] text-[var(--pas-muted)] mt-0.5">
-                    {o.customer_name} - {o.customer_phone}
+                    {o.customer_name} - {compactPhone(o.customer_phone)}
                   </p>
                 </div>
                 <span className={`pas-pill ${statusOf(o, steps.length)}`}>
@@ -3827,12 +3827,15 @@ function DetailSheet({
 
   /** Salin nomor HP pembeli ke clipboard, dengan fallback untuk webview lama. */
   const copyPhone = async (phone: string) => {
+    // Digitnya saja yang disalin — nomor ber-dash cuma bikin ribet saat
+    // ditempel ke WhatsApp / form ekspedisi.
+    const value = compactPhone(phone);
     try {
       if (navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(phone);
+        await navigator.clipboard.writeText(value);
       } else {
         const ta = document.createElement("textarea");
-        ta.value = phone;
+        ta.value = value;
         ta.style.position = "fixed";
         ta.style.opacity = "0";
         document.body.appendChild(ta);
@@ -4035,13 +4038,15 @@ function DetailSheet({
             <div className="min-w-0 flex-1">
               <span className="pas-stencil text-[9px] text-[var(--pas-muted)]">Pembeli</span>
               <p className="truncate text-[14px] font-bold leading-tight text-[var(--pas-ink-1)]">{order.customer_name || "(tanpa nama)"}</p>
+              {/* Nomor ditampilkan tanpa dash/spasi (compactPhone) supaya bisa
+                  langsung di-copy-paste ke WA atau form ekspedisi. */}
               {order.customer_phone ? (
                 <a
-                  href={`tel:${order.customer_phone.replace(/[^\d+]/g, "")}`}
+                  href={`tel:${compactPhone(order.customer_phone)}`}
                   className="pas-num mt-0.5 inline-block text-[12.5px] text-[var(--pas-muted)] transition hover:text-[var(--pas-accent)]"
                   title="Klik untuk menelepon"
                 >
-                  {order.customer_phone}
+                  {compactPhone(order.customer_phone)}
                 </a>
               ) : (
                 <span className="mt-0.5 block text-[12.5px] text-[var(--pas-muted)]">No. HP belum diisi</span>

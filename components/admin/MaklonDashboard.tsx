@@ -9,6 +9,7 @@ import {
   rememberProducts,
 } from "@/lib/product-options";
 import { waNote } from "@/lib/notif-note";
+import { compactPhone } from "@/lib/wa";
 import {
   formatDateTimeWIB,
   formatNumericDateID,
@@ -1336,8 +1337,9 @@ function DetailSheet({
               <div className="col-span-2 px-4 py-3 border-b border-[var(--pas-line)]">
                 <span className="pas-stencil text-[9px] text-[var(--pas-muted)]">Customer</span>
                 <p className="mt-1 text-[14px] font-semibold">{order.customer_name}</p>
+                {/* Digit saja (compactPhone): nomor siap di-copy-paste ke WA. */}
                 <p className="text-[12px] text-[var(--pas-muted)] mt-0.5 pas-num">
-                  {order.customer_phone}
+                  {compactPhone(order.customer_phone)}
                 </p>
               </div>
               <div className="px-4 py-3 border-b border-r border-[var(--pas-line)]">

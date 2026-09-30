@@ -25,6 +25,20 @@ export function normalizeWhatsAppNumber(raw: string): string {
   return digits;
 }
 
+/**
+ * Nomor HP apa adanya untuk ditempel: hanya digit, tanpa dash/spasi/kurung.
+ *
+ * Dipakai di detail pesanan admin supaya nomor yang tampil bisa langsung
+ * di-paste ke WhatsApp atau form ekspedisi tanpa dirapikan manual dulu.
+ * Formatnya sengaja TIDAK diubah ke 62… — nomor tetap seperti yang diisi
+ * pembeli (biasanya 08…), cuma tanda bacanya dibuang.
+ *
+ *   0822-9984-9418 → 082299849418
+ */
+export function compactPhone(raw: string | null | undefined): string {
+  return (raw || "").replace(/\D/g, "");
+}
+
 /** Build a WhatsApp Click-to-Chat URL that works on both Android & iOS. */
 export function buildWhatsAppLink(phone: string, text: string): string {
   const normalized = normalizeWhatsAppNumber(phone);
