@@ -3,127 +3,126 @@
 @tailwind utilities;
 
 /* ============================================================
-   VSP Sport — design tokens.
-   Oranye #F2762A → merah #D2452A + netral hangat. Light values on :root, dark overrides under .dark.
+   TAFF Sportwear — design tokens.
+   Oranye #FF5A1F → merah #E84A12 + netral hangat. Light values on :root, dark overrides under .dark.
    Tailwind reads these via tailwind.config.ts so theme switching
    only swaps variables.
    ============================================================ */
 :root {
-  /* Brand gradient stops — oranye VSP Sport ke gelap */
-  --color-brand-from: #F2762A;
-  --color-brand-via: #D2452A;
-  --color-brand-to: #1B1512;
+  /* Brand gradient stops — oranye TAFF Sportwear ke gelap */
+  --color-brand-from: #FF5A1F;
+  --color-brand-via: #E84A12;
+  --color-brand-to: #0A0A0A;
 
   /* Primary (CTA) — tombol hitam teks putih (.btn-d) */
-  --color-primary: #1B1512;
+  --color-primary: #0A0A0A;
   --color-primary-strong: #000000;
-  /* Secondary — oranye VSP Sport untuk highlight */
-  --color-secondary: #F2762A;
-  --color-secondary-strong: #D2452A;
+  /* Secondary — oranye TAFF Sportwear untuk highlight */
+  --color-secondary: #FF5A1F;
+  --color-secondary-strong: #E84A12;
 
   /* Accent oranye untuk promo / warning */
-  --color-accent: #F2762A;
+  --color-accent: #FF5A1F;
 
-  /* Backgrounds (light) — abu hangat VSP Sport (#F7F6F4) */
-  --color-background: #F7F6F4;
-  --color-background-canvas: #F7F6F4;
-  --color-background-bone: #F2EFEC;
+  /* Backgrounds (light) — cream hangat TAFF Sportwear (#F5EFE3) */
+  --color-background: #F5EFE3;
+  --color-background-canvas: #F5EFE3;
+  --color-background-bone: #EDEDE8;
 
   /* Surfaces (light) — putih bersih untuk card */
-  --color-surface: #FAF7F5;
+  --color-surface: #FBF8F2;
   --color-surface-card: #ffffff;
   --color-surface-glass: rgba(255, 255, 255, 0.85);
-  --color-surface-glass-border: rgba(40, 25, 18, 0.06);
-  --color-surface-dark: #1B1512;
-  --color-surface-deep: #14100E;
+  --color-surface-glass-border: rgba(10, 10, 10, 0.06);
+  --color-surface-dark: #0A0A0A;
+  --color-surface-deep: #050505;
 
-  /* Text (light) — hierarki hitam hangat ke abu ala mockup VSP Sport */
-  --color-foreground: #1B1512;
-  --color-ink: #1B1512;
-  --color-body: #2A211C;
-  --color-charcoal: #60544D;
-  --color-mute: #8A7C73;
-  --color-ash: #75665E;
-  --color-stone: #A29086;
+  /* Text (light) — hierarki hitam hangat ke abu ala mockup TAFF Sportwear */
+  --color-foreground: #0A0A0A;
+  --color-ink: #0A0A0A;
+  --color-body: #3A3A36;
+  --color-charcoal: #4A4A46;
+  --color-mute: #8A8A85;
+  --color-ash: #6B6B66;
+  --color-stone: #A3A3A3;
 
   /* On-color */
   --color-on-primary: #ffffff;
-  --color-on-secondary: #1B1512;
+  --color-on-secondary: #0A0A0A;
   --color-on-dark: #ffffff;
-  --color-on-dark-mute: #A29086;
+  --color-on-dark-mute: #A3A3A3;
 
   /* Borders / dividers — sangat halus */
-  --color-hairline: rgba(40, 25, 18, 0.07);
-  --color-hairline-strong: rgba(40, 25, 18, 0.13);
-  --color-divider: rgba(40, 25, 18, 0.07);
+  --color-hairline: rgba(10, 10, 10, 0.07);
+  --color-hairline-strong: rgba(10, 10, 10, 0.13);
+  --color-divider: rgba(10, 10, 10, 0.07);
 
   /* Semantic */
   --color-success: #18794e;
   --color-warning: #9a7400;
   --color-info: #3550c4;
-  --color-danger: #C0392B;
-  --color-link: #1B1512;
-  --color-ring-focus: rgba(242, 118, 42, 0.45);
+  --color-danger: #E84A12;
+  --color-link: #0A0A0A;
+  --color-ring-focus: rgba(255, 90, 31, 0.45);
 
   /* Premium shadows — soft, layered depth */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.06), 0 4px 16px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 4px 16px rgba(0, 0, 0, 0.08), 0 12px 32px rgba(0, 0, 0, 0.06);
   --shadow-xl: 0 8px 24px rgba(0, 0, 0, 0.10), 0 24px 48px rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 0 0 1px rgba(242, 118, 42, 0.25), 0 4px 16px rgba(242, 118, 42, 0.18);
+  --shadow-glow: 0 0 0 1px rgba(255, 90, 31, 0.25), 0 4px 16px rgba(255, 90, 31, 0.18);
 
   /* Mesh background (light) — oranye samar */
   --mesh-bg:
-    radial-gradient(60% 50% at 20% 10%, rgba(242, 118, 42, 0.05), transparent 60%),
-    radial-gradient(50% 50% at 85% 20%, rgba(242, 118, 42, 0.04), transparent 60%),
-    radial-gradient(60% 60% at 50% 100%, rgba(40, 25, 18, 0.03), transparent 60%);
+    radial-gradient(60% 50% at 20% 10%, rgba(255, 90, 31, 0.05), transparent 60%),
+    radial-gradient(50% 50% at 85% 20%, rgba(255, 90, 31, 0.04), transparent 60%),
+    radial-gradient(60% 60% at 50% 100%, rgba(10, 10, 10, 0.03), transparent 60%);
 
-  /* VSP Sport pakai Geist — display & mono mengikuti sans */
+  /* TAFF Sportwear pakai Archivo — display mengikuti sans, mono dari --font-mono */
   --font-display: var(--font-sans);
-  --font-mono: var(--font-sans);
 }
 
 .dark {
   /* Brand gradient stops (dark) */
-  --color-brand-from: #F2762A;
-  --color-brand-via: #D2452A;
-  --color-brand-to: #1B1512;
+  --color-brand-from: #FF5A1F;
+  --color-brand-via: #E84A12;
+  --color-brand-to: #0A0A0A;
 
-  /* Primary — oranye VSP Sport di dark */
-  --color-primary: #F2762A;
-  --color-primary-strong: #D2452A;
+  /* Primary — oranye TAFF Sportwear di dark */
+  --color-primary: #FF5A1F;
+  --color-primary-strong: #E84A12;
   /* Secondary — dark surface untuk tombol */
-  --color-secondary: #2A1E18;
-  --color-secondary-strong: #332720;
+  --color-secondary: #1A1A1A;
+  --color-secondary-strong: #2A2A2A;
   /* Accent — oranye */
-  --color-accent: #F2762A;
+  --color-accent: #FF5A1F;
 
-  /* Backgrounds (dark) — hitam hangat ala sidebar VSP Sport */
-  --color-background: #14100E;
-  --color-background-canvas: #14100E;
-  --color-background-bone: #231A16;
+  /* Backgrounds (dark) — hitam hangat ala sidebar TAFF Sportwear */
+  --color-background: #050505;
+  --color-background-canvas: #050505;
+  --color-background-bone: #1A1A1A;
 
   /* Surfaces (dark) */
-  --color-surface: #1B1512;
-  --color-surface-card: #231A16;
+  --color-surface: #0A0A0A;
+  --color-surface-card: #1A1A1A;
   --color-surface-glass: rgba(255, 255, 255, 0.04);
   --color-surface-glass-border: rgba(255, 255, 255, 0.08);
-  --color-surface-dark: #0E0A08;
+  --color-surface-dark: #000000;
   --color-surface-deep: #000000;
 
   /* Text (dark) */
   --color-foreground: #ffffff;
   --color-ink: #ffffff;
-  --color-body: #D8CEC7;
-  --color-charcoal: #C4B8B0;
-  --color-mute: #A29086;
-  --color-ash: #B0A099;
-  --color-stone: #7E6F66;
+  --color-body: #D4D4D4;
+  --color-charcoal: #BFBFBF;
+  --color-mute: #A3A3A3;
+  --color-ash: #A3A3A3;
+  --color-stone: #5C5C5C;
 
-  --color-on-primary: #1B1512;
+  --color-on-primary: #0A0A0A;
   --color-on-secondary: #ffffff;
   --color-on-dark: #ffffff;
-  --color-on-dark-mute: #C4B8B0;
+  --color-on-dark-mute: #BFBFBF;
 
   /* Borders (dark) */
   --color-hairline: rgba(255, 255, 255, 0.08);
@@ -135,21 +134,21 @@
   --color-warning: #e0b400;
   --color-info: #7d96f5;
   --color-danger: #f87171;
-  --color-link: #F2762A;
-  --color-ring-focus: rgba(242, 118, 42, 0.5);
+  --color-link: #FF5A1F;
+  --color-ring-focus: rgba(255, 90, 31, 0.5);
 
   /* Premium shadows (dark) — deeper, with subtle glow */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 1px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
   --shadow-xl: 0 24px 56px rgba(0, 0, 0, 0.7), 0 8px 16px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 0 1px rgba(242, 118, 42, 0.35), 0 8px 32px rgba(242, 118, 42, 0.22);
+  --shadow-glow: 0 0 0 1px rgba(255, 90, 31, 0.35), 0 8px 32px rgba(255, 90, 31, 0.22);
 
   /* Mesh background (dark) */
   --mesh-bg:
-    radial-gradient(60% 50% at 20% 10%, rgba(242, 118, 42, 0.10), transparent 60%),
-    radial-gradient(50% 50% at 85% 20%, rgba(242, 118, 42, 0.07), transparent 60%),
-    radial-gradient(60% 60% at 50% 100%, rgba(40, 25, 18, 0.35), transparent 60%);
+    radial-gradient(60% 50% at 20% 10%, rgba(255, 90, 31, 0.10), transparent 60%),
+    radial-gradient(50% 50% at 85% 20%, rgba(255, 90, 31, 0.07), transparent 60%),
+    radial-gradient(60% 60% at 50% 100%, rgba(10, 10, 10, 0.35), transparent 60%);
 }
 
 /* ============================================================
@@ -379,23 +378,23 @@
 
 
 
-  /* Diagonal brand stripes — the signature VSP Sport orange slashes from the
+  /* Diagonal brand stripes — the signature TAFF Sportwear orange slashes from the
      reference art. Layered widths/opacities create the dynamic feel. */
   .stripes-brand {
     background-image: repeating-linear-gradient(
       118deg,
       transparent 0px,
       transparent 28px,
-      rgba(242, 118, 42, 0.10) 28px,
-      rgba(242, 118, 42, 0.10) 52px,
+      rgba(255, 90, 31, 0.10) 28px,
+      rgba(255, 90, 31, 0.10) 52px,
       transparent 52px,
       transparent 68px,
-      rgba(242, 118, 42, 0.22) 68px,
-      rgba(242, 118, 42, 0.22) 82px,
+      rgba(255, 90, 31, 0.22) 68px,
+      rgba(255, 90, 31, 0.22) 82px,
       transparent 82px,
       transparent 112px,
-      rgba(210, 69, 42, 0.14) 112px,
-      rgba(210, 69, 42, 0.14) 148px
+      rgba(232, 74, 18, 0.14) 112px,
+      rgba(232, 74, 18, 0.14) 148px
     );
   }
   .dark .stripes-brand {
@@ -403,16 +402,16 @@
       118deg,
       transparent 0px,
       transparent 28px,
-      rgba(242, 118, 42, 0.10) 28px,
-      rgba(242, 118, 42, 0.10) 52px,
+      rgba(255, 90, 31, 0.10) 28px,
+      rgba(255, 90, 31, 0.10) 52px,
       transparent 52px,
       transparent 68px,
-      rgba(242, 118, 42, 0.18) 68px,
-      rgba(242, 118, 42, 0.18) 82px,
+      rgba(255, 90, 31, 0.18) 68px,
+      rgba(255, 90, 31, 0.18) 82px,
       transparent 82px,
       transparent 112px,
-      rgba(210, 69, 42, 0.12) 112px,
-      rgba(210, 69, 42, 0.12) 148px
+      rgba(232, 74, 18, 0.12) 112px,
+      rgba(232, 74, 18, 0.12) 148px
     );
   }
 
@@ -438,7 +437,7 @@
 
   /* Light mode: sidebar slightly warmer than main content */
   .h-dvh aside {
-    background-color: #F2EFEC;
+    background-color: #EDEDE8;
   }
   .dark .h-dvh aside {
     background-color: var(--color-surface-card);
@@ -473,10 +472,10 @@
 
 /* Catalog tab active state */
 .catalog-tab[aria-selected="true"] {
-  background: #F2762A;
+  background: #FF5A1F;
   color: #fff;
-  border-color: #F2762A;
-  box-shadow: 0 10px 30px rgba(242,118,42,.18);
+  border-color: #FF5A1F;
+  box-shadow: 0 10px 30px rgba(255, 90, 31,.18);
 }
 
 /* Catalog image transition */
@@ -1654,7 +1653,7 @@
    TRACKING PAGES — matches reference HTML design system
    ================================================================ */
 .trk-bg {
-  background-color: #14100E;
+  background-color: #050505;
   color: #fff;
 }
 
@@ -1667,7 +1666,7 @@
 
 .trk-bg .trk-glow {
   background:
-    radial-gradient(60% 55% at 50% 0%, rgba(242,118,42,.18), transparent 70%),
+    radial-gradient(60% 55% at 50% 0%, rgba(255, 90, 31,.18), transparent 70%),
     radial-gradient(45% 40% at 85% 20%, rgba(255,214,186,.10), transparent 70%);
 }
 
@@ -1686,27 +1685,27 @@
 
 .trk-card {
   background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
-  border: 1px solid #33261F;
+  border: 1px solid #2E2E2E;
   border-radius: 20px;
 }
 
 .trk-field {
-  background: #17110F;
-  border: 1px solid #33261F;
+  background: #050505;
+  border: 1px solid #2E2E2E;
   border-radius: 14px;
   color: #fff;
   transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
 }
-.trk-field::placeholder { color: #6B5C55; }
+.trk-field::placeholder { color: #4A4A46; }
 .trk-field:focus {
   outline: none;
-  border-color: #F2762A;
-  box-shadow: 0 0 0 4px rgba(242,118,42,.14);
-  background: #1A130F;
+  border-color: #FF5A1F;
+  box-shadow: 0 0 0 4px rgba(255, 90, 31,.14);
+  background: #0A0A0A;
 }
 
 .trk-btn-accent {
-  background: #F2762A;
+  background: #FF5A1F;
   color: #FFFFFF;
   border-radius: 14px;
   font-family: var(--font-archivo), "Archivo", sans-serif;
@@ -1714,18 +1713,18 @@
   letter-spacing: .04em;
   text-transform: uppercase;
   transition: transform .15s ease, box-shadow .2s ease, filter .2s ease;
-  box-shadow: 0 10px 30px -12px rgba(242,118,42,.7);
+  box-shadow: 0 10px 30px -12px rgba(255, 90, 31,.7);
 }
 .trk-btn-accent:hover { transform: translateY(-2px); filter: brightness(1.05); }
 .trk-btn-accent:active { transform: translateY(0) scale(.985); }
 
 .trk-btn-ghost {
-  border: 1px solid #33261F;
+  border: 1px solid #2E2E2E;
   border-radius: 14px;
   transition: border-color .2s, background .2s;
 }
 .trk-btn-ghost:hover {
-  border-color: #5A4740;
+  border-color: #4A4A46;
   background: rgba(255,255,255,.04);
 }
 
@@ -1743,14 +1742,14 @@
   top: 30px;
   bottom: -4px;
   width: 2px;
-  background: #33261F;
+  background: #2E2E2E;
 }
 .trk-step:last-child::before { display: none; }
 .trk-step.trk-done::before {
-  background: linear-gradient(180deg, #F2762A, #F2762A);
+  background: linear-gradient(180deg, #FF5A1F, #FF5A1F);
 }
 .trk-step.trk-current::before {
-  background: linear-gradient(180deg, #F2762A, #33261F);
+  background: linear-gradient(180deg, #FF5A1F, #2E2E2E);
 }
 
 .trk-dot {
@@ -1763,22 +1762,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #1A130F;
-  border: 1px solid #33261F;
-  color: #6B5C55;
+  background: #0A0A0A;
+  border: 1px solid #2E2E2E;
+  color: #4A4A46;
   font-size: 13px;
   font-weight: 700;
   transition: all .35s ease;
 }
 .trk-step.trk-done .trk-dot {
-  background: rgba(242,118,42,.14);
-  border-color: rgba(242,118,42,.55);
-  color: #F2762A;
+  background: rgba(255, 90, 31,.14);
+  border-color: rgba(255, 90, 31,.55);
+  color: #FF5A1F;
 }
 .trk-step.trk-current .trk-dot {
-  background: rgba(242,118,42,.14);
-  border-color: #F2762A;
-  color: #F2762A;
+  background: rgba(255, 90, 31,.14);
+  border-color: #FF5A1F;
+  color: #FF5A1F;
   animation: trk-pulse 1.8s ease-out infinite;
 }
 .trk-step.trk-current .trk-dot svg {
@@ -1787,27 +1786,27 @@
 
 @keyframes trk-spin { to { transform: rotate(360deg); } }
 @keyframes trk-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(242,118,42,.45); }
-  70% { box-shadow: 0 0 0 12px rgba(242,118,42,0); }
-  100% { box-shadow: 0 0 0 0 rgba(242,118,42,0); }
+  0% { box-shadow: 0 0 0 0 rgba(255, 90, 31,.45); }
+  70% { box-shadow: 0 0 0 12px rgba(255, 90, 31,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 90, 31,0); }
 }
 
 .trk-step .trk-label { font-weight: 600; }
-.trk-step.trk-todo .trk-label { color: #75665E; }
-.trk-step.trk-done .trk-label { color: #EFE3DC; }
+.trk-step.trk-todo .trk-label { color: #6B6B66; }
+.trk-step.trk-done .trk-label { color: #E4E4DF; }
 .trk-step.trk-current .trk-label { color: #fff; }
 
 .trk-bar {
   height: 8px;
   border-radius: 999px;
-  background: #221A16;
+  background: #111111;
   overflow: hidden;
 }
 .trk-bar > i {
   display: block;
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #F2762A, #F2762A);
+  background: linear-gradient(90deg, #FF5A1F, #FF5A1F);
   width: 0;
   transition: width 1.2s cubic-bezier(.22,1,.36,1);
 }
@@ -1844,19 +1843,19 @@
   gap: 8px;
 }
 .trk-pill-shipped {
-  border: 1px solid rgba(242,118,42,.5);
-  background: rgba(242,118,42,.12);
-  color: #F2762A;
+  border: 1px solid rgba(255, 90, 31,.5);
+  background: rgba(255, 90, 31,.12);
+  color: #FF5A1F;
 }
 .trk-pill-active {
-  border: 1px solid rgba(242,118,42,.45);
-  background: rgba(242,118,42,.1);
-  color: #F2762A;
+  border: 1px solid rgba(255, 90, 31,.45);
+  background: rgba(255, 90, 31,.1);
+  color: #FF5A1F;
 }
 
 /* Info grid cells */
 .trk-cell {
-  background: #1A130F;
+  background: #0A0A0A;
   padding: 16px;
 }
 .trk-cell-label {
@@ -1865,7 +1864,7 @@
   letter-spacing: .18em;
   text-transform: uppercase;
   font-size: 9px;
-  color: #A29086;
+  color: #A3A3A3;
 }
 .trk-cell-value {
   font-size: 15px;
@@ -1876,8 +1875,8 @@
 /* Last update box */
 .trk-update-box {
   border-radius: 16px;
-  border: 1px solid rgba(242,118,42,.28);
-  background: rgba(242,118,42,.06);
+  border: 1px solid rgba(255, 90, 31,.28);
+  background: rgba(255, 90, 31,.06);
   padding: 16px;
 }
 
@@ -1887,7 +1886,7 @@
 .dpo-card {
   position: relative;
   background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.015));
-  border: 1px solid #231A16;
+  border: 1px solid #1A1A1A;
   border-radius: 20px;
   backdrop-filter: blur(8px);
   box-shadow: 0 1px 0 rgba(255,255,255,.05) inset, 0 24px 60px -40px rgba(0,0,0,.9);
@@ -1896,7 +1895,7 @@
   letter-spacing: .22em;
   text-transform: uppercase;
   font-size: 11px;
-  color: #7E6F66;
+  color: #5C5C5C;
 }
 .dpo-h1 {
   font-family: var(--font-display), "Barlow Condensed", "Barlow", sans-serif;
@@ -1927,12 +1926,12 @@
   line-height: 1;
   border: 1px solid rgba(255,255,255,.10);
   background: rgba(255,255,255,.04);
-  color: #A29086;
+  color: #A3A3A3;
 }
 .dpo-meta-acc {
-  border-color: rgba(242,118,42,.40);
-  background: rgba(242,118,42,.12);
-  color: #F2762A;
+  border-color: rgba(255, 90, 31,.40);
+  background: rgba(255, 90, 31,.12);
+  color: #FF5A1F;
   font-weight: 600;
 }
 .dpo-live {
@@ -1940,7 +1939,7 @@
   width: 6px;
   height: 6px;
   border-radius: 999px;
-  background: #F2762A;
+  background: #FF5A1F;
   flex: none;
 }
 .dpo-live::after {
@@ -1948,7 +1947,7 @@
   position: absolute;
   inset: -4px;
   border-radius: 999px;
-  background: rgba(242,118,42,.35);
+  background: rgba(255, 90, 31,.35);
   animation: dpo-ping 1.8s ease-out infinite;
 }
 @keyframes dpo-ping {
@@ -1963,12 +1962,12 @@
   background: rgba(255,255,255,.07);
 }
 .dpo-segs > span.on {
-  background: linear-gradient(180deg, #F2762A, #D2452A);
-  box-shadow: 0 0 12px rgba(242,118,42,.5);
+  background: linear-gradient(180deg, #FF5A1F, #E84A12);
+  box-shadow: 0 0 12px rgba(255, 90, 31,.5);
 }
 .dpo-segs > span.cur {
-  background: #F2762A;
-  box-shadow: 0 0 16px rgba(242,118,42,.85);
+  background: #FF5A1F;
+  box-shadow: 0 0 16px rgba(255, 90, 31,.85);
   animation: dpo-seg 1.8s ease-in-out infinite;
 }
 @keyframes dpo-seg { 0%,100% { opacity: 1 } 50% { opacity: .5 } }
@@ -1983,7 +1982,7 @@
   border-radius: 16px;
   transition: border-color .2s ease, background .2s ease;
   background: linear-gradient(180deg, rgba(255,255,255,.045), rgba(255,255,255,.015));
-  border: 1px solid #231A16;
+  border: 1px solid #1A1A1A;
 }
 .dpo-step::after {
   content: "";
@@ -1992,18 +1991,18 @@
   top: 100%;
   height: 10px;
   width: 2px;
-  background: linear-gradient(180deg, rgba(242,118,42,.55), rgba(242,118,42,.12));
+  background: linear-gradient(180deg, rgba(255, 90, 31,.55), rgba(255, 90, 31,.12));
 }
-.dpo-step.is-todo::after { background: #3E2E26; }
+.dpo-step.is-todo::after { background: #2E2E2E; }
 .dpo-step.is-last::after { display: none; }
 .dpo-step.is-todo {
   background: transparent;
   border-color: rgba(255,255,255,.06);
 }
 .dpo-step.is-now {
-  border-color: rgba(242,118,42,.45);
-  background: linear-gradient(135deg, rgba(242,118,42,.14), rgba(242,118,42,.02) 55%, rgba(255,255,255,.02));
-  box-shadow: 0 0 0 1px rgba(242,118,42,.10), 0 14px 40px -18px rgba(242,118,42,.65);
+  border-color: rgba(255, 90, 31,.45);
+  background: linear-gradient(135deg, rgba(255, 90, 31,.14), rgba(255, 90, 31,.02) 55%, rgba(255,255,255,.02));
+  box-shadow: 0 0 0 1px rgba(255, 90, 31,.10), 0 14px 40px -18px rgba(255, 90, 31,.65);
 }
 .dpo-dot {
   position: relative;
@@ -2013,31 +2012,31 @@
   border-radius: 11px;
   display: grid;
   place-items: center;
-  background: #241812;
-  border: 1px solid #3E2E26;
-  color: #7E6F66;
+  background: #0A0A0A;
+  border: 1px solid #2E2E2E;
+  color: #5C5C5C;
   flex: none;
   font-family: var(--font-mono), monospace;
   font-size: 12px;
   margin-top: 1px;
 }
 .dpo-dot.done {
-  background: rgba(242,118,42,.14);
-  border-color: rgba(242,118,42,.5);
-  color: #F2762A;
+  background: rgba(255, 90, 31,.14);
+  border-color: rgba(255, 90, 31,.5);
+  color: #FF5A1F;
 }
 .dpo-dot.now {
   color: #FFFFFF;
-  background: #F2762A;
-  border-color: #F2762A;
-  box-shadow: 0 0 22px rgba(242,118,42,.55);
+  background: #FF5A1F;
+  border-color: #FF5A1F;
+  box-shadow: 0 0 22px rgba(255, 90, 31,.55);
 }
 .dpo-dot.now::after {
   content: "";
   position: absolute;
   inset: -4px;
   border-radius: 14px;
-  border: 1px solid rgba(242,118,42,.55);
+  border: 1px solid rgba(255, 90, 31,.55);
   animation: dpo-ping 2.2s ease-out infinite;
 }
 .dpo-step-title {
@@ -2047,10 +2046,10 @@
   letter-spacing: .02em;
   text-transform: uppercase;
 }
-.dpo-step.is-todo .dpo-step-title { color: #A29086; font-weight: 500; }
-.dpo-step-desc { margin-top: 2px; font-size: 13px; color: #A29086; line-height: 1.5; }
-.dpo-step.is-todo .dpo-step-desc { color: #7E6F66; }
-.dpo-step-time { margin-top: 6px; font-size: 11px; color: #7E6F66; letter-spacing: .03em; }
+.dpo-step.is-todo .dpo-step-title { color: #A3A3A3; font-weight: 500; }
+.dpo-step-desc { margin-top: 2px; font-size: 13px; color: #A3A3A3; line-height: 1.5; }
+.dpo-step.is-todo .dpo-step-desc { color: #5C5C5C; }
+.dpo-step-time { margin-top: 6px; font-size: 11px; color: #5C5C5C; letter-spacing: .03em; }
 .dpo-chip {
   border-radius: 999px;
   padding: 2px 9px;
@@ -2060,14 +2059,14 @@
   text-transform: uppercase;
 }
 .dpo-chip-done {
-  background: rgba(242,118,42,.10);
-  color: rgba(242,118,42,.85);
-  border: 1px solid rgba(242,118,42,.22);
+  background: rgba(255, 90, 31,.10);
+  color: rgba(255, 90, 31,.85);
+  border: 1px solid rgba(255, 90, 31,.22);
 }
-.dpo-chip-now { background: #F2762A; color: #FFFFFF; }
+.dpo-chip-now { background: #FF5A1F; color: #FFFFFF; }
 .dpo-chip-next {
   background: rgba(255,255,255,.06);
-  color: #A29086;
+  color: #A3A3A3;
   border: 1px solid rgba(255,255,255,.12);
 }
 
@@ -2085,7 +2084,7 @@
   font-size: 14px;
   font-weight: 600;
   letter-spacing: .06em;
-  color: #EFE3DC;
+  color: #E4E4DF;
 }
 .dpo-reveal { animation: dpo-up .55s cubic-bezier(.2,.75,.2,1) both; }
 @keyframes dpo-up {
@@ -2107,7 +2106,7 @@
   bottom: 0;
   z-index: 40;
   padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
-  background: linear-gradient(180deg, rgba(20,16,14,0), rgba(20,16,14,.92) 38%);
+  background: linear-gradient(180deg, rgba(10, 10, 10,0), rgba(10, 10, 10,.92) 38%);
   backdrop-filter: blur(8px);
 }
 @media (min-width: 640px) { .dpo-stickycta { display: none } }
@@ -2130,10 +2129,10 @@
    ═══════════════════════════════════════════════ */
 .pas-shell,
 .pas-light {
-  --color-ink: #1B1512;
-  --color-foreground: #1B1512;
-  --color-body: #1B1512;
-  --color-background: #F7F6F4;
+  --color-ink: #0A0A0A;
+  --color-foreground: #0A0A0A;
+  --color-body: #0A0A0A;
+  --color-background: #F5EFE3;
   --color-surface: #FFFFFF;
   --color-surface-card: #FFFFFF;
   color-scheme: light;
@@ -2142,34 +2141,34 @@
 
 :root {
   color-scheme: light;
-  /* ── VSP Sport — palet dari mockup HTML: oranye #F2762A → merah #D2452A ── */
-  --pas-bg: #F7F6F4;
+  /* ── TAFF Sportwear — palet dari mockup HTML: oranye #FF5A1F → merah #E84A12 ── */
+  --pas-bg: #F5EFE3;
   --pas-surface: #FFFFFF;
-  --pas-surface-2: #FAF7F5;
-  --pas-line: #EDE7E2;
-  --pas-line-2: #F3EEEA;
-  --pas-muted: #8A7C73;
-  --pas-muted-2: #9A8C83;
-  --pas-ink-1: #1B1512;
-  --pas-ink-2: #2A211C;
-  --pas-accent: #C0392B;
-  --pas-accent-soft: rgba(210,69,42,.10);
+  --pas-surface-2: #FBF8F2;
+  --pas-line: #E4E4DF;
+  --pas-line-2: #F0EBE0;
+  --pas-muted: #8A8A85;
+  --pas-muted-2: #A3A3A3;
+  --pas-ink-1: #0A0A0A;
+  --pas-ink-2: #3A3A36;
+  --pas-accent: #E84A12;
+  --pas-accent-soft: rgba(232, 74, 18,.10);
   --pas-radius: 16px;
 
-  --pas-green: #1E1512;   /* permukaan gelap (sidebar & drawer) */
-  --pas-orange: #F2762A;
-  --pas-red: #C0392B;
-  --pas-deep: #D2452A;
-  --pas-grad: linear-gradient(90deg, #F2762A, #D2452A);
-  --pas-grad-135: linear-gradient(135deg, #C0392B, #F2762A);
-  --pas-grad-side: linear-gradient(180deg, #1E1512, #2B1A13);
+  --pas-green: #0A0A0A;   /* permukaan gelap (sidebar & drawer) */
+  --pas-orange: #FF5A1F;
+  --pas-red: #E84A12;
+  --pas-deep: #E84A12;
+  --pas-grad: linear-gradient(90deg, #FF5A1F, #E84A12);
+  --pas-grad-135: linear-gradient(135deg, #E84A12, #FF5A1F);
+  --pas-grad-side: #0A0A0A; /* sidebar rata hitam — mockup aside {} */
   /* badge status — mockup .b-baru / .b-prod / .b-kirim / .b-sel */
-  --pas-baru-bg: #FDEEE4;    --pas-baru-fg: #C0392B;
+  --pas-baru-bg: #FFE9DF;    --pas-baru-fg: #E84A12;
   --pas-prod-bg: #FFF2DC;    --pas-prod-fg: #B07514;
   --pas-kirim-bg: #EAEFFA;   --pas-kirim-fg: #3F5BA9;
   --pas-selesai-bg: #E7F3E7; --pas-selesai-fg: #4F7A4E;
-  --pas-light: #F2EFEC;
-  --pas-yellow: #F2762A;  /* aksen oranye (nama variabel lama) */
+  --pas-light: #EDEDE8;
+  --pas-yellow: #FF5A1F;  /* aksen oranye (nama variabel lama) */
 
   /* alias font lama — beberapa komponen masih menulis var(--font-geist*) */
   --font-geist: var(--font-sans);
@@ -2187,12 +2186,12 @@
 .pas-side .pas-display { color: #FFFFFF !important; }
 .pas-side .pas-stencil { color: rgba(255,255,255,.7) !important; }
 .pas-navlink {
-  display: flex; align-items: center; gap: 12px; padding: 11px 16px;
-  border-radius: 10px; font-size: 14px; font-weight: 500; color: #C9BFB8; transition: .15s;
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+  border-radius: 8px; font-size: 14px; font-weight: 500; color: #A3A3A3; transition: .15s;
 }
-.pas-navlink:hover { background: rgba(255,255,255,.06); color: #fff; }
-.pas-navlink.on { background: var(--pas-grad); color: #fff; font-weight: 600; }
-.pas-navlink.on .pas-ic { color: #fff; }
+.pas-navlink:hover { background: #1A1A1A; color: #fff; }
+.pas-navlink.on { background: #fff; color: #0A0A0A; font-weight: 700; }
+.pas-navlink.on .pas-ic { color: #0A0A0A; }
 .pas-ic { width: 18px; display: inline-flex; align-items: center; justify-content: center; font-size: 15px; opacity: .95; }
 
 /* Drawer menu (dark panel, premium feel) — HANYA untuk nav drawer (slide-left) */
@@ -2200,16 +2199,16 @@
   background: var(--pas-green) !important;
   border-color: rgba(255,255,255,.08) !important;
 }
-.pas-panel.slide-left .pas-navlink { color: rgba(255,255,255,.65) !important; background: transparent !important; }
-.pas-panel.slide-left .pas-navlink:hover { background: rgba(255,255,255,.08) !important; color: #fff !important; }
-.pas-panel.slide-left .pas-navlink.on { background: var(--pas-grad) !important; color: #fff !important; font-weight: 600; }
-.pas-panel.slide-left .pas-navlink.on .pas-ic { color: #fff !important; }
+.pas-panel.slide-left .pas-navlink { color: #A3A3A3 !important; background: transparent !important; }
+.pas-panel.slide-left .pas-navlink:hover { background: #1A1A1A !important; color: #fff !important; }
+.pas-panel.slide-left .pas-navlink.on { background: #fff !important; color: #0A0A0A !important; font-weight: 700; }
+.pas-panel.slide-left .pas-navlink.on .pas-ic { color: #0A0A0A !important; }
 .pas-panel.slide-left .pas-navsec { color: rgba(255,255,255,.35) !important; }
 .pas-panel.slide-left .pas-display { color: #fff !important; }
 .pas-panel.slide-left .pas-mark { background: #fff; color: var(--pas-green); }
 .pas-navsec {
   font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
-  color: #7E6F66; padding: 0 8px; margin: 14px 0 10px; font-weight: 700;
+  color: #5C5C5C; padding: 0 8px; margin: 14px 0 10px; font-weight: 700;
 }
 @media (max-width: 900px) { .pas-side { display: none; } }
 
@@ -2221,36 +2220,36 @@
 
 .pas-card {
   background: var(--pas-surface); border: 1px solid var(--pas-line);
-  border-radius: var(--pas-radius); box-shadow: 0 4px 18px rgba(40,25,18,.05);
+  border-radius: var(--pas-radius); box-shadow: 0 4px 18px rgba(10, 10, 10,.05);
   transition: border-color .18s, transform .18s;
 }
 .pas-kpi { position: relative; overflow: hidden; }
-.pas-kpi:hover { border-color: #E3DAD3; }
+.pas-kpi:hover { border-color: #DADAD5; }
 
-/* KPI unggulan — kartu gradient (mockup .kpi.hero) */
+/* KPI unggulan — kartu hitam rata (mockup .card.hero) */
 .pas-kpi-hero,
 .pas-kpi-hero:hover {
-  background: var(--pas-grad-135); border-color: transparent; color: #fff;
-  box-shadow: 0 8px 24px rgba(192,57,43,.28);
+  background: #0A0A0A; border-color: #0A0A0A; color: #fff;
+  box-shadow: 0 8px 24px rgba(10, 10, 10,.18);
 }
 .pas-kpi-hero .pas-num { color: #fff; }
-.pas-kpi-hero .pas-kpi-label { color: #FFE2D2; }
-.pas-kpi-hero .pas-kpi-note { color: #FFE2D2; }
-.pas-kpi-hero .pas-delta { background: rgba(255,255,255,.22); color: #FFE2D2; }
+.pas-kpi-hero .pas-kpi-label { color: #A3A3A3; }
+.pas-kpi-hero .pas-kpi-note { color: #A3A3A3; }
+.pas-kpi-hero .pas-delta { background: #fff; color: #0A0A0A; }
 .pas-delta { font-size: 11.5px; font-weight: 600; padding: 2px 7px; border-radius: 6px; }
-.pas-delta.up { background: #FDEEE4; color: #C0392B; }
-.pas-delta.flat { background: #F2EFEC; color: #8A7C73; }
+.pas-delta.up { background: #FFE9DF; color: #E84A12; }
+.pas-delta.flat { background: #EDEDE8; color: #8A8A85; }
 .pas-delta.ok { background: #FFF2DC; color: #B07514; }
 .pas-delta.good { background: #E7F3E7; color: #4F7A4E; }
-.pas-delta.bad { background: #FDEEE4; color: #C0392B; }
+.pas-delta.bad { background: #FFE9DF; color: #E84A12; }
 
 .pas-field {
   background: var(--pas-surface); border: 1px solid var(--pas-line);
   border-radius: 10px; color: var(--pas-ink-1);
 }
-.pas-field::placeholder { color: #A2938A; }
+.pas-field::placeholder { color: #A3A3A3; }
 .pas-field:focus {
-  border-color: var(--pas-deep); box-shadow: 0 0 0 3px rgba(210,69,42,.14);
+  border-color: var(--pas-deep); box-shadow: 0 0 0 3px rgba(232, 74, 18,.14);
   background: var(--pas-surface);
 }
 /* pastikan dropdown option selalu terang (bukan ikut dark-mode OS) */
@@ -2266,41 +2265,41 @@
 .pas-search input { padding-left: 38px; }
 .pas-search .pas-mag {
   position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-  color: #A2938A; font-size: 14px; pointer-events: none;
+  color: #A3A3A3; font-size: 14px; pointer-events: none;
 }
 
 .pas-btn-accent {
-  /* VSP Sport: tombol utama gradient oranye→merah (mockup .btn-p) */
+  /* TAFF Sportwear: tombol utama gradient oranye→merah (mockup .btn-p) */
   background: var(--pas-grad); color: #fff; border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(210,69,42,.35);
+  box-shadow: 0 4px 12px rgba(232, 74, 18,.35);
   letter-spacing: 0; text-transform: none;
-  font-family: var(--font-sans), "Geist", system-ui, sans-serif; font-weight: 700;
+  font-family: var(--font-sans), "Archivo", system-ui, sans-serif; font-weight: 700;
 }
 .pas-btn-accent:hover { transform: none; filter: brightness(1.06); }
 .pas-btn-ghost {
   border: 1px solid transparent; border-radius: 10px;
-  background: #F2EFEC; color: #60544D; font-weight: 500;
+  background: #EDEDE8; color: #4A4A46; font-weight: 500;
 }
-.pas-btn-ghost:hover { background: #EBE5E0; border-color: transparent; }
+.pas-btn-ghost:hover { background: #E4E4DF; border-color: transparent; }
 
 .pas-seg {
   display: inline-flex; background: transparent;
   border: 0; border-radius: 0; padding: 0; gap: 8px;
 }
 .pas-chip {
-  border: 1px solid var(--pas-line); background: var(--pas-surface); color: #60544D;
+  border: 1px solid var(--pas-line); background: var(--pas-surface); color: #4A4A46;
   font-weight: 500; border-radius: 8px; padding: 8px 14px; font-size: 12.5px; font-family: inherit; cursor: pointer;
 }
-.pas-chip:hover { background: #FDF6F2; color: var(--pas-ink-1); }
+.pas-chip:hover { background: #FBF8F2; color: var(--pas-ink-1); }
 .pas-chip.on {
   background: var(--pas-grad); color: #fff; border-color: transparent;
-  box-shadow: 0 4px 12px rgba(210,69,42,.28);
+  box-shadow: 0 4px 12px rgba(232, 74, 18,.28);
 }
 
 .pas-pill {
   display: inline-flex; align-items: center; gap: 6px; border-radius: 12px;
   font-size: 11.5px; font-weight: 600; letter-spacing: 0; text-transform: none;
-  padding: 5px 12px; background: #F2EFEC; color: #8A7C73;
+  padding: 5px 12px; background: #EDEDE8; color: #8A8A85;
 }
 .pas-pill::before { content: none; }
 .pas-pill.baru { background: var(--pas-baru-bg); color: var(--pas-baru-fg); }
@@ -2310,7 +2309,7 @@
 
 table.pas-tbl { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
 table.pas-tbl th {
-  background: #FAF7F5; color: #8A7C73; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+  background: #FBF8F2; color: #8A8A85; font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
   font-weight: 700; padding: 12px 16px; text-align: left;
 }
 table.pas-tbl td {
@@ -2319,8 +2318,8 @@ table.pas-tbl td {
   overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 table.pas-tbl tbody tr { transition: background .16s; cursor: pointer; }
-table.pas-tbl tbody tr:nth-child(even) { background: #FDFAF8; }
-table.pas-tbl tbody tr:hover { background: #FDF6F2; }
+table.pas-tbl tbody tr:nth-child(even) { background: #FDFAF4; }
+table.pas-tbl tbody tr:hover { background: #FBF8F2; }
 @media (max-width: 1024px) {
   table.pas-tbl { table-layout: auto; }
   table.pas-tbl th, table.pas-tbl td { padding: 12px 10px; font-size: 13px; }
@@ -2328,10 +2327,10 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 .pas-avatar {
   width: 30px; height: 30px; border-radius: 999px; flex: none;
   display: grid; place-items: center; font-size: 11px; font-weight: 700;
-  background: #FCE9DE; color: var(--pas-red); border: 0;
+  background: #FFE9DF; color: var(--pas-red); border: 0;
 }
 
-/* ── VSP Sport: brand tengah di sidebar (mockup .brand) ── */
+/* ── TAFF Sportwear: brand tengah di sidebar (mockup .brand) ── */
 .pas-brand {
   display: flex; flex-direction: column; align-items: center; gap: 12px;
   padding: 6px 8px 26px; text-align: center;
@@ -2339,46 +2338,49 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 .pas-brand-mark { width: 116px; height: 116px; display: grid; place-items: center; }
 .pas-brand-mark img {
   width: 100%; height: 100%; object-fit: contain; display: block;
-  filter: drop-shadow(0 8px 22px rgba(242,118,42,.45));
+  filter: drop-shadow(0 8px 22px rgba(255, 90, 31,.45));
 }
 .pas-brand-name {
   display: block; color: #fff; font-size: 19px; font-weight: 700;
   line-height: 1.2; letter-spacing: .3px;
 }
 .pas-brand-sub {
-  display: block; color: #A29086; font-size: 11px; letter-spacing: 1.4px;
+  display: block; color: #A3A3A3; font-size: 11px; letter-spacing: 1.4px;
   text-transform: uppercase; margin-top: 3px;
 }
 
-/* ── VSP Sport: user box gelap di bawah sidebar (mockup .user) ── */
+/* ── TAFF Sportwear: user box gelap di bawah sidebar (mockup .user) ── */
 .pas-userbox {
-  background: #2F1E16; border: 1px solid #4A3025;
-  color: #fff; border-radius: 14px;
+  background: #1A1A1A; border: 0;
+  color: #fff; border-radius: 10px;
 }
 .pas-userbox .pas-avatar-invert {
-  background: var(--pas-grad-135); color: #fff; border-color: transparent;
+  background: #fff; color: #0A0A0A; border-color: transparent;
 }
 
-/* ── VSP Sport: badge orange (mockup .badge-y) ── */
+/* ── Badge jumlah di nav (mockup aside a .n) ──
+   Di nav gelap badge-nya terang; begitu nav-nya aktif (putih) badge berbalik jadi
+   hitam — sama seperti mockup, dan tetap kebaca di dua kondisi. */
 .pas-badge-y {
-  background: var(--pas-grad); color: #fff; font-style: normal;
-  font-size: 10px; font-weight: 700; border-radius: 999px; padding: 2px 8px;
+  background: rgba(255,255,255,.14); color: #fff; font-style: normal;
+  font-size: 11px; font-weight: 700; border-radius: 10px; padding: 2px 8px;
 }
+.pas-navlink.on .pas-badge-y { background: #0A0A0A; color: #fff; }
 
 .pas-mini {
-  background: #F0EAE5; height: 5px; border-radius: 99px;
+  background: #EDEDE8; height: 5px; border-radius: 99px;
   display: block; overflow: hidden; min-width: 60px;
 }
 .pas-mini > i { display: block; height: 100%; background: var(--pas-grad); border-radius: 99px; transition: width .8s cubic-bezier(.22,1,.36,1); }
 .pas-bar {
-  background: #F0EAE5; height: 6px; border-radius: 99px; display: block; overflow: hidden;
+  background: #EDEDE8; height: 6px; border-radius: 99px; display: block; overflow: hidden;
 }
 .pas-bar > i { display: block; height: 100%; background: var(--pas-grad); border-radius: 99px; transition: width .8s cubic-bezier(.22,1,.36,1); }
 
 .pas-sheet { position: fixed; inset: 0; z-index: 60; display: none; }
 .pas-sheet.open { display: block; }
 .pas-sheet .pas-veil {
-  position: absolute; inset: 0; background: rgba(30,21,18,.45);
+  position: absolute; inset: 0; background: rgba(10, 10, 10,.45);
   backdrop-filter: blur(3px);
 }
 .pas-sheet .pas-panel {
@@ -2422,17 +2424,17 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 .pas-stepbtn {
   display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;
   padding: 10px 12px; border-radius: 12px; border: 1px solid transparent;
-  transition: all .18s; font-size: 14px; color: #8A7C73;
+  transition: all .18s; font-size: 14px; color: #8A8A85;
 }
 .pas-stepbtn:hover { background: var(--pas-light); color: var(--pas-ink-1); }
 .pas-stepbtn .pas-num {
   width: 24px; height: 24px; border-radius: 99px; display: grid; place-items: center;
-  font-size: 11px; font-weight: 700; background: #F2EFEC; color: #8A7C73; flex: none;
+  font-size: 11px; font-weight: 700; background: #EDEDE8; color: #8A8A85; flex: none;
 }
 .pas-stepbtn.done { color: var(--pas-ink-1); }
-.pas-stepbtn.done .pas-num { background: rgba(242,118,42,.14); color: var(--pas-red); }
+.pas-stepbtn.done .pas-num { background: rgba(255, 90, 31,.14); color: var(--pas-red); }
 .pas-stepbtn.cur {
-  background: rgba(242,118,42,.10); border-color: rgba(242,118,42,.35); color: var(--pas-ink-1);
+  background: rgba(255, 90, 31,.10); border-color: rgba(255, 90, 31,.35); color: var(--pas-ink-1);
 }
 .pas-stepbtn.cur .pas-num { background: var(--pas-grad); color: #fff; }
 
@@ -2447,12 +2449,12 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 @media (max-width: 640px) { .pas-toast { right: 12px; left: 12px; top: 12px; transform: translateY(-8px); text-align: center; } .pas-toast.on { transform: translateY(0); } }
 
 .pas-display {
-  /* VSP Sport: pakai Geist (satu keluarga font) */
-  font-family: var(--font-sans), "Geist", system-ui, sans-serif;
+  /* TAFF Sportwear: pakai Archivo (satu keluarga font) */
+  font-family: var(--font-sans), "Archivo", system-ui, sans-serif;
   letter-spacing: -.022em; color: var(--pas-ink-1); font-weight: 700;
 }
 .pas-stencil {
-  font-family: var(--font-sans), "Geist", system-ui, sans-serif;
+  font-family: var(--font-sans), "Archivo", system-ui, sans-serif;
   font-weight: 800; letter-spacing: .18em; text-transform: uppercase;
 }
 .pas-num { font-variant-numeric: tabular-nums; }
@@ -2471,17 +2473,17 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
     transition: all .2s ease;
   }
   .pas-bento-kpi:hover {
-    border-color: #E3DAD3;
+    border-color: #DADAD5;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0,0,0,.16);
   }
 
-  /* kartu KPI unggulan tetap gradient di mobile (menang atas .pas-bento-kpi) */
+  /* kartu KPI unggulan tetap hitam di mobile (menang atas .pas-bento-kpi) */
   .pas-bento-kpi.pas-kpi-hero,
   .pas-bento-kpi.pas-kpi-hero:hover {
-    background: var(--pas-grad-135);
-    border-color: transparent;
-    box-shadow: 0 8px 24px rgba(192,57,43,.28);
+    background: #0A0A0A;
+    border-color: #0A0A0A;
+    box-shadow: 0 8px 24px rgba(10, 10, 10,.18);
   }
 
   .pas-bento-card {
@@ -2494,7 +2496,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
     transition: all .2s ease;
   }
   .pas-bento-card:hover {
-    border-color: #E3DAD3;
+    border-color: #DADAD5;
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0,0,0,.16);
   }
@@ -2502,7 +2504,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
   .pas-bento-avatar {
     width: 36px; height: 36px; border-radius: 9999px; flex: none;
     display: grid; place-items: center; font-size: 13px; font-weight: 700;
-    background: #FCE9DE; color: var(--pas-red);
+    background: #FFE9DF; color: var(--pas-red);
     border: 1px solid var(--pas-line);
   }
 
@@ -2535,7 +2537,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
     box-shadow: 0 2px 6px rgba(0,0,0,.04) !important;
   }
   .pas-bento-chip:hover {
-    background: #FDF6F2 !important;
+    background: #FBF8F2 !important;
     color: var(--pas-ink-1) !important;
     border-color: var(--pas-deep) !important;
     transform: translateY(-1px);
@@ -2544,7 +2546,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
     background: var(--pas-grad) !important;
     color: #fff !important;
     border-color: var(--pas-deep) !important;
-    box-shadow: 0 4px 12px rgba(210,69,42,.28) !important;
+    box-shadow: 0 4px 12px rgba(232, 74, 18,.28) !important;
   }
 
   .pas-bento-divider {
@@ -2567,7 +2569,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 8px 32px rgba(30,21,18,.35), 0 2px 8px rgba(0,0,0,.12);
+    box-shadow: 0 8px 32px rgba(10, 10, 10,.35), 0 2px 8px rgba(0,0,0,.12);
     z-index: 50;
   }
   .pas-bottom-nav-item {
@@ -2578,11 +2580,11 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
     transition: all .18s ease; cursor: pointer;
   }
   .pas-bottom-nav-item:hover { color: #fff; background: rgba(255,255,255,.1); }
-  .pas-bottom-nav-item.on { color: #F2762A; background: rgba(255,255,255,.12); }
+  .pas-bottom-nav-item.on { color: #FF5A1F; background: rgba(255,255,255,.12); }
   .pas-bottom-nav-dot {
     position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
     width: 5px; height: 5px; border-radius: 99px;
-    background: #F2762A;
+    background: #FF5A1F;
   }
 
   /* Push content up so bottom nav doesn't overlap */
@@ -2603,8 +2605,8 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 
 /* Lane accent colors */
 :root {
-  --lane-desain: #F2762A;
-  --lane-produksi: #C0392B;
+  --lane-desain: #FF5A1F;
+  --lane-produksi: #E84A12;
   --lane-finishing: #B07514;
   --lane-kirim: #3F5BA9;
 }
@@ -2668,7 +2670,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
   scrollbar-width: thin;
   scrollbar-color: var(--pas-line) transparent;
 }
-.pas-lane-over { outline: 2px dashed var(--pas-deep); outline-offset: -2px; background: rgba(210,69,42,.06); }
+.pas-lane-over { outline: 2px dashed var(--pas-deep); outline-offset: -2px; background: rgba(232, 74, 18,.06); }
 .pas-dragging { transform: rotate(1deg) scale(1.01); box-shadow: 0 10px 28px rgba(0,0,0,.18); }
 .pas-lane-body::-webkit-scrollbar { width: 4px; }
 .pas-lane-body::-webkit-scrollbar-thumb { background: var(--pas-line); border-radius: 99px; }
@@ -2684,7 +2686,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
   position: relative;
 }
 .pas-order-card:hover {
-  border-color: #E3DAD3;
+  border-color: #DADAD5;
   box-shadow: 0 4px 16px rgba(0,0,0,.06);
   transform: translateY(-1px);
 }
@@ -2821,7 +2823,7 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
    ═══════════════════════════════════════════════ */
 .pas-picker {
   background: var(--pas-surface); border: 1px solid var(--pas-line);
-  border-radius: var(--pas-radius); box-shadow: 0 4px 18px rgba(40,25,18,.05);
+  border-radius: var(--pas-radius); box-shadow: 0 4px 18px rgba(10, 10, 10,.05);
   padding: 14px 18px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
 }
 .pas-picker-ic {
@@ -2867,13 +2869,13 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 .pas-cap-track > i { display: block; height: 100%; background: var(--pas-grad); border-radius: 99px; transition: width .45s ease; }
 .pas-cap-track.warn { background: #F3E7CF; }
 .pas-cap-track.warn > i { background: var(--pas-yellow); }
-.pas-cap-track.over { background: rgba(192,57,43,.14); }
-.pas-cap-track.over > i { background: repeating-linear-gradient(45deg, var(--pas-orange) 0 9px, #C0392B 9px 18px); }
+.pas-cap-track.over { background: rgba(232, 74, 18,.14); }
+.pas-cap-track.over > i { background: repeating-linear-gradient(45deg, var(--pas-orange) 0 9px, #E84A12 9px 18px); }
 .pas-cap-mark { position: absolute; top: -5px; bottom: -5px; width: 2px; background: var(--pas-orange); border-radius: 2px; }
 .pas-cap-big { font-size: 28px; font-weight: 800; letter-spacing: -.035em; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .pas-cap-big small { font-size: 15px; font-weight: 700; color: var(--pas-muted); }
 .pas-cap-row { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--pas-muted); font-weight: 600; }
-.pas-over { color: #C0392B; font-weight: 800; }
+.pas-over { color: #E84A12; font-weight: 800; }
 
 /* banner peringatan kapasitas */
 .pas-alert {
@@ -2891,12 +2893,12 @@ table.pas-tbl tbody tr:hover { background: #FDF6F2; }
 .pas-alert li { margin-bottom: 2px; }
 .pas-alert.warn { background: #FBF3E4; border-color: #EBD9B8; color: #7A5A1C; }
 .pas-alert.warn .ic { background: var(--pas-yellow); }
-.pas-alert.over { background: rgba(192,57,43,.08); border-color: rgba(192,57,43,.28); color: #C0392B; }
+.pas-alert.over { background: rgba(232, 74, 18,.08); border-color: rgba(232, 74, 18,.28); color: #E84A12; }
 .pas-alert.over .ic { background: var(--pas-orange); }
 
 /* varian pill untuk status kapasitas */
-.pas-pill.warn { background: rgba(242,118,42,.16); color: #9A5A14; }
-.pas-pill.danger { background: rgba(192,57,43,.14); color: #C0392B; }
+.pas-pill.warn { background: rgba(255, 90, 31,.16); color: #9A5A14; }
+.pas-pill.danger { background: rgba(232, 74, 18,.14); color: #E84A12; }
 
 /* tabel statis (rincian laporan) — tanpa affordance klik */
 table.pas-tbl.pas-tbl-static tbody tr { cursor: default; }

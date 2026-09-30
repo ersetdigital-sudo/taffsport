@@ -39,3 +39,6 @@ supabase/.temp/
 
 .vercel
 .env*
+
+# log dev server lokal
+.dev.log

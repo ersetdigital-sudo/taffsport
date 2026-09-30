@@ -43,13 +43,13 @@ export default function LoginPage() {
       <div className="pas-card p-8 w-full max-w-sm">
         <div className="flex flex-col items-center text-center gap-3 mb-7">
           <img
-            src="/logo-vsp.png"
-            alt="VSP Sport"
+            src="/logo-taff.png"
+            alt="TAFF Sportwear"
             className="w-24 h-24 object-contain"
-            style={{ filter: "drop-shadow(0 8px 22px rgba(242,118,42,.35))" }}
+            style={{ filter: "drop-shadow(0 8px 22px rgba(255, 90, 31,.35))" }}
           />
           <div>
-            <span className="block pas-display text-[17px]">VSP Sport</span>
+            <span className="block pas-display text-[17px]">TAFF Sportwear</span>
             <span className="block text-[11px] tracking-[1.4px] uppercase text-[var(--pas-muted)] mt-1">
               Panel Pesanan
             </span>
@@ -72,7 +72,7 @@ export default function LoginPage() {
               required
               type="password"
               autoComplete="off"
-              name="vsp-pesanan-pass"
+              name="taff-pesanan-pass"
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
@@ -89,8 +89,8 @@ export default function LoginPage() {
               className="mt-3 text-[13px] rounded-xl border px-4 py-3"
               style={{
                 borderColor: "#F6D9C9",
-                background: "#FDEEE4",
-                color: "#C0392B",
+                background: "#FFE9DF",
+                color: "#E84A12",
               }}
             >
               {error}

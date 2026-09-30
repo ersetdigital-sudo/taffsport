@@ -9,7 +9,7 @@ import {
 import { checkRateLimit } from "@/lib/rate-limit";
 
 const TEST_MESSAGE =
-  "Test notifikasi dari VSP Sport. Jika Anda menerima pesan ini, token Fonnte berfungsi dengan baik.";
+  "Test notifikasi dari TAFF Sportwear. Jika Anda menerima pesan ini, token Fonnte berfungsi dengan baik.";
 
 /**
  * POST /api/admin/settings/fonnte/test — kirim pesan uji (admin only).

@@ -2,7 +2,7 @@
  * Satu sumber kebenaran untuk "domain publik aplikasi ini".
  *
  * Kenapa tidak di-hardcode: domain project ini sudah pernah pindah
- * (menarasport.vercel.app → vsp-sport.vercel.app), dan tiap kali itu
+ * (menarasport.vercel.app → taff-sport.vercel.app), dan tiap kali itu
  * terjadi, link tracking yang dikirim ke customer lewat WhatsApp ikut mati.
  *
  * Vercel sudah menyediakan domain produksi sebagai system environment

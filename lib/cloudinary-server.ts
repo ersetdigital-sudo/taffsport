@@ -33,6 +33,29 @@ function sign(params: Record<string, string>, apiSecret: string): string {
 }
 
 /**
+ * Tanda tangan untuk upload dari browser (signed upload).
+ *
+ * Preset Cloudinary toko ini disetel SIGNED, jadi browser tidak boleh upload
+ * sendiri tanpa tanda tangan ini — dan itu memang tujuannya: kalau unsigned,
+ * siapa pun yang tahu nama cloud-nya bisa menitipkan berkas ke akun kita.
+ *
+ * `file`, `api_key`, dan `cloud_name` TIDAK ikut ditandatangani (Cloudinary
+ * mengecualikan ketiganya). Parameter LAIN yang dikirim wajib ikut semua,
+ * karena Cloudinary menghitung ulang tanda tangan dari yang benar-benar
+ * diterimanya.
+ *
+ * Mengembalikan null kalau API secret belum di-set, supaya pemanggil bisa
+ * membalas pesan yang jelas alih-alih mengirim tanda tangan kosong.
+ */
+export function cloudinaryUploadSignature(
+  params: Record<string, string>
+): string | null {
+  const apiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (!apiSecret) return null;
+  return sign(params, apiSecret);
+}
+
+/**
  * Hapus aset Cloudinary berdasarkan URL yang tersimpan di database.
  *
  * - URL yang bukan milik cloud kita (mis. gambar lama dari instalasi lain)

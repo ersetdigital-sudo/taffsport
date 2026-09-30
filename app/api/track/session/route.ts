@@ -3,7 +3,7 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { verifyToken, getSessionFromCookie } from "@/lib/verify-token";
 
 /**
- * GET /api/track/session?order=VSP-XXXXXX-XXX
+ * GET /api/track/session?order=TAFF-XXXXXX-XXX
  * Validates a signed session token and returns fresh order data.
  * Token can come from:
  *   1. Authorization: Bearer <token> header (primary — client stores in sessionStorage)

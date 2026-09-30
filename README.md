@@ -1,6 +1,6 @@
 <div align="center">
 
-# VSP Sport
+# TAFF Sportwear
 
 **Production operations platform for a custom jersey manufacturer.**
 
@@ -11,9 +11,6 @@ Order intake → 11-stage production pipeline → automated WhatsApp updates →
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres_%2B_RLS-3ECF8E?logo=supabase&logoColor=white)](https://supabase.com)
-[![Vercel](https://img.shields.io/badge/Deployed_on-Vercel-000000?logo=vercel&logoColor=white)](https://vsp-sport.vercel.app)
-
-[**Live demo**](https://vsp-sport.vercel.app) · [Customer tracking](https://vsp-sport.vercel.app/track)
 
 </div>
 
@@ -21,7 +18,7 @@ Order intake → 11-stage production pipeline → automated WhatsApp updates →
 
 ## The problem
 
-VSP Sport produces custom full-printing jerseys. Every order passes through eleven production stages across different workstations — design, layout, colour proofing, printing, press transfer, cutting, sewing, finishing, QC, packing, shipping.
+TAFF Sportwear produces custom full-printing jerseys. Every order passes through eleven production stages across different workstations — design, layout, colour proofing, printing, press transfer, cutting, sewing, finishing, QC, packing, shipping.
 
 Before this platform, keeping customers informed meant someone pausing work to answer *"how far along is my order?"* on WhatsApp. Order status lived in the operator's head; the customer had no way to check it themselves.
 
@@ -45,58 +42,6 @@ This platform turns that flow into a tracked, self-reporting pipeline: the momen
 | **Reports** | Average production turnaround, derived from the recorded stage history rather than a manually maintained sheet. |
 | **Settings** | Shop profile, WhatsApp gateway token, reminder schedule and monthly capacity — all editable from the dashboard. |
 
-## Screenshots
-
-**Home / entry point**
-
-![Home](docs/screenshots/01-home.png)
-
-**Orders dashboard**
-
-![Orders dashboard](docs/screenshots/03-orders-dashboard.png)
-
-<table>
-<tr>
-<td width="50%">
-
-**Maklon (toll manufacturing) dashboard**
-
-![Maklon dashboard](docs/screenshots/05-maklon-dashboard.png)
-
-</td>
-<td width="50%">
-
-**Customer tracking page**
-
-![Customer tracking](docs/screenshots/07-customer-tracking.png)
-
-</td>
-</tr>
-<tr>
-<td width="50%">
-
-**Customer status timeline**
-
-![Customer status](docs/screenshots/06-customer-status.png)
-
-</td>
-<td width="50%">
-
-**Mobile dashboard**
-
-![Mobile dashboard](docs/screenshots/04-orders-dashboard-mobile.png)
-
-</td>
-</tr>
-</table>
-
-<details>
-<summary>Login screen</summary>
-
-![Login](docs/screenshots/02-login.png)
-
-</details>
-
 ## Architecture
 
 A single Next.js App Router application. Server Components read data directly; mutations go through Route Handlers that own the authorisation check.
@@ -106,12 +51,13 @@ Browser
   dashboards · tracking pages · public entry page
         │
         ▼
-Next.js 15 (App Router) on Vercel
+Next.js 15 (App Router)
   middleware.ts        session refresh, tags each request with its pathname
   Server Components    read through the service client
-  Route Handlers       getAdminDb()   auth check FIRST, then service client
+  Route Handlers       auth check FIRST (getAdminDb), then service client
                        tracking       phone match / signed token, then read
                        cron           CRON_SECRET, then service client
+                       cloudinary     session check, then hand out a signed upload grant
         │
         ▼
 Supabase (Postgres)
@@ -120,7 +66,7 @@ Supabase (Postgres)
   RPCs                 atomic stage-claim for notifications
         │
         ├──▶ Fonnte (WhatsApp gateway)
-        └──▶ Cloudinary (media)
+        └──▶ Cloudinary (media, signed uploads)
 ```
 
 ### Data model
@@ -149,25 +95,42 @@ A few parts that were genuinely interesting to get right.
 
 **Tracking links that don't leak.** A dashboard behind a shared password is fine for staff, but customers shouldn't need accounts. Jersey orders are verified by normalising both sides to digits before comparing the phone number. Messages sent over WhatsApp carry an HMAC-SHA256 signed token (30-day TTL) so the link works without re-typing an order number, while `/status`, `/track` and `/status/maklon` resolve independently and never expose one customer's data to another.
 
-**Photos without a media server.** Design approvals and work orders are uploaded straight from the browser to Cloudinary via an unsigned upload preset; only the resulting URLs are stored. A server-side fallback route handles cases the browser preset can't.
+**Uploads that are signed, not open.** Media choice matters less than the upload path. Cloudinary offers an *unsigned* upload preset, which means anyone who reads the cloud name out of the page source can push files into the account. This platform uses a **signed** preset instead: the browser asks `POST /api/pesanan/cloudinary/sign` for a short-lived grant, and the server signs `timestamp`, `upload_preset` and `folder` with the API secret. That secret never reaches the browser, and the endpoint is behind the same session guard as every other dashboard route. Forging the signature is rejected at Cloudinary's end (verified: HTTP 401).
 
-**Order numbers that survive being read aloud.** `VSP` + `YYMMDD` + four characters drawn from a CSPRNG, with the ambiguous characters `B I O L 0 1` removed from the alphabet. Uniqueness is checked against the database with retry, because customers read these numbers over the phone. Numbers minted before the rename (`MENARA…`) still resolve on the tracking page, so links already sent to customers keep working.
+**Photos are never stored at camera resolution.** The billed unit here is not requests, it's stored bytes plus delivery bandwidth plus derived transformations. A phone photo is routinely 4000 px and 2 MB, while the largest place this app ever shows a photo is a 1600 px lightbox — every pixel above that is paid for forever and never looked at. So the browser downsizes to a 1600 px long edge and re-encodes to JPEG q0.82 *before* the upload, which lands a photo around 200–400 KB: roughly a 5–8× reduction in stored bytes, with no visible difference at the sizes the app actually displays. The helper is deliberately pessimistic — it falls back to the original file if the browser can't decode, if the image is already small enough, or if the re-encode didn't actually save bytes. PNG stays PNG, because jersey mockups often carry transparency and a JPEG re-encode would turn those areas black. EXIF orientation is honoured so phone photos don't come back rotated.
+
+**Order numbers that survive being read aloud.** `TAFF` + `YYMMDD` + four characters drawn from a CSPRNG, with the ambiguous characters `B I O L 0 1` removed from the alphabet. Uniqueness is checked against the database with retry, because customers read these numbers over the phone. Numbers minted before the rename (`MENARA…`) and under the previous prefix (`VSP…`) both still resolve on the tracking page, so links already sent to customers keep working.
+
+**Theming as a one-file change.** Every colour and font in the product is a CSS variable in `app/globals.css` (`:root` plus a `.dark` override) that `tailwind.config.ts` reads from. Rebranding the whole application — palette, typeface, logo, order-number prefix — is a change to that token block plus the logo files, not a hunt through hundreds of components.
 
 ## Security model
 
-Worth calling out, because the first version of this app had a serious flaw that the rewrite fixed.
+Worth calling out, because an earlier version of this platform had a serious flaw that the rewrite fixed.
 
-**What was wrong.** The operational tables shipped with row-level security enabled but policies written as `USING (true)` for the `public` role. Because `NEXT_PUBLIC_SUPABASE_ANON_KEY` is embedded in the browser bundle by design, anyone who opened DevTools could read *every* customer record — names, phone numbers, cities — insert fabricated orders, or rewrite any order's status and tracking number by calling the REST API directly. The application never came into it. Public signup was also enabled, and content tables granted writes to any authenticated user.
+**What was wrong.** The operational tables shipped with row-level security enabled but policies written as `USING (true)` for the `public` role. Because `NEXT_PUBLIC_SUPABASE_ANON_KEY` is embedded in the browser bundle by design, anyone who opened DevTools could read *every* customer record — names, phone numbers, cities — insert fabricated orders, or rewrite any order's status and tracking number by calling the REST API directly. The application never came into it.
 
 **What changed.**
 
-- **Authorisation moved to the server.** All 38 call sites that touch operational tables now use a service-role client created in exactly one place (`createServiceClient()`), used only from server code. The public anon key no longer has any access to customer data.
-- **A single guard, applied first.** `getAdminDb()` verifies the admin session and returns the service client only if it passes — so every handler begins with an explicit 401 path rather than trusting RLS to filter results.  It was added to 15 handler functions across 10 routes that previously had no authorisation check at all — including two that could rewrite an order's stage (and therefore message a customer) and one that could change the shop's WhatsApp number.
-- **The RLS hole was closed.** The permissive policies were removed from the four operational tables and both stage lists, verified by attempting an unauthenticated write against the live database and confirming it is rejected with a row-level security error. The baseline schema simply never grants them: anon can read the shop identity and the stage-name lists, nothing else.
+- **Authorisation moved to the server.** Every call site that touches operational tables now uses a service-role client created in exactly one place (`createServiceClient()`), used only from server code. The public anon key no longer has any access to customer data.
+- **A single guard, applied first.** `getAdminDb()` verifies the admin session and returns the service client only if it passes — so every handler begins with an explicit 401 path rather than trusting RLS to filter results.
+- **The RLS hole was closed.** The permissive policies were removed from the four operational tables and both stage lists. The baseline schema simply never grants them: anon can read the shop identity and the stage-name lists, nothing else.
 - **RPCs are service-role only.** The notification/settings functions are `SECURITY DEFINER`, so the grants matter more than the table policies. They are revoked from `public`, `anon` and `authenticated` and granted to `service_role` — otherwise the public anon key could overwrite the WhatsApp token or claim a stage on someone else's behalf and silence their notifications.
-- **Public signup disabled**, neutralising the `authenticated`-role policies on content tables at once.
 - **Secrets stay encrypted.** The WhatsApp gateway token is stored AES-256-GCM encrypted (key from the environment, never in code), so a database dump alone doesn't expose the account.
 - **The remaining anon surface is only what has to be public:** the stage-name lists the customer status pages read, nothing else.
+
+## Verified on this deployment
+
+Claims are cheap, so these were checked against the live project rather than assumed:
+
+| Check | Result |
+|---|---|
+| Migrations `0001`–`0010` applied to a fresh database | 11 tables created, versions recorded in `supabase_migrations` |
+| Anon key reads the public brand row | `200` — intended, this is the shop identity the status pages need |
+| Anon key writes a fabricated order | `401` — `new row violates row-level security policy for table "orders"` |
+| Signed upload without a session | `401` from the sign endpoint |
+| Signed upload with a valid session | `200`, asset landed in the intended folder |
+| Upload with a forged signature | `401` from Cloudinary — the signature is genuinely enforced |
+| `tsc --noEmit` and `next build` | clean |
 
 ## Tech stack
 
@@ -177,14 +140,14 @@ Worth calling out, because the first version of this app had a serious flaw that
 | Language | TypeScript, `strict` | The status/pipeline logic spans a dozen files; the compiler catches the drift |
 | Styling | Tailwind CSS 3 + Radix UI primitives | Design tokens live in CSS variables so the brand palette is themeable in one place |
 | Database | Supabase (Postgres) + RLS | Real relational constraints for order history, plus a first-party RPC path for atomic claims |
-| Media | Cloudinary | Direct-from-browser uploads, no media server to run |
+| Media | Cloudinary (signed uploads) | Direct-from-browser uploads with no media server to run, and no open upload endpoint |
 | Messaging | Fonnte (WhatsApp gateway) | Where the customers already are; no app install required |
 | Hosting | Vercel | Cron for reminders, plus edge middleware for session refresh |
 
 ## Status
 
-Shipped to production and in daily operational use. The platform deliberately covers operations only — no storefront, no catalogue — so the data model stays as small as the work it supports.
+The platform covers operations only — no storefront, no catalogue — so the data model stays as small as the work it supports. Freshly provisioned on its own Supabase project and migrations, with the checks above passing; not yet deployed to a public URL.
 
 ## Author
 
-Built by **Your Name** <!-- TODO: ganti dengan nama kamu --> · [GitHub](https://github.com/ersetdigital-sudo) · [Live demo](https://vsp-sport.vercel.app)
+Built by **Erset Digital** · [GitHub](https://github.com/ersetdigital-sudo)

@@ -1,6 +1,6 @@
 import { createHmac, randomBytes } from "crypto";
 
-const SECRET = process.env.TRACK_SESSION_SECRET || "vsp-track-session-2026-dev-key";
+const SECRET = process.env.TRACK_SESSION_SECRET || "taff-track-session-2026-dev-key";
 
 export interface TrackSession {
   orderId: string;

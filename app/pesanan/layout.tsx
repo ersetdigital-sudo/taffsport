@@ -28,6 +28,6 @@ export default async function PesananLayout({
   }
 
   return (
-    <div className="min-h-screen bg-[#F7F6F4] text-[#1B1512]">{children}</div>
+    <div className="min-h-screen bg-[#F5EFE3] text-[#0A0A0A]">{children}</div>
   );
 }

@@ -1,6 +1,6 @@
 # `supabase/` — Skema database, RLS, dan RPC
 
-Supabase (Postgres) menyimpan data operasional VSP Sport: pesanan jersey, pesanan maklon,
+Supabase (Postgres) menyimpan data operasional TAFF Sportwear: pesanan jersey, pesanan maklon,
 tahap produksi, pengaturan, dan log notifikasi WhatsApp.
 
 Database ini **khusus operasional**. Modul landing page/katalog sudah dibuang beserta

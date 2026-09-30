@@ -5,7 +5,7 @@ import StatusClient from "./StatusClient";
 
 export const metadata: Metadata = {
   title: "Status Pesanan",
-  description: "Pantau progres produksi pesanan jersey custom VSP Sport.",
+  description: "Pantau progres produksi pesanan jersey custom TAFF Sportwear.",
 };
 
 // Identitas toko dibaca per request: nomor WhatsApp untuk tombol CS harus sama

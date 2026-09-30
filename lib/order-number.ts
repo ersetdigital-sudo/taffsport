@@ -6,7 +6,7 @@
  * maklon bisa diprediksi. Sekarang keduanya memakai fungsi di sini.
  *
  * Format: `<PREFIX><YYMMDD><4 karakter acak>`
- *   VSP260921K4XQ     → pesanan jersey
+ *   TAFF260921K4XQ     → pesanan jersey
  *   MKL260921K4XQ     → pesanan maklon
  *
  * Charset membuang karakter yang sering salah ketik pelanggan
@@ -21,19 +21,19 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 /** Charset aman: tanpa B, I, O, L, 0, 1. */
 export const ORDER_NUMBER_CHARSET = "ACDEFGHJKMNPQRSTUVWXYZ23456789";
 
-export const ORDER_NUMBER_PREFIX = "VSP";
+export const ORDER_NUMBER_PREFIX = "TAFF";
 export const MAKLON_NUMBER_PREFIX = "MKL";
 
 /**
  * Prefix lama yang tetap harus dikenali saat memvalidasi nomor.
  *
  * Nomor yang sudah beredar — dikirim ke pelanggan lewat WhatsApp dan tersimpan
- * di tabel `orders` — memakai prefix `MENARA`. Kalau prefix baru saja yang
+ * di tabel `orders` — memakai prefix `MENARA` — dan `VSP` setelah rename ke TAFF. Kalau prefix baru saja yang
  * diizinkan regex, pesanan lama itu jadi tidak bisa dilacak sama sekali.
  * Jadi prefix baru dipakai untuk nomor yang baru dibuat, sedangkan yang lama
  * tetap diterima.
  */
-export const LEGACY_ORDER_NUMBER_PREFIXES = ["MENARA"];
+export const LEGACY_ORDER_NUMBER_PREFIXES = ["MENARA", "VSP"];
 
 /** Panjang bagian acak. */
 const CODE_LENGTH = 4;
@@ -87,7 +87,7 @@ function randomCode(length = CODE_LENGTH): string {
 export interface GenerateOrderNumberOptions {
   /** Tabel untuk pengecekan bentrok. Default `orders`. */
   table?: OrderNumberTable;
-  /** Prefix nomor. Default `VSP`. */
+  /** Prefix nomor. Default `TAFF`. */
   prefix?: string;
   /** Tanggal acuan (untuk pengujian). Default sekarang. */
   date?: Date;

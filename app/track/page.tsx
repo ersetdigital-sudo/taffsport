@@ -5,7 +5,7 @@ import TrackForm from "./TrackForm";
 export const metadata: Metadata = {
   title: "Lacak Pesanan",
   description:
-    "Lacak progres pesanan jersey custom VSP Sport dengan nomor pesanan dan nomor HP.",
+    "Lacak progres pesanan jersey custom TAFF Sportwear dengan nomor pesanan dan nomor HP.",
 };
 
 // Identitas toko dibaca per request supaya nomor WhatsApp di halaman ini selalu

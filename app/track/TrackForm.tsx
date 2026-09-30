@@ -54,7 +54,7 @@ export default function TrackForm({
 
       if (!res.ok) {
         showErr(
-          "Nomor pesanan tidak ditemukan. Cek lagi formatnya (contoh: VSP260907K4XQ) atau hubungi admin."
+          "Nomor pesanan tidak ditemukan. Cek lagi formatnya (contoh: TAFF260907K4XQ) atau hubungi admin."
         );
         setLoading(false);
         return;
@@ -69,9 +69,9 @@ export default function TrackForm({
 
       // Store token separately for session header auth
       if (data.token) {
-        sessionStorage.setItem(`vsp_token_${id}`, data.token);
+        sessionStorage.setItem(`taff_token_${id}`, data.token);
       }
-      sessionStorage.setItem(`vsp_verified_${id}`, JSON.stringify(data));
+      sessionStorage.setItem(`taff_verified_${id}`, JSON.stringify(data));
       router.push(`/status?order=${encodeURIComponent(id)}`);
     } catch {
       showErr("Terjadi kesalahan. Coba lagi.");
@@ -86,18 +86,18 @@ export default function TrackForm({
           {/* nav */}
           <header className="max-w-6xl mx-auto px-5 sm:px-8 py-5 flex items-center justify-between">
             <a href="/" className="flex items-center gap-3">
-{/* Mark saja (tanpa wordmark), karena teks VSP Sport sudah ada di sampingnya */}
+{/* Mark saja (tanpa wordmark), karena teks TAFF Sportwear sudah ada di sampingnya */}
                 <img
-                  src="/logo-vsp-mark.png"
+                  src="/logo-taff-mark.png"
                   alt=""
                   aria-hidden="true"
                   className="h-10 w-auto"
                 />
               <span className="leading-none">
                 <span className="block trk-display text-[15px] tracking-tight">
-                  VSP Sport
+                  TAFF Sportwear
                 </span>
-                <span className="block trk-stencil text-[9px] text-[#A29086] mt-[3px]">
+                <span className="block trk-stencil text-[9px] text-[#A3A3A3] mt-[3px]">
                   Custom Apparel
                 </span>
               </span>
@@ -106,7 +106,7 @@ export default function TrackForm({
               href={waHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex trk-btn-ghost px-4 py-2 text-sm text-[#A29086] hover:text-white"
+              className="hidden sm:inline-flex trk-btn-ghost px-4 py-2 text-sm text-[#A3A3A3] hover:text-white"
             >
               Hubungi Admin
             </a>
@@ -116,17 +116,17 @@ export default function TrackForm({
             <div className="max-w-xl mx-auto flex flex-col gap-8 pt-6 sm:pt-10 lg:pt-14">
               {/* copy + form */}
               <section>
-                <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#F2762A] border border-[rgba(242,118,42,.35)] rounded-full px-3 py-1.5">
+                <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#FF5A1F] border border-[rgba(255, 90, 31,.35)] rounded-full px-3 py-1.5">
                   Order Tracking
                 </span>
 
                 <h1 className="trk-display text-[40px] leading-[1.02] sm:text-[58px] mt-5">
                   Lacak Pesanan
                   <br />
-                  Kamu<span className="text-[#F2762A]">.</span>
+                  Kamu<span className="text-[#FF5A1F]">.</span>
                 </h1>
 
-                <p className="text-[#A29086] text-[16px] sm:text-[17px] leading-relaxed mt-4">
+                <p className="text-[#A3A3A3] text-[16px] sm:text-[17px] leading-relaxed mt-4">
                   Pantau progres jersey custom kamu dari desain sampai siap
                   dikirim. Tanpa perlu login, cukup masukkan nomor pesanan dan
                   nomor HP yang dipakai saat order.
@@ -138,7 +138,7 @@ export default function TrackForm({
                   className="trk-card p-5 sm:p-7 mt-8"
                 >
                   <label className="block">
-                    <span className="trk-stencil text-[10px] text-[#A29086]">
+                    <span className="trk-stencil text-[10px] text-[#A3A3A3]">
                       Nomor Pesanan
                     </span>
                     <input
@@ -149,14 +149,14 @@ export default function TrackForm({
                         setOrderNumber(e.target.value);
                         clearErr();
                       }}
-                      placeholder="VSP260907K4XQ"
+                      placeholder="TAFF260907K4XQ"
                       autoComplete="off"
                       className="trk-field w-full mt-2 px-4 py-3.5 text-[16px] tracking-wide"
                     />
                   </label>
 
                   <label className="block mt-5">
-                    <span className="trk-stencil text-[10px] text-[#A29086]">
+                    <span className="trk-stencil text-[10px] text-[#A3A3A3]">
                       Nomor HP
                     </span>
                     <input
@@ -172,7 +172,7 @@ export default function TrackForm({
                       autoComplete="off"
                       className="trk-field w-full mt-2 px-4 py-3.5 text-[16px] tracking-wide"
                     />
-                    <span className="block text-[13px] text-[#7E6F66] mt-2">
+                    <span className="block text-[13px] text-[#5C5C5C] mt-2">
                       Dipakai hanya untuk verifikasi pemilik pesanan.
                     </span>
                   </label>
@@ -209,7 +209,7 @@ export default function TrackForm({
                     )}
                   </button>
 
-                  <p className="text-[13px] text-[#7E6F66] text-center mt-5">
+                  <p className="text-[13px] text-[#5C5C5C] text-center mt-5">
                     Lupa nomor pesanan?{" "}
                     <a
                       href={waMeUrl(
@@ -218,14 +218,14 @@ export default function TrackForm({
                       )}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-[#F2762A] underline underline-offset-4"
+                      className="text-[#FF5A1F] underline underline-offset-4"
                     >
                       Tanya admin
                     </a>
                   </p>
                 </form>
 
-                <div className="flex flex-wrap gap-x-7 gap-y-2 mt-7 text-[13px] text-[#A29086]">
+                <div className="flex flex-wrap gap-x-7 gap-y-2 mt-7 text-[13px] text-[#A3A3A3]">
                   <span>11 tahap produksi transparan</span>
                   <span>Estimasi kirim jelas</span>
                   <span>Update tiap hari kerja</span>
@@ -236,26 +236,26 @@ export default function TrackForm({
               <section>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="trk-card p-4 sm:p-5 text-center">
-                    <p className="trk-display text-[20px] sm:text-[24px] text-[#F2762A]">
+                    <p className="trk-display text-[20px] sm:text-[24px] text-[#FF5A1F]">
                       450K+
                     </p>
-                    <p className="text-[12px] sm:text-[13px] text-[#A29086] mt-1 leading-snug">
+                    <p className="text-[12px] sm:text-[13px] text-[#A3A3A3] mt-1 leading-snug">
                       Order selesai
                     </p>
                   </div>
                   <div className="trk-card p-4 sm:p-5 text-center">
-                    <p className="trk-display text-[20px] sm:text-[24px] text-[#F2762A]">
+                    <p className="trk-display text-[20px] sm:text-[24px] text-[#FF5A1F]">
                       9K+
                     </p>
-                    <p className="text-[12px] sm:text-[13px] text-[#A29086] mt-1 leading-snug">
+                    <p className="text-[12px] sm:text-[13px] text-[#A3A3A3] mt-1 leading-snug">
                       Tim &amp; klien
                     </p>
                   </div>
                   <div className="trk-card p-4 sm:p-5 text-center">
-                    <p className="trk-display text-[20px] sm:text-[24px] text-[#F2762A]">
+                    <p className="trk-display text-[20px] sm:text-[24px] text-[#FF5A1F]">
                       7–10
                     </p>
-                    <p className="text-[12px] sm:text-[13px] text-[#A29086] mt-1 leading-snug">
+                    <p className="text-[12px] sm:text-[13px] text-[#A3A3A3] mt-1 leading-snug">
                       Hari kerja
                     </p>
                   </div>
@@ -264,21 +264,21 @@ export default function TrackForm({
             </div>
           </main>
 
-          <footer className="border-t border-[#33261F] mt-auto">
+          <footer className="border-t border-[#2E2E2E] mt-auto">
             <div className="max-w-6xl mx-auto px-5 sm:px-8 py-7 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
               <div className="flex flex-col">
-                <p className="text-[13px] text-[#A29086]">
-                  © 2026 VSP Sport — Custom Jersey &amp; Sportswear
+                <p className="text-[13px] text-[#A3A3A3]">
+                  © 2026 TAFF Sportwear — Custom Jersey &amp; Sportswear
                 </p>
-                <p className="trk-stencil text-[9px] text-[#7E6F66] mt-0.5">
-                  vspsport.id
+                <p className="trk-stencil text-[9px] text-[#5C5C5C] mt-0.5">
+                  taffsport.id
                 </p>
               </div>
-              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#7E6F66]">
+              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#5C5C5C]">
                 <span>{hours}</span>
                 <a
                   href={waHref}
-                  className="text-[#F2762A] hover:underline underline-offset-4"
+                  className="text-[#FF5A1F] hover:underline underline-offset-4"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

@@ -1,18 +1,39 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import localFont from "next/font/local";
+import { JetBrains_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { getAppUrl } from "@/lib/app-url";
 import { getBrand } from "@/lib/queries";
 import "./globals.css";
 
 /**
- * Font — Geist (satu keluarga untuk semuanya, sesuai mockup VSP Sport).
- * --font-display dan --font-mono di globals.css mengikuti --font-sans.
+ * Font — Archivo (satu keluarga untuk teks & display, sesuai brand TAFF Sportwear).
+ * Berkasnya diambil dari folder `fonts/` di root repo, jadi tidak ada request ke
+ * Google Fonts saat build maupun saat halaman dibuka.
  */
-const geist = Geist({
-  subsets: ["latin"],
-  display: "swap",
+const archivo = localFont({
+  src: [
+    { path: "../fonts/archivo-regular.ttf", weight: "400", style: "normal" },
+    { path: "../fonts/archivo-italic.ttf", weight: "400", style: "italic" },
+    { path: "../fonts/archivo-medium.ttf", weight: "500", style: "normal" },
+    { path: "../fonts/archivo-semibold.ttf", weight: "600", style: "normal" },
+    { path: "../fonts/archivo-bold.ttf", weight: "700", style: "normal" },
+    { path: "../fonts/archivo-extrabold.ttf", weight: "800", style: "normal" },
+    { path: "../fonts/archivo-black.ttf", weight: "900", style: "normal" },
+  ],
   variable: "--font-sans",
+  display: "swap",
+});
+
+/**
+ * JetBrains Mono — khusus nomor pesanan & label stencil seperti di mockup TAFF
+ * (contoh: TNT260929YXUZ). Dikonsumsi lewat --font-mono di globals.css.
+ */
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+  variable: "--font-mono",
 });
 
 /**
@@ -59,8 +80,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#F7F6F4" },
-    { media: "(prefers-color-scheme: dark)", color: "#14100E" },
+    { media: "(prefers-color-scheme: light)", color: "#F5EFE3" },
+    { media: "(prefers-color-scheme: dark)", color: "#050505" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -72,7 +93,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="id" suppressHydrationWarning className={geist.variable}>
+    <html lang="id" suppressHydrationWarning className={`${archivo.variable} ${jetbrainsMono.variable}`}>
       <body className="antialiased">
         <ThemeProvider
           attribute="class"

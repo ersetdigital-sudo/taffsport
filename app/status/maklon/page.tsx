@@ -21,7 +21,7 @@ import { waMeUrl } from "@/lib/wa";
  */
 
 export const metadata: Metadata = {
-  title: "Status Pesanan Maklon — VSP Sport",
+  title: "Status Pesanan Maklon — TAFF Sportwear",
   description: "Pantau progres produksi pesanan maklon kamu.",
   robots: { index: false, follow: false },
 };
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 /** Nama tahap cadangan bila tabel `maklon_steps` belum berisi apa pun. */
 const DEFAULT_STEP_NAMES = MAKLON_STAGES.map((stage) => stage.label);
 
-const BRAND_FALLBACK = { name: "VSP Sport", whatsapp_number: WA_NUMBER };
+const BRAND_FALLBACK = { name: "TAFF Sportwear", whatsapp_number: WA_NUMBER };
 
 type MaklonProduct = { name?: string; sizes?: { size?: string; qty?: number }[] };
 
@@ -108,7 +108,7 @@ function ProductList({ products, fallbackName, fallbackQty }: {
             className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[.03] px-3.5 py-2.5"
           >
             <span className="text-[14px] font-medium">{p.name || "-"}</span>
-            <span className="dpo-mono text-[14px] text-[#F2762A]">{qty} pcs</span>
+            <span className="dpo-mono text-[14px] text-[#FF5A1F]">{qty} pcs</span>
           </div>
         );
       })}
@@ -135,9 +135,9 @@ function Shell({ children, csHref }: { children: React.ReactNode; csHref: string
               <div className="flex items-center gap-3">
                 <a href="/" className="shrink-0" aria-label="Kembali ke beranda">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {/* Mark saja (tanpa wordmark), karena teks VSP Sport ada di sampingnya */}
+                  {/* Mark saja (tanpa wordmark), karena teks TAFF Sportwear ada di sampingnya */}
                   <img
-                    src="/logo-vsp-mark.png"
+                    src="/logo-taff-mark.png"
                     alt=""
                     aria-hidden="true"
                     className="h-8 w-auto"
@@ -145,9 +145,9 @@ function Shell({ children, csHref }: { children: React.ReactNode; csHref: string
                 </a>
                 <div className="leading-tight">
                   <p className="trk-display text-[14.5px] font-semibold uppercase tracking-wide sm:text-[15px]">
-                    VSP Sport
+                    TAFF Sportwear
                   </p>
-                  <p className="text-[10.5px] text-[#7E6F66] sm:text-[11px]">
+                  <p className="text-[10.5px] text-[#5C5C5C] sm:text-[11px]">
                     Pabrik Jersey Custom Full Printing
                   </p>
                 </div>
@@ -156,7 +156,7 @@ function Shell({ children, csHref }: { children: React.ReactNode; csHref: string
                 href={csHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border border-white/[.12] bg-white/5 px-4 py-2 text-[13px] font-medium text-[#A29086] hover:bg-white/10 hover:text-white transition"
+                className="inline-flex items-center gap-2 rounded-full border border-white/[.12] bg-white/5 px-4 py-2 text-[13px] font-medium text-[#A3A3A3] hover:bg-white/10 hover:text-white transition"
               >
                 Hubungi CS
               </a>
@@ -245,7 +245,7 @@ export default async function MaklonStatusPage({
         <div className="pt-7 sm:pt-12">
           <InfoCard title="Status Pesanan Maklon">
             <h1 className="trk-display text-[22px] leading-tight">Link tidak valid atau kedaluwarsa</h1>
-            <p className="mt-3 text-[14px] leading-relaxed text-[#A29086]">
+            <p className="mt-3 text-[14px] leading-relaxed text-[#A3A3A3]">
               Link ini cuma bisa dibuka dari pesan WhatsApp resmi kami dan berlaku 30 hari.
               Kalau link-nya sudah lama, minta link baru ke CS ya — atau langsung tanya
               progres pesanan kamu.
@@ -270,8 +270,8 @@ export default async function MaklonStatusPage({
         <div className="pt-7 sm:pt-12">
           <InfoCard title="Status Pesanan Maklon">
             <h1 className="trk-display text-[22px] leading-tight">Pesanan tidak ditemukan</h1>
-            <p className="mt-3 text-[14px] leading-relaxed text-[#A29086]">
-              Pesanan <span className="dpo-mono text-[#EFE3DC]">{orderNumber}</span> tidak ada di
+            <p className="mt-3 text-[14px] leading-relaxed text-[#A3A3A3]">
+              Pesanan <span className="dpo-mono text-[#E4E4DF]">{orderNumber}</span> tidak ada di
               sistem kami. Pastikan nomornya benar atau hubungi CS untuk dibantu cek ulang.
             </p>
             <a
@@ -310,8 +310,8 @@ export default async function MaklonStatusPage({
               ? "Pesanan maklon kamu siap dikirim"
               : "Pesanan maklon kamu sedang kami kerjakan"}
         </h1>
-        <p className="mt-3 text-[14px] text-[#A29086]">
-          Nomor <span className="dpo-mono text-[#EFE3DC]">{order.order_number}</span> -{" "}
+        <p className="mt-3 text-[14px] text-[#A3A3A3]">
+          Nomor <span className="dpo-mono text-[#E4E4DF]">{order.order_number}</span> -{" "}
           {order.customer_name}
         </p>
         <div className="mt-4 flex flex-wrap items-center gap-2.5">
@@ -327,7 +327,7 @@ export default async function MaklonStatusPage({
             />
             {isDone ? "Selesai" : stageName}
           </span>
-          <span className="text-[12.5px] text-[#7E6F66]">
+          <span className="text-[12.5px] text-[#5C5C5C]">
             Tahap {step} dari {totalSteps}
           </span>
         </div>
@@ -335,7 +335,7 @@ export default async function MaklonStatusPage({
         <div className="trk-bar mt-6">
           <i style={{ width: `${pct}%` }} />
         </div>
-        <div className="mt-2 flex items-center justify-between text-[12.5px] text-[#7E6F66]">
+        <div className="mt-2 flex items-center justify-between text-[12.5px] text-[#5C5C5C]">
           <span className="dpo-mono">{pct}%</span>
           <span>Update terakhir {formatDateTime(order.updated_at)}</span>
         </div>
@@ -360,7 +360,7 @@ export default async function MaklonStatusPage({
                   )}
                 </div>
                 <p className="trk-label text-[15px]">{name}</p>
-                <p className="mt-1 text-[12.5px] text-[#7E6F66]">
+                <p className="mt-1 text-[12.5px] text-[#5C5C5C]">
                   {pos < step ? "Selesai" : pos === step ? (isDone ? "Selesai" : "Sedang dikerjakan") : "Menunggu"}
                 </p>
               </div>
@@ -453,14 +453,14 @@ export default async function MaklonStatusPage({
         <section className="mt-10">
           <p className="dpo-kicker">Catatan untuk Kamu</p>
           <div className="trk-update-box mt-3">
-            <p className="text-[14px] leading-relaxed text-[#EFE3DC]">{order.design_notes}</p>
+            <p className="text-[14px] leading-relaxed text-[#E4E4DF]">{order.design_notes}</p>
           </div>
         </section>
       )}
 
       <section className="mt-10">
         <div className="trk-card p-6 text-center sm:p-7">
-          <p className="text-[14px] leading-relaxed text-[#A29086]">
+          <p className="text-[14px] leading-relaxed text-[#A3A3A3]">
             Ada yang mau ditanyakan soal pesanan ini? CS kami siap bantu.
           </p>
           <div className="mt-5 flex justify-center">
@@ -468,7 +468,7 @@ export default async function MaklonStatusPage({
               href={csHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#F2762A] px-8 py-3.5 text-[15px] font-semibold text-white transition hover:-translate-y-px hover:bg-[#F2762A] sm:w-auto"
+              className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#FF5A1F] px-8 py-3.5 text-[15px] font-semibold text-white transition hover:-translate-y-px hover:bg-[#FF5A1F] sm:w-auto"
             >
               Chat CS
             </a>

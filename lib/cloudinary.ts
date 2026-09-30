@@ -1,19 +1,36 @@
 /**
- * Cloudinary — upload gambar dari sisi browser memakai UNSIGNED upload preset
- * (env: NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME + NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
- * keduanya memang aman dipublikasikan).
+ * Cloudinary — upload gambar dari sisi browser.
+ *
+ * Preset Cloudinary toko ini disetel SIGNED, jadi browser tidak bisa upload
+ * sendiri: komponen client minta tanda tangan ke /api/pesanan/cloudinary/sign
+ * dulu, baru mengirim berkasnya memakai tanda tangan itu.
  *
  * Berkas ini di-import komponen client, jadi JANGAN pernah menaruh API key/secret
- * di sini. Operasi yang butuh tanda tangan (hapus aset) ada di
- * lib/cloudinary-server.ts.
+ * di sini. Tanda tangan dan operasi hapus aset ada di lib/cloudinary-server.ts.
  */
 
-/** Folder induk semua aset gambar VSP Sport di Cloudinary. */
-export const CLOUDINARY_FOLDER = "vsp-sport/desain";
+/** Folder induk semua aset gambar TAFF Sportwear di Cloudinary. */
+export const CLOUDINARY_FOLDER = "taff-sportwear/desain";
 
-/** Batas ukuran per gambar. Cloudinary gratis dihitung dari kredit, jadi
- *  foto 5 MB dari kamera HP sebaiknya ditolak di sini, bukan setelah terupload. */
+/** Batas ukuran berkas yang diterima dari input file.
+ *
+ *  Sejak foto diperkecil dulu di browser (lihat downscaleImage), batas ini
+ *  bukan lagi soal kredit Cloudinary — melainkan supaya browser HP tidak
+ *  dipaksa mendekode berkas raksasa. Yang benar-benar disimpan di Cloudinary
+ *  jauh lebih kecil dari angka ini. */
 export const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+
+/** Sisi terpanjang gambar yang perlu disimpan ke Cloudinary.
+ *
+ *  Lightbox di dashboard/status menampilkan maksimal 1600px. Menyimpan versi
+ *  4000px dari foto kamera HP tidak menambah apa pun yang bisa dilihat orang,
+ *  tapi ikut ditagih sebagai storage dan bandwidth setiap kali foto dikirim. */
+export const MAX_UPLOAD_DIMENSION = 1600;
+
+/** Kualitas JPEG saat foto diperkecil ulang.
+ *  0.82 masih sulit dibedakan mata untuk foto, tapi ukurannya jauh lebih
+ *  kecil daripada 0.95. */
+export const JPEG_QUALITY = 0.82;
 
 /** Format yang diterima. HEIC sengaja tidak ikut — Cloudinary bisa mengonversinya,
  *  tapi browser tidak bisa menampilkan hasilnya sebagai preview lokal. */
@@ -46,32 +63,141 @@ export function validateImageFile(file: File): string | null {
 }
 
 /**
- * Upload satu gambar ke Cloudinary (unsigned).
+ * Perkecil foto di browser SEBELUM dikirim ke Cloudinary.
  *
- * `folder` opsional — defaultnya CLOUDINARY_FOLDER. Preset `modigi` mengizinkan
- * parameter folder (sudah diuji), jadi tiap upload bisa dikelompokkan.
+ * Ini bagian yang paling menghemat kredit. Tagihan Cloudinary dihitung dari
+ * (a) besar berkas yang disimpan, (b) bandwidth pengiriman, dan (c) jumlah
+ * transformasi. Foto kamera HP gampang 4000px & 2 MB, sementara dashboard
+ * paling besar cuma menampilkannya 1600px — piksel di atas itu cuma membakar
+ * storage dan bandwidth selamanya tanpa pernah terlihat.
+ *
+ * Setelah diperkecil, satu foto biasanya tinggal ~200-400 KB (hemat sekitar
+ * 5-8x dibanding menyimpan aslinya).
+ *
+ * Aturannya sengaja konservatif: kalau ragu, KIRIM BERKAS ASLINYA. Gagal
+ * memperkecil tidak boleh bikin operator tidak bisa upload.
  */
-export async function uploadToCloudinary(
-  file: File,
-  params: { folder?: string } = {}
-): Promise<{ url: string; public_id: string }> {
-  const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-  const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+async function downscaleImage(
+  file: File
+): Promise<{ blob: Blob; filename: string }> {
+  const asIs = { blob: file as Blob, filename: file.name || "foto.jpg" };
 
-  if (!cloudName || !uploadPreset) {
-    throw new Error("Cloudinary belum dikonfigurasi");
+  // Browser lawas (mis. Safari lama) tidak punya createImageBitmap.
+  if (typeof createImageBitmap !== "function") return asIs;
+
+  let bitmap: ImageBitmap;
+  try {
+    // `from-image` menghormati orientasi EXIF. Tanpa ini, foto HP yang
+    // dipotret miring akan tersimpan miring setelah digambar ulang ke canvas.
+    bitmap = await createImageBitmap(file, { imageOrientation: "from-image" });
+  } catch {
+    return asIs;
   }
 
+  try {
+    const longest = Math.max(bitmap.width, bitmap.height);
+    if (longest <= MAX_UPLOAD_DIMENSION) return asIs;
+
+    const scale = MAX_UPLOAD_DIMENSION / longest;
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return asIs;
+
+    // PNG bisa punya bagian transparan (mockup desain jersey sering begitu).
+    // Kalau dipaksa jadi JPEG, area transparan itu berubah jadi hitam — jadi
+    // untuk PNG keluarannya tetap PNG, dan penghematannya datang dari dimensi.
+    const keepPng = file.type === "image/png";
+    if (!keepPng) {
+      // JPEG tidak punya alpha; putih adalah latar paling aman.
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+    }
+    ctx.drawImage(bitmap, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, keepPng ? "image/png" : "image/jpeg", JPEG_QUALITY)
+    );
+
+    // Kalau hasilnya ternyata TIDAK lebih kecil (mis. PNG kecil tapi padat),
+    // pakai berkas aslinya.
+    if (!blob || blob.size >= file.size) return asIs;
+
+    const ext = keepPng ? "png" : "jpg";
+    const base = (file.name || "foto").replace(/\.[^.]+$/, "");
+    return { blob, filename: base + "." + ext };
+  } catch {
+    return asIs;
+  } finally {
+    bitmap.close();
+  }
+}
+
+/** Tanda tangan upload yang diterbitkan server, berlaku untuk satu upload. */
+interface UploadGrant {
+  cloudName: string;
+  apiKey: string;
+  uploadPreset: string;
+  folder: string;
+  timestamp: number;
+  signature: string;
+}
+
+/**
+ * Minta tanda tangan upload ke server.
+ *
+ * Dipisah dari uploadToCloudinary supaya bisa jalan PARALEL dengan proses
+ * memperkecil foto — dua-duanya butuh waktu, dan tidak saling bergantung.
+ */
+async function requestUploadGrant(): Promise<UploadGrant> {
+  const res = await fetch("/api/pesanan/cloudinary/sign", { method: "POST" });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => null);
+    if (res.status === 401) {
+      throw new Error("Sesi berakhir. Login ulang dulu untuk upload foto.");
+    }
+    throw new Error(data?.error || `Gagal minta izin upload (HTTP ${res.status})`);
+  }
+
+  return res.json();
+}
+
+/**
+ * Upload satu gambar ke Cloudinary.
+ *
+ * Dua langkah: perkecil di browser, lalu kirim memakai tanda tangan dari
+ * server. Folder ditentukan server dan ikut ditandatangani, jadi browser
+ * tidak bisa mengarahkan foto ke folder lain.
+ */
+export async function uploadToCloudinary(
+  file: File
+): Promise<{ url: string; public_id: string }> {
   const invalid = validateImageFile(file);
   if (invalid) throw new Error(invalid);
 
+  // Perkecil dulu di browser — lihat downscaleImage(). Ini yang paling
+  // menghemat kredit, karena berkas inilah yang disimpan permanen.
+  const [upload, grant] = await Promise.all([
+    downscaleImage(file),
+    requestUploadGrant(),
+  ]);
+
   const formData = new FormData();
-  formData.append("file", file);
-  formData.append("upload_preset", uploadPreset);
-  formData.append("folder", params.folder || CLOUDINARY_FOLDER);
+  formData.append("file", upload.blob, upload.filename);
+  formData.append("api_key", grant.apiKey);
+  formData.append("timestamp", String(grant.timestamp));
+  formData.append("signature", grant.signature);
+  formData.append("upload_preset", grant.uploadPreset);
+  formData.append("folder", grant.folder);
 
   const res = await fetch(
-    `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+    `https://api.cloudinary.com/v1_1/${grant.cloudName}/image/upload`,
     { method: "POST", body: formData }
   );
 

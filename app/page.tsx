@@ -72,11 +72,11 @@ export default async function HomePage() {
                   setiap halaman. Nama toko tetap dirender sebagai teks di
                   sampingnya supaya ikut berubah dari menu Pengaturan. */}
               <Image
-                src="/logo-vsp-mark.png"
+                src="/logo-taff-mark.png"
                 alt=""
                 aria-hidden="true"
                 width={192}
-                height={224}
+                height={192}
                 className="h-10 w-auto"
                 priority
               />
@@ -84,7 +84,7 @@ export default async function HomePage() {
                 <span className="block trk-display text-[15px] tracking-tight">
                   {brand.name}
                 </span>
-                <span className="block trk-stencil text-[9px] text-[#A29086] mt-[3px]">
+                <span className="block trk-stencil text-[9px] text-[#A3A3A3] mt-[3px]">
                   Custom Apparel
                 </span>
               </span>
@@ -101,7 +101,7 @@ export default async function HomePage() {
                 href={waHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden sm:inline-flex trk-btn-ghost px-4 py-2 text-sm text-[#A29086] hover:text-white"
+                className="hidden sm:inline-flex trk-btn-ghost px-4 py-2 text-sm text-[#A3A3A3] hover:text-white"
               >
                 Konsultasi
               </a>
@@ -111,17 +111,17 @@ export default async function HomePage() {
           <main className="max-w-6xl mx-auto px-5 sm:px-8 pb-24">
             {/* ── Hero ──────────────────────────────────────────────────── */}
             <section className="max-w-3xl pt-6 sm:pt-10 lg:pt-14">
-              <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#F2762A] border border-[rgba(242,118,42,.35)] rounded-full px-3 py-1.5">
+              <span className="inline-flex items-center gap-2 trk-stencil text-[10px] text-[#FF5A1F] border border-[rgba(255, 90, 31,.35)] rounded-full px-3 py-1.5">
                 Desain Bebas · Kirim se-Indonesia
               </span>
 
               <h1 className="trk-display text-[38px] leading-[1.03] sm:text-[58px] mt-5">
                 {taglineLines[0] || "Jersey Custom Full Printing"}
-                <span className="text-[#F2762A]">.</span>
+                <span className="text-[#FF5A1F]">.</span>
               </h1>
 
               {taglineLines[1] && (
-                <p className="text-[#A29086] text-[16px] sm:text-[17px] leading-relaxed mt-4">
+                <p className="text-[#A3A3A3] text-[16px] sm:text-[17px] leading-relaxed mt-4">
                   {taglineLines.slice(1).join(" ")}
                 </p>
               )}
@@ -149,7 +149,7 @@ export default async function HomePage() {
               <h2 className="trk-display text-[24px] sm:text-[30px]">
                 Yang bisa kami buat
               </h2>
-              <p className="text-[#A29086] text-[14.5px] mt-2">
+              <p className="text-[#A3A3A3] text-[14.5px] mt-2">
                 Harga dan bahan menyesuaikan jumlah pesanan — konsultasi dulu
                 lewat WhatsApp, gratis.
               </p>
@@ -159,7 +159,7 @@ export default async function HomePage() {
                   <div key={family} className="trk-card p-5 sm:p-6">
                     <div className="flex items-baseline justify-between gap-3">
                       <h3 className="trk-display text-[20px]">{family}</h3>
-                      <span className="trk-stencil text-[9.5px] text-[#F2762A]">
+                      <span className="trk-stencil text-[9.5px] text-[#FF5A1F]">
                         {FAMILY_INFO[family]?.unit}
                       </span>
                     </div>
@@ -167,9 +167,9 @@ export default async function HomePage() {
                       {items.map((item) => (
                         <li
                           key={item}
-                          className="flex items-center gap-2.5 text-[14px] text-[#D3C6BE]"
+                          className="flex items-center gap-2.5 text-[14px] text-[#D4D4D4]"
                         >
-                          <span className="h-1.5 w-1.5 rounded-full bg-[#F2762A] shrink-0" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-[#FF5A1F] shrink-0" />
                           {item}
                         </li>
                       ))}
@@ -184,7 +184,7 @@ export default async function HomePage() {
               <h2 className="trk-display text-[24px] sm:text-[30px]">
                 {stages.length} tahap produksi, bisa dipantau
               </h2>
-              <p className="text-[#A29086] text-[14.5px] mt-2">
+              <p className="text-[#A3A3A3] text-[14.5px] mt-2">
                 Setiap tahap selesai, kami kirim update otomatis ke WhatsApp-mu.
               </p>
 
@@ -192,9 +192,9 @@ export default async function HomePage() {
                 {stages.map((label, i) => (
                   <li
                     key={label}
-                    className="trk-btn-ghost px-3.5 py-2 text-[12.5px] text-[#D3C6BE]"
+                    className="trk-btn-ghost px-3.5 py-2 text-[12.5px] text-[#D4D4D4]"
                   >
-                    <span className="trk-stencil text-[9px] text-[#7E6F66] mr-1.5">
+                    <span className="trk-stencil text-[9px] text-[#5C5C5C] mr-1.5">
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {label}
@@ -228,13 +228,13 @@ export default async function HomePage() {
                     },
                   ].map((step) => (
                     <div key={step.n}>
-                      <span className="trk-stencil text-[10px] text-[#F2762A]">
+                      <span className="trk-stencil text-[10px] text-[#FF5A1F]">
                         {step.n}
                       </span>
                       <p className="text-[15px] font-semibold text-white mt-1.5">
                         {step.t}
                       </p>
-                      <p className="text-[13px] text-[#A29086] leading-relaxed mt-1">
+                      <p className="text-[13px] text-[#A3A3A3] leading-relaxed mt-1">
                         {step.d}
                       </p>
                     </div>
@@ -251,21 +251,21 @@ export default async function HomePage() {
           </main>
 
           {/* ── Footer ──────────────────────────────────────────────────── */}
-          <footer className="border-t border-[#33261F] mt-auto">
+          <footer className="border-t border-[#2E2E2E] mt-auto">
             <div className="max-w-6xl mx-auto px-5 sm:px-8 py-7 flex flex-col sm:flex-row gap-4 sm:items-center justify-between">
               <div className="flex flex-col">
-                <p className="text-[13px] text-[#A29086]">
+                <p className="text-[13px] text-[#A3A3A3]">
                   © {new Date().getFullYear()} {brand.name}
                 </p>
               </div>
-              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#7E6F66]">
+              <div className="flex flex-col sm:items-end gap-1 text-[13px] text-[#5C5C5C]">
                 {/* Jam operasional dari menu Pengaturan, bukan teks tetap */}
                 <span>{hours}</span>
                 <a
                   href={waHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[#F2762A] hover:underline underline-offset-4"
+                  className="text-[#FF5A1F] hover:underline underline-offset-4"
                 >
                   WhatsApp: {formatWhatsAppDisplay(brand.whatsappNumber)}
                 </a>

@@ -8,7 +8,7 @@
  * (`%s · <nama brand dari database>`) yang masih berisi nama brand lama.
  */
 export const metadata = {
-  title: { absolute: "Login · VSP Sport" },
+  title: { absolute: "Login · TAFF Sportwear" },
 };
 
 export default function LoginLayout({
