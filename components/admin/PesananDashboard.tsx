@@ -151,6 +151,18 @@ function orderPcs(o: OrderData): number {
 }
 
 /**
+ * Jumlah pcs untuk ditampilkan.
+ *
+ * `quantity` dari API sudah berbentuk "12 pcs" (lihat mapOrder), jadi menulis
+ * angka itu lalu menempel " pcs" menghasilkan "12 pcs pcs". Satuan hanya boleh
+ * ditempel lewat fungsi ini.
+ */
+function pcsLabel(q: unknown): string {
+  const n = parseInt(String(q ?? ""), 10);
+  return Number.isNaN(n) ? "-" : `${n} pcs`;
+}
+
+/**
  * Pecah satu order jadi bucket per PRODUK (label = nama produk apa adanya).
  *
  * Sumber utama adalah `products[]` karena satu order bisa berisi campuran
@@ -437,7 +449,6 @@ export default function PesananDashboard({
   const [loading, setLoading] = useState(!initialOrders);
   // Data awal dari server → tidak perlu fetch ulang saat halaman baru dibuka.
   // Daftar tetap diperbarui setelah aksi apa pun (simpan, hapus, pindah tahap).
-  const hasServerData = (initialOrders?.length ?? 0) > 0;
   const [filter, setFilter] = useState<FilterKey>("all");
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -487,10 +498,13 @@ export default function PesananDashboard({
     }
   }, []);
 
+  // Data yang dilukis server cuma untuk tampilan pertama; daftar tetap
+  // disegarkan di latar belakang supaya halaman yang di-refresh operator
+  // menampilkan kondisi terkini, bukan snapshot saat HTML dibuat.
   useEffect(() => {
-    if (!hasServerData) fetchOrders();
+    fetchOrders();
     fetchSteps();
-  }, [fetchOrders, fetchSteps, hasServerData]);
+  }, [fetchOrders, fetchSteps]);
 
   useEffect(() => {
     const h = window.location.hash.replace("#", "") as ViewKey;
@@ -1351,10 +1365,13 @@ function ViewPesanan({
                 </button>
               </div>
 
-              {/* Baris 1: Nomor pesanan + badge status */}
-              <div className="flex items-center justify-between pr-10">
-                <p className="font-bold text-[16px] pas-num">{o.id}</p>
-                <span className="flex items-center gap-1.5">
+              {/* Baris 1: Nomor pesanan + badge status.
+                  Bungkusnya boleh turun baris: nomor pesanan warisan ("MENARA…")
+                  lebih panjang dari prefix baru, dan di ponsel badge statusnya
+                  dulu terhimpit sampai ikut terpotong. */}
+              <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pr-10">
+                <p className="font-bold text-[16px] pas-num break-all">{o.id}</p>
+                <span className="flex flex-wrap items-center gap-1.5">
                   <span className={`pas-pill ${st}`}>{FILTER_LABEL[st]}</span>
                   {dlNote && (
                     <span className={`pas-pill ${dlNote.cls}`}>{dlNote.text}</span>
@@ -1370,7 +1387,7 @@ function ViewPesanan({
                     <p className="text-[14px] font-medium truncate">{o.customer_name}</p>
                   </div>
                 </div>
-                <p className="text-[14px] font-semibold pas-num shrink-0 ml-3">{o.quantity} pcs</p>
+                <p className="text-[14px] font-semibold pas-num shrink-0 ml-3">{pcsLabel(o.quantity)}</p>
               </div>
 
               {/* Baris 3: Nama produk */}
@@ -4351,7 +4368,7 @@ function DetailSheet({
               )}
               <div className="px-4 py-3 border-b border-r border-[var(--pas-line)]">
                 <span className="pas-stencil text-[9px] text-[var(--pas-muted)]">Jumlah</span>
-                <p className="mt-1 text-[14px] font-semibold">{order.quantity} pcs</p>
+                <p className="mt-1 text-[14px] font-semibold">{pcsLabel(order.quantity)}</p>
               </div>
               {step === 11 && (courier || resi) ? (
                 <div className="px-4 py-3 border-b border-[var(--pas-line)]">

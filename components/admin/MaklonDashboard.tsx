@@ -18,6 +18,18 @@ import {
 } from "@/lib/format-date";
 import { Search, AlertTriangle } from "lucide-react";
 
+/**
+ * Jumlah pcs untuk ditampilkan.
+ *
+ * `quantity` dari API sudah berbentuk "12 pcs" (lihat mapMaklonOrder), jadi
+ * menulis angka itu lalu menempel " pcs" menghasilkan "12 pcs pcs". Satuan
+ * hanya boleh ditempel lewat fungsi ini.
+ */
+function pcsLabel(q: unknown): string {
+  const n = parseInt(String(q ?? ""), 10);
+  return Number.isNaN(n) ? "-" : `${n} pcs`;
+}
+
 type StepRow = { id: string; name: string; position: number };
 
 /**
@@ -150,8 +162,6 @@ export default function MaklonDashboard({
 } = {}) {
   const [orders, setOrders] = useState<OrderData[]>(initialOrders ?? []);
   const [loading, setLoading] = useState(!initialOrders);
-  // Data awal dari server → tidak perlu fetch ulang saat halaman baru dibuka.
-  const hasServerData = (initialOrders?.length ?? 0) > 0;
   const [filter, setFilter] = useState<FilterKey>("all");
   const [query, setQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(null);
@@ -191,10 +201,13 @@ export default function MaklonDashboard({
     }
   }, []);
 
+  // Data yang dilukis server cuma untuk tampilan pertama; daftar tetap
+  // disegarkan di latar belakang supaya halaman yang di-refresh operator
+  // menampilkan kondisi terkini, bukan snapshot saat HTML dibuat.
   useEffect(() => {
-    if (!hasServerData) fetchOrders();
+    fetchOrders();
     fetchSteps();
-  }, [fetchOrders, fetchSteps, hasServerData]);
+  }, [fetchOrders, fetchSteps]);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -509,9 +522,12 @@ export default function MaklonDashboard({
                   const stageName = steps[o.current_step - 1]?.name || `Tahap ${o.current_step}`;
                   return (
                     <div key={o.id} className="pas-bento-card cursor-pointer" onClick={() => setOpenId(o.id)}>
-                      <div className="flex items-center justify-between pr-2">
-                        <p className="font-bold text-[16px] pas-num">{o.id}</p>
-                        <div className="flex items-center gap-1.5">
+                      {/* Bungkusnya boleh turun baris: nomor maklon warisan
+                          ("MENARA…") lebih panjang dari prefix baru dan di
+                          ponsel tombol + badge statusnya dulu terhimpit. */}
+                      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pr-2">
+                        <p className="font-bold text-[16px] pas-num break-all">{o.id}</p>
+                        <div className="flex shrink-0 items-center gap-1.5">
                           <button
                             className="text-[var(--pas-muted)] hover:text-blue-400 transition p-1.5 rounded-lg hover:bg-blue-400/10"
                             title="Edit maklon"
@@ -547,7 +563,7 @@ export default function MaklonDashboard({
                             <p className="text-[14px] font-medium truncate">{o.customer_name}</p>
                           </div>
                         </div>
-                        <p className="text-[14px] font-semibold pas-num shrink-0 ml-3">{o.quantity} pcs</p>
+                        <p className="text-[14px] font-semibold pas-num shrink-0 ml-3">{pcsLabel(o.quantity)}</p>
                       </div>
                       <p className="text-[13px] text-[var(--pas-muted)] mt-3">{o.product_name}</p>
                       <div className="mt-3">
@@ -1401,7 +1417,7 @@ function DetailSheet({
               )}
               <div className="px-4 py-3 border-b border-r border-[var(--pas-line)]">
                 <span className="pas-stencil text-[9px] text-[var(--pas-muted)]">Jumlah</span>
-                <p className="mt-1 text-[14px] font-semibold">{order.quantity} pcs</p>
+                <p className="mt-1 text-[14px] font-semibold">{pcsLabel(order.quantity)}</p>
               </div>
               <div className="px-4 py-3 border-b border-[var(--pas-line)]">
                 <span className="pas-stencil text-[9px] text-[var(--pas-muted)]">Ekspedisi / Resi</span>
